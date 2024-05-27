@@ -25,7 +25,7 @@ public sealed class Currency : Entity
         var codeResult = CurrencyCode.Create(code);
         if (codeResult.IsFailure) return codeResult.Error;
         
-        var symbolResult = CurrencySymbol.Create(code);
+        var symbolResult = CurrencySymbol.Create(symbol);
         if (symbolResult.IsFailure) return symbolResult.Error;
 
         return new Currency(id, nameResult.Value, codeResult.Value, symbolResult.Value);
