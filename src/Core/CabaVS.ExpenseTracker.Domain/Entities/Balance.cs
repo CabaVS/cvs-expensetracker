@@ -7,12 +7,14 @@ namespace CabaVS.ExpenseTracker.Domain.Entities;
 public sealed class Balance : Entity
 {
     public BalanceName Name { get; }
-    public Money Money { get; }
+    public decimal Amount { get; set; }
+    public Currency Currency { get; }
     
-    private Balance(Guid id, BalanceName name, Money money) : base(id)
+    private Balance(Guid id, BalanceName name, decimal amount, Currency currency) : base(id)
     {
         Name = name;
-        Money = money;
+        Amount = amount;
+        Currency = currency;
     }
     
     public static Result<Balance> Create(Guid id, string name, decimal amount, Currency currency)
@@ -20,6 +22,6 @@ public sealed class Balance : Entity
         var nameResult = BalanceName.Create(name);
         if (nameResult.IsFailure) return nameResult.Error;
 
-        return new Balance(id, nameResult.Value, new Money(amount, currency));
+        return new Balance(id, nameResult.Value, amount, currency);
     }
 }
