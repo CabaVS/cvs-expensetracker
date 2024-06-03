@@ -1,4 +1,5 @@
 using CabaVS.ExpenseTracker.Application.Features.Currencies.Commands;
+using CabaVS.ExpenseTracker.Domain.Shared;
 using CabaVS.ExpenseTracker.Presentation.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -23,8 +24,11 @@ internal sealed class CreateCurrencyEndpoint : IEndpoint
 
                 return result.ToDefaultApiResponse(nameof(GetCurrencyByIdEndpoint));
             })
+            .WithTags(EndpointTags.Currencies)
             .WithName(nameof(CreateCurrencyEndpoint))
-            .WithTags(EndpointTags.Currencies);
+            .WithDescription("Creates a new Currency from provided data. Location header is filled.")
+            .Produces(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest, typeof(Error));
     }
 
     private sealed record CreateCurrencyRequestModel(string Name, string Code, string Symbol);

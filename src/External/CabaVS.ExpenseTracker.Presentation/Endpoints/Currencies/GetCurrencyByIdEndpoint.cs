@@ -1,4 +1,6 @@
+using CabaVS.ExpenseTracker.Application.Features.Currencies.Models;
 using CabaVS.ExpenseTracker.Application.Features.Currencies.Queries;
+using CabaVS.ExpenseTracker.Domain.Shared;
 using CabaVS.ExpenseTracker.Presentation.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -22,7 +24,10 @@ internal sealed class GetCurrencyByIdEndpoint : IEndpoint
 
                 return result.ToDefaultApiResponse();
             })
+            .WithTags(EndpointTags.Currencies)
             .WithName(nameof(GetCurrencyByIdEndpoint))
-            .WithTags(EndpointTags.Currencies);
+            .WithDescription("Gets a Currency by provided ID.")
+            .Produces(StatusCodes.Status200OK, typeof(CurrencyModel))
+            .Produces(StatusCodes.Status400BadRequest, typeof(Error));
     }
 }
