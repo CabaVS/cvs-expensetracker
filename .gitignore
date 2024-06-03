@@ -4,3 +4,6 @@ obj/
 
 # Rider IDE
 .idea/
+
+# Application logs
+logs/

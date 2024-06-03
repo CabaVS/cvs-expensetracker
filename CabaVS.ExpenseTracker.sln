@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{89F57B97-C9B9-4A14-B610-D385496FF383}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		cvs-efcore-migrations.ps1 = cvs-efcore-migrations.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EBE6C230-59CC-4E4D-B1AC-1AB1893EFF89}"
@@ -17,6 +18,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{9DB42229-31CE-4E75-8245-6E0617FF18FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CabaVS.ExpenseTracker.Domain", "src\Core\CabaVS.ExpenseTracker.Domain\CabaVS.ExpenseTracker.Domain.csproj", "{6FA95B21-A35A-4298-886E-6105DD638725}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CabaVS.ExpenseTracker.Application", "src\Core\CabaVS.ExpenseTracker.Application\CabaVS.ExpenseTracker.Application.csproj", "{FFC6C2C9-1446-4485-BBA3-71A19E9C5F8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CabaVS.ExpenseTracker.Presentation", "src\External\CabaVS.ExpenseTracker.Presentation\CabaVS.ExpenseTracker.Presentation.csproj", "{53AFCBBA-BCA5-4A61-AB5B-40A625274A80}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CabaVS.ExpenseTracker.Infrastructure", "src\External\CabaVS.ExpenseTracker.Infrastructure\CabaVS.ExpenseTracker.Infrastructure.csproj", "{072ABBF3-E3C9-4320-BB50-4CF21818EE24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CabaVS.ExpenseTracker.API", "src\CabaVS.ExpenseTracker.API\CabaVS.ExpenseTracker.API.csproj", "{0437EFBC-8589-4800-BD50-1F54C267ECC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,11 +39,31 @@ Global
 		{C067E5C2-7D54-4F8D-9762-D52BBDD11B5D} = {EBE6C230-59CC-4E4D-B1AC-1AB1893EFF89}
 		{9DB42229-31CE-4E75-8245-6E0617FF18FD} = {EBE6C230-59CC-4E4D-B1AC-1AB1893EFF89}
 		{6FA95B21-A35A-4298-886E-6105DD638725} = {C067E5C2-7D54-4F8D-9762-D52BBDD11B5D}
+		{FFC6C2C9-1446-4485-BBA3-71A19E9C5F8A} = {C067E5C2-7D54-4F8D-9762-D52BBDD11B5D}
+		{53AFCBBA-BCA5-4A61-AB5B-40A625274A80} = {9DB42229-31CE-4E75-8245-6E0617FF18FD}
+		{072ABBF3-E3C9-4320-BB50-4CF21818EE24} = {9DB42229-31CE-4E75-8245-6E0617FF18FD}
+		{0437EFBC-8589-4800-BD50-1F54C267ECC6} = {EBE6C230-59CC-4E4D-B1AC-1AB1893EFF89}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6FA95B21-A35A-4298-886E-6105DD638725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6FA95B21-A35A-4298-886E-6105DD638725}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FA95B21-A35A-4298-886E-6105DD638725}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FA95B21-A35A-4298-886E-6105DD638725}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFC6C2C9-1446-4485-BBA3-71A19E9C5F8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFC6C2C9-1446-4485-BBA3-71A19E9C5F8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFC6C2C9-1446-4485-BBA3-71A19E9C5F8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFC6C2C9-1446-4485-BBA3-71A19E9C5F8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53AFCBBA-BCA5-4A61-AB5B-40A625274A80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53AFCBBA-BCA5-4A61-AB5B-40A625274A80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53AFCBBA-BCA5-4A61-AB5B-40A625274A80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53AFCBBA-BCA5-4A61-AB5B-40A625274A80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{072ABBF3-E3C9-4320-BB50-4CF21818EE24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{072ABBF3-E3C9-4320-BB50-4CF21818EE24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{072ABBF3-E3C9-4320-BB50-4CF21818EE24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{072ABBF3-E3C9-4320-BB50-4CF21818EE24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0437EFBC-8589-4800-BD50-1F54C267ECC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0437EFBC-8589-4800-BD50-1F54C267ECC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0437EFBC-8589-4800-BD50-1F54C267ECC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0437EFBC-8589-4800-BD50-1F54C267ECC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
