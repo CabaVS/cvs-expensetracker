@@ -1,5 +1,7 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
+using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence;
+using CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +18,9 @@ public static class DependencyInjection
             ServiceLifetime.Transient);
         
         serviceCollection.AddTransient<IUnitOfWork, UnitOfWork>();
+
+        serviceCollection.AddSingleton<SqlConnectionFactory>();
+        serviceCollection.AddSingleton<ICurrencyReadRepository, CurrencyReadRepository>();
         
         return serviceCollection;
     }

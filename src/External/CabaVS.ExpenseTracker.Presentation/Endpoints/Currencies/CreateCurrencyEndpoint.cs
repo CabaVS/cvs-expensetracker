@@ -1,4 +1,5 @@
 using CabaVS.ExpenseTracker.Application.Features.Currencies.Commands;
+using CabaVS.ExpenseTracker.Presentation.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -20,9 +21,7 @@ internal sealed class CreateCurrencyEndpoint : IEndpoint
 
                 var result = await sender.Send(command, ct);
 
-                return result.IsSuccess
-                    ? Results.Ok(result.Value) // TODO: Should return 201 response code
-                    : Results.BadRequest(result.Error);
+                return result.ToDefaultApiResponse(nameof(GetCurrencyByIdEndpoint));
             })
             .WithName(nameof(CreateCurrencyEndpoint))
             .WithTags(EndpointTags.Currencies);
