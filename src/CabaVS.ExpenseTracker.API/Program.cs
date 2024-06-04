@@ -21,9 +21,7 @@ builder.WebHost
 
 var app = builder.Build();
 
+app.UseFastEndpoints();
 app.UseSerilogRequestLogging();
-
-app.ConfigureSwagger();
-app.MapAllEndpoints();
 
 app.Run();

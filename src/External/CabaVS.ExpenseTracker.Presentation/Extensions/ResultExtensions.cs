@@ -1,22 +1,23 @@
 using CabaVS.ExpenseTracker.Domain.Shared;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CabaVS.ExpenseTracker.Presentation.Extensions;
 
 internal static class ResultExtensions
 {
-    public static IResult ToDefaultApiResponse(this Result result) =>
+    public static Results<Ok, BadRequest<Error>> ToDefaultApiResponse(this Result result) =>
         result.IsSuccess
-            ? Results.Ok()
-            : Results.BadRequest(result.Error);
+            ? TypedResults.Ok()
+            : TypedResults.BadRequest(result.Error);
     
-    public static IResult ToDefaultApiResponse<T>(this Result<T> result) =>
+    public static Results<Ok<T>, BadRequest<Error>> ToDefaultApiResponse<T>(this Result<T> result) =>
         result.IsSuccess
-            ? Results.Ok(result.Value)
-            : Results.BadRequest(result.Error);
+            ? TypedResults.Ok(result.Value)
+            : TypedResults.BadRequest(result.Error);
     
-    public static IResult ToDefaultApiResponse(this Result<Guid> result, string routeName) =>
+    public static Results<CreatedAtRoute, BadRequest<Error>> ToDefaultApiResponse(this Result<Guid> result, string routeName) =>
         result.IsSuccess
-            ? Results.CreatedAtRoute(routeName, new { Id = result.Value })
-            : Results.BadRequest(result.Error);
+            ? TypedResults.CreatedAtRoute(routeName, new { Id = result.Value })
+            : TypedResults.BadRequest(result.Error);
 }
