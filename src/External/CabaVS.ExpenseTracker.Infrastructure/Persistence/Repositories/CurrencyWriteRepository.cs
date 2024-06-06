@@ -6,12 +6,12 @@ namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 
 internal sealed class CurrencyWriteRepository(ApplicationDbContext dbContext) : ICurrencyWriteRepository
 {
-    public Task<Guid> Create(DomainCurrency currency, CancellationToken ct = default)
+    public async Task<Guid> Create(DomainCurrency currency, CancellationToken ct = default)
     {
         var entity = Currency.FromDomain(currency);
 
-        var added = dbContext.Currencies.Add(entity);
+        var added = await dbContext.Currencies.AddAsync(entity, ct);
 
-        return Task.FromResult(added.Entity.Id);
+        return added.Entity.Id;
     }
 }

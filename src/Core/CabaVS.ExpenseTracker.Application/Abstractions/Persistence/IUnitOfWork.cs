@@ -7,4 +7,5 @@ public interface IUnitOfWork
     Task SaveChanges(CancellationToken ct = default);
     
     ICurrencyWriteRepository CurrencyWriteRepository { get; }
+    IWorkspaceWriteRepository WorkspaceWriteRepository { get; }
 }
