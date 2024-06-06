@@ -11,7 +11,7 @@ namespace CabaVS.ExpenseTracker.Presentation.Endpoints.Workspaces;
 
 internal sealed class CreateWorkspaceEndpoint(ISender sender) 
     : Endpoint<
-        CreateWorkspaceEndpoint.CreateWorkspaceEndpointRequest,
+        CreateWorkspaceEndpoint.RequestModel,
         Results<CreatedAtRoute, BadRequest<Error>>>
 {
     public override void Configure()
@@ -22,24 +22,18 @@ internal sealed class CreateWorkspaceEndpoint(ISender sender)
     }
 
     public override async Task<Results<CreatedAtRoute, BadRequest<Error>>> ExecuteAsync(
-        CreateWorkspaceEndpointRequest req,
+        RequestModel req,
         CancellationToken ct)
     {
-        var command = new CreateWorkspaceCommand(req.CreateWorkspaceModel.Name);
+        var command = new CreateWorkspaceCommand(req.Name);
 
         var result = await sender.Send(command, ct);
 
         // TODO: Wrong endpoint
         return result.ToDefaultApiResponse(nameof(CreateWorkspaceEndpoint));
     }
-
-    internal sealed record CreateWorkspaceEndpointRequest
-    {
-        [FromBody]
-        public CreateWorkspaceModel CreateWorkspaceModel { get; init; } = default!;
-    };
     
-    internal sealed record CreateWorkspaceModel(string Name);
+    internal sealed record RequestModel(string Name);
 }
 
 internal sealed class CreateWorkspaceEndpointSummary : Summary<CreateWorkspaceEndpoint>
@@ -50,7 +44,7 @@ internal sealed class CreateWorkspaceEndpointSummary : Summary<CreateWorkspaceEn
         Description = "Creates a new Workspace.";
 
         ExampleRequest =
-            new CreateWorkspaceEndpoint.CreateWorkspaceModel(
+            new CreateWorkspaceEndpoint.RequestModel(
                 "My Family Budget 2020");
         
         Response(

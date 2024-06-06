@@ -11,7 +11,7 @@ namespace CabaVS.ExpenseTracker.Presentation.Endpoints.Currencies;
 
 internal sealed class CreateCurrencyEndpoint(ISender sender) 
     : Endpoint<
-        CreateCurrencyEndpoint.CreateCurrencyEndpointRequest,
+        CreateCurrencyEndpoint.RequestModel,
         Results<CreatedAtRoute, BadRequest<Error>>>
 {
     public override void Configure()
@@ -22,26 +22,17 @@ internal sealed class CreateCurrencyEndpoint(ISender sender)
     }
 
     public override async Task<Results<CreatedAtRoute, BadRequest<Error>>> ExecuteAsync(
-        CreateCurrencyEndpointRequest req,
+        RequestModel req,
         CancellationToken ct)
     {
-        var command = new CreateCurrencyCommand(
-            req.CreateCurrencyModel.Name,
-            req.CreateCurrencyModel.Code,
-            req.CreateCurrencyModel.Symbol);
+        var command = new CreateCurrencyCommand(req.Name, req.Code, req.Symbol);
 
         var result = await sender.Send(command, ct);
 
         return result.ToDefaultApiResponse(nameof(GetCurrencyByIdEndpoint));
     }
-
-    internal sealed record CreateCurrencyEndpointRequest
-    {
-        [FromBody]
-        public CreateCurrencyModel CreateCurrencyModel { get; init; } = default!;
-    };
     
-    internal sealed record CreateCurrencyModel(string Name, string Code, string Symbol);
+    internal sealed record RequestModel(string Name, string Code, string Symbol);
 }
 
 internal sealed class CreateCurrencyEndpointSummary : Summary<CreateCurrencyEndpoint>
@@ -52,7 +43,7 @@ internal sealed class CreateCurrencyEndpointSummary : Summary<CreateCurrencyEndp
         Description = "Creates a new Currency.";
 
         ExampleRequest =
-            new CreateCurrencyEndpoint.CreateCurrencyModel(
+            new CreateCurrencyEndpoint.RequestModel(
                 "United States Dollar", "USD", "$");
         
         Response(
