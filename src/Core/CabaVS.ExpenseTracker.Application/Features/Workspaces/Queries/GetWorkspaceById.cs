@@ -15,7 +15,7 @@ internal sealed class GetWorkspaceByIdQueryHandler(
 {
     public async Task<Result<WorkspaceModel>> Handle(GetWorkspaceByIdQuery request, CancellationToken cancellationToken)
     {
-        var userId = (await currentUserAccessor.Get(cancellationToken)).Id;
+        var userId = await currentUserAccessor.GetId(cancellationToken);
 
         var model = await workspaceReadRepository.GetById(request.Id, userId, cancellationToken);
         if (model is null) return WorkspaceErrors.NotFoundById(request.Id);

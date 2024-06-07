@@ -12,12 +12,13 @@ internal sealed class Workspace
     
     public ICollection<UserWorkspace> UserWorkspaces { get; set; } = default!;
 
-    public static Workspace FromDomain(DomainWorkspace workspace)
+    public static Workspace FromDomain(DomainWorkspace workspace, Guid userId)
     {
         return new Workspace
         {
             Id = workspace.Id,
-            Name = workspace.Name.Value
+            Name = workspace.Name.Value,
+            UserWorkspaces = [ new UserWorkspace { WorkspaceId = workspace.Id, UserId = userId, IsAdmin = workspace.IsAdmin } ]
         };
     }
 }

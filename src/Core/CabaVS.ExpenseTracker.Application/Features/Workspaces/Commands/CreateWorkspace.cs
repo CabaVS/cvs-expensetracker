@@ -14,13 +14,14 @@ internal sealed class CreateWorkspaceCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateWorkspaceCommand request, CancellationToken cancellationToken)
     {
-        var workspaceResult = Workspace.Create(Guid.NewGuid(), request.Name);
+        var userId = await currentUserAccessor.GetId(cancellationToken);
+        
+        var workspaceResult = Workspace.Create(Guid.NewGuid(), request.Name, true);
         if (workspaceResult.IsFailure) return workspaceResult.Error;
 
         var id = await unitOfWork.WorkspaceWriteRepository.Create(
             workspaceResult.Value,
-            (await currentUserAccessor.Get(cancellationToken)).Id,
-            true,
+            userId,
             cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
 

@@ -4,5 +4,5 @@ namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositorie
 
 public interface IWorkspaceWriteRepository
 {
-    Task<Guid> Create(Workspace workspace, Guid userId, bool isWorkspaceAdmin = true, CancellationToken ct = default);
+    Task<Guid> Create(Workspace workspace, Guid userId, CancellationToken ct = default);
 }

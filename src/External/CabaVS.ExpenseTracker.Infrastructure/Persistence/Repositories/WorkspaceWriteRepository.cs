@@ -6,11 +6,9 @@ namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 
 internal sealed class WorkspaceWriteRepository(ApplicationDbContext dbContext) : IWorkspaceWriteRepository
 {
-    public async Task<Guid> Create(DomainWorkspace workspace, Guid userId, bool isWorkspaceAdmin = true, CancellationToken ct = default)
+    public async Task<Guid> Create(DomainWorkspace workspace, Guid userId, CancellationToken ct = default)
     {
-        var entity = Workspace.FromDomain(workspace);
-        
-        entity.UserWorkspaces = [new UserWorkspace { UserId = userId, IsAdmin = isWorkspaceAdmin }];
+        var entity = Workspace.FromDomain(workspace, userId);
 
         var added = await dbContext.Workspaces.AddAsync(entity, ct);
 

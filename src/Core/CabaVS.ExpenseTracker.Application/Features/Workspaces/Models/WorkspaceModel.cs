@@ -1,3 +1,3 @@
 namespace CabaVS.ExpenseTracker.Application.Features.Workspaces.Models;
 
-public sealed record WorkspaceModel(Guid Id, string Name);
+public sealed record WorkspaceModel(Guid Id, string Name, bool IsAdmin);

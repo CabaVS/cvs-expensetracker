@@ -9,7 +9,7 @@ internal sealed class WorkspaceReadRepository(SqlConnectionFactory sqlConnection
     public async Task<WorkspaceModel?> GetById(Guid id, Guid userId, CancellationToken ct = default)
     {
         const string sql = """
-                           SELECT TOP(1) [w].[Id], [w].[Name] FROM [dbo].[Workspaces] AS [w]
+                           SELECT TOP(1) [w].[Id], [w].[Name], [uw].[IsAdmin] FROM [dbo].[Workspaces] AS [w]
                            LEFT JOIN [dbo].[UserWorkspaces] AS [uw] ON [uw].[WorkspaceId] = [w].[Id]
                            WHERE [w].[Id] = @id
                            AND [uw].[UserId] = @userId

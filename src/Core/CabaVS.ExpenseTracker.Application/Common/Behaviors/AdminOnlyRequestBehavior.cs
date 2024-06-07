@@ -19,7 +19,7 @@ internal sealed class AdminOnlyRequestBehavior<TRequest, TResponse>(
 
     private static TResponse CreateFailedResponse()
     {
-        var error = new Error("Admin.PermissionsNotSufficient", "Admin permissions required for this operation.");
+        var error = new Error("Admin.PermissionsRequired", "Admin permissions required for this operation.");
         
         if (typeof(TResponse) == typeof(Result))
         {

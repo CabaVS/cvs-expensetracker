@@ -51,7 +51,8 @@ internal sealed class GetWorkspaceByIdEndpointSummary : Summary<GetWorkspaceById
             "OK response with body.",
             example: new WorkspaceModel(
                 new Guid("DCF2732A-E43A-4CB1-8718-EA1AD3543BA1"),
-                "My Family Budget 2020"));
+                "My Family Budget 2020",
+                true));
         
         Response(
             (int)HttpStatusCode.BadRequest,

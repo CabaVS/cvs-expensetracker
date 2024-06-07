@@ -13,4 +13,6 @@ internal sealed class CurrentUserAccessor : ICurrentUserAccessor
                 "Test User",
                 true));
     }
+
+    public async Task<Guid> GetId(CancellationToken ct = default) => (await Get(ct)).Id;
 }
