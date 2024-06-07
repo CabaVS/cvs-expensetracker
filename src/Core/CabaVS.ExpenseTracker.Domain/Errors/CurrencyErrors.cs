@@ -24,5 +24,5 @@ public static class CurrencyErrors
     public static Error SymbolTooLong(string actualValue) =>
         StringErrors.TooLong(nameof(Currency), nameof(Currency.Symbol), CurrencySymbol.MaxLength, actualValue);
 
-    public static Error NotFoundById(Guid id) => new("Currency.NotFoundById", $"Currency not found by ID '{id}'.");
+    public static Error NotFoundById(Guid id) => GeneralErrors.NotFoundById(nameof(Currency), id);
 }

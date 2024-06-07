@@ -11,4 +11,6 @@ public static class WorkspaceErrors
         StringErrors.IsNullOrWhiteSpace(nameof(Workspace), nameof(Workspace.Name));
     public static Error NameTooLong(string actualValue) =>
         StringErrors.TooLong(nameof(Workspace), nameof(Workspace.Name), WorkspaceName.MaxLength, actualValue);
+    
+    public static Error NotFoundById(Guid id) => GeneralErrors.NotFoundById(nameof(Workspace), id);
 }

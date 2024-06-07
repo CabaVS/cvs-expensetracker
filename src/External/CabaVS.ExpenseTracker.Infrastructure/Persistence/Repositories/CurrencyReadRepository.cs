@@ -9,7 +9,7 @@ internal sealed class CurrencyReadRepository(SqlConnectionFactory sqlConnectionF
     public async Task<CurrencyModel?> GetById(Guid id, CancellationToken ct = default)
     {
         const string sql = """
-                           SELECT [Id], [Name], [Code], [Symbol] FROM [Currencies]
+                           SELECT TOP(1) [Id], [Name], [Code], [Symbol] FROM [dbo].[Currencies]
                            WHERE [Id] = @id
                            """;
         

@@ -28,9 +28,8 @@ internal sealed class CreateWorkspaceEndpoint(ISender sender)
         var command = new CreateWorkspaceCommand(req.Name);
 
         var result = await sender.Send(command, ct);
-
-        // TODO: Wrong endpoint
-        return result.ToDefaultApiResponse(nameof(CreateWorkspaceEndpoint));
+        
+        return result.ToDefaultApiResponse(nameof(GetWorkspaceByIdEndpoint));
     }
     
     internal sealed record RequestModel(string Name);
