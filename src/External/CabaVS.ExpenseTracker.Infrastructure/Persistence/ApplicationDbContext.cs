@@ -13,6 +13,8 @@ internal sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext
     public DbSet<Currency> Currencies { get; set; }
 
     public DbSet<Balance> Balances { get; set; }
+    public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
+    public DbSet<IncomeCategory> IncomeCategories { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
