@@ -11,6 +11,8 @@ internal sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext
     public DbSet<UserWorkspace> UserWorkspaces { get; set; }
     
     public DbSet<Currency> Currencies { get; set; }
+
+    public DbSet<Balance> Balances { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

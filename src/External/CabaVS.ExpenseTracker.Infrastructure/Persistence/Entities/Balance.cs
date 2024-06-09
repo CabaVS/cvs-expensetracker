@@ -1,0 +1,70 @@
+using CabaVS.ExpenseTracker.Domain.ValueObjects;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using DomainBalance = CabaVS.ExpenseTracker.Domain.Entities.Balance;
+using DomainCurrency = CabaVS.ExpenseTracker.Domain.Entities.Currency;
+
+namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Entities;
+
+internal sealed class Balance
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; } = default!;
+    public decimal Amount { get; set; }
+
+    public Guid CurrencyId { get; set; }
+    public Currency Currency { get; set; } = default!;
+
+    public Guid WorkspaceId { get; set; }
+    public Workspace Workspace { get; set; } = default!;
+    
+    public DomainBalance ToDomain(Balance balance)
+    {
+        var currency = DomainCurrency
+            .Create(balance.Currency.Id, balance.Currency.Name, balance.Currency.Code, balance.Currency.Symbol)
+            .Value;
+        
+        return DomainBalance
+            .Create(Id, Name, Amount, currency)
+            .Value;
+    }
+
+    public static Balance FromDomain(DomainBalance balance, Guid workspaceId)
+    {
+        return new Balance
+        {
+            Id = balance.Id,
+            Name = balance.Name.Value,
+            Amount = balance.Amount,
+            CurrencyId = balance.Currency.Id,
+            WorkspaceId = workspaceId
+        };
+    }
+}
+
+internal sealed class BalanceTypeConfiguration : IEntityTypeConfiguration<Balance>
+{
+    public void Configure(EntityTypeBuilder<Balance> builder)
+    {
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Name)
+            .IsRequired()
+            .HasMaxLength(BalanceName.MaxLength);
+
+        builder.Property(x => x.Amount)
+            .IsRequired();
+
+        builder.HasOne(x => x.Currency)
+            .WithMany()
+            .HasForeignKey(x => x.CurrencyId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.Workspace)
+            .WithMany()
+            .HasForeignKey(x => x.WorkspaceId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
