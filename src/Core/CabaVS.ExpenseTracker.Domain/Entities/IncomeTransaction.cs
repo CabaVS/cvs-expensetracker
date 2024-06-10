@@ -6,7 +6,7 @@ namespace CabaVS.ExpenseTracker.Domain.Entities;
 
 public sealed class IncomeTransaction : Entity
 {
-    public DateOnly DateInUtc { get; }
+    public DateOnly Date { get; }
     
     public IncomeCategory Source { get; }
     public decimal AmountInSourceCurrency { get; }
@@ -16,13 +16,13 @@ public sealed class IncomeTransaction : Entity
     
     private IncomeTransaction(
         Guid id, 
-        DateOnly dateInUtc, 
+        DateOnly date, 
         IncomeCategory source,
         decimal amountInSourceCurrency, 
         Balance destination,
         decimal amountInDestinationCurrency) : base(id)
     {
-        DateInUtc = dateInUtc;
+        Date = date;
 
         Source = source;
         AmountInSourceCurrency = amountInSourceCurrency;
