@@ -6,6 +6,15 @@ namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 
 internal sealed class CurrencyReadRepository(SqlConnectionFactory sqlConnectionFactory) : ICurrencyReadRepository
 {
+    public async Task<CurrencyModel[]> GetAll(CancellationToken ct = default)
+    {
+        const string sql = "SELECT [Id], [Name], [Code], [Symbol] FROM [dbo].[Currencies]";
+        
+        using var connection = sqlConnectionFactory.Create();
+        var models = await connection.QueryAsync<CurrencyModel>(sql);
+        return models.ToArray();
+    }
+
     public async Task<CurrencyModel?> GetById(Guid id, CancellationToken ct = default)
     {
         const string sql = """
