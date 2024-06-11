@@ -4,5 +4,6 @@ namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositorie
 
 public interface IWorkspaceReadRepository
 {
+    Task<WorkspaceModel[]> GetAll(Guid userId, CancellationToken ct = default);
     Task<WorkspaceModel?> GetById(Guid id, Guid userId, CancellationToken ct = default);
 }
