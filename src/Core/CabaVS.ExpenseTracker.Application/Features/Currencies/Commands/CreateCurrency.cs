@@ -1,5 +1,6 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
 using CabaVS.ExpenseTracker.Application.Common;
+using CabaVS.ExpenseTracker.Application.Common.Abstractions;
 using CabaVS.ExpenseTracker.Domain.Entities;
 using CabaVS.ExpenseTracker.Domain.Shared;
 using MediatR;

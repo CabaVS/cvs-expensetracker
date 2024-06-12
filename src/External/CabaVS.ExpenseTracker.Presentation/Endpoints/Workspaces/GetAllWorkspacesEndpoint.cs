@@ -16,7 +16,11 @@ internal sealed class GetAllWorkspacesEndpoint(ISender sender) : EndpointWithout
     {
         AllowAnonymous();
         Get("api/workspaces");
-        Options(x => x.WithName(nameof(GetAllWorkspacesEndpoint)));
+        Options(x =>
+        {
+            x.WithName(nameof(GetAllWorkspacesEndpoint));
+            x.WithTags(EndpointTags.Workspaces);
+        });
     }
 
     public override async Task<Ok<WorkspaceModel[]>> ExecuteAsync(CancellationToken ct)

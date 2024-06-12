@@ -5,6 +5,7 @@ using CabaVS.ExpenseTracker.Presentation.Extensions;
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CabaVS.ExpenseTracker.Presentation.Endpoints.Workspaces;
@@ -18,7 +19,11 @@ internal sealed class CreateWorkspaceEndpoint(ISender sender)
     {
         AllowAnonymous();
         Post("api/workspaces");
-        Options(x => x.WithName(nameof(CreateWorkspaceEndpoint)));
+        Options(x =>
+        {
+            x.WithName(nameof(CreateWorkspaceEndpoint));
+            x.WithTags(EndpointTags.Workspaces);
+        });
     }
 
     public override async Task<Results<CreatedAtRoute, BadRequest<Error>>> ExecuteAsync(

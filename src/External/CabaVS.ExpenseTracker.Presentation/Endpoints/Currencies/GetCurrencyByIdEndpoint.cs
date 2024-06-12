@@ -6,6 +6,7 @@ using CabaVS.ExpenseTracker.Presentation.Extensions;
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CabaVS.ExpenseTracker.Presentation.Endpoints.Currencies;
@@ -19,7 +20,11 @@ internal sealed class GetCurrencyByIdEndpoint(ISender sender)
     {
         AllowAnonymous();
         Get("api/currencies/{id:guid}");
-        Options(x => x.WithName(nameof(GetCurrencyByIdEndpoint)));
+        Options(x =>
+        {
+            x.WithName(nameof(GetCurrencyByIdEndpoint));
+            x.WithTags(EndpointTags.Currencies);
+        });
     }
 
     public override async Task<Results<Ok<CurrencyModel>, BadRequest<Error>>> ExecuteAsync(

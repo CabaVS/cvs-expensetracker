@@ -16,7 +16,11 @@ internal sealed class GetAllCurrenciesEndpoint(ISender sender) : EndpointWithout
     {
         AllowAnonymous();
         Get("api/currencies");
-        Options(x => x.WithName(nameof(GetAllCurrenciesEndpoint)));
+        Options(x =>
+        {
+            x.WithName(nameof(GetAllCurrenciesEndpoint));
+            x.WithTags(EndpointTags.Currencies);
+        });
     }
 
     public override async Task<Ok<CurrencyModel[]>> ExecuteAsync(CancellationToken ct)

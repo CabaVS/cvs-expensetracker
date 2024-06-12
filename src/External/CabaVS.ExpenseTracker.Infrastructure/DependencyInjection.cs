@@ -20,6 +20,7 @@ public static class DependencyInjection
         serviceCollection.AddTransient<IUnitOfWork, UnitOfWork>();
 
         serviceCollection.AddSingleton<SqlConnectionFactory>();
+        serviceCollection.AddSingleton<IUserReadRepository, UserReadRepository>();
         serviceCollection.AddSingleton<IWorkspaceReadRepository, WorkspaceReadRepository>();
         serviceCollection.AddSingleton<ICurrencyReadRepository, CurrencyReadRepository>();
         

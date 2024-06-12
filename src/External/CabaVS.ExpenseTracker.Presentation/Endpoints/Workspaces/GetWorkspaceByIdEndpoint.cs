@@ -6,6 +6,7 @@ using CabaVS.ExpenseTracker.Presentation.Extensions;
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CabaVS.ExpenseTracker.Presentation.Endpoints.Workspaces;
@@ -19,7 +20,11 @@ internal sealed class GetWorkspaceByIdEndpoint(ISender sender)
     {
         AllowAnonymous();
         Get("api/workspaces/{id:guid}");
-        Options(x => x.WithName(nameof(GetWorkspaceByIdEndpoint)));
+        Options(x =>
+        {
+            x.WithName(nameof(GetWorkspaceByIdEndpoint));
+            x.WithTags(EndpointTags.Workspaces);
+        });
     }
 
     public override async Task<Results<Ok<WorkspaceModel>, BadRequest<Error>>> ExecuteAsync(

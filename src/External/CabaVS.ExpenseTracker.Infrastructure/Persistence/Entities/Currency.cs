@@ -12,7 +12,7 @@ internal sealed class Currency
     public string Code { get; set; } = default!;
     public string Symbol { get; set; } = default!;
 
-    public DomainCurrency ToDomain(Currency currency)
+    public DomainCurrency ToDomain()
     {
         return DomainCurrency
             .Create(Id, Name, Code, Symbol)

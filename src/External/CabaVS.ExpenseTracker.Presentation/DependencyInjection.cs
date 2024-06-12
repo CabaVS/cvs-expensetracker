@@ -27,7 +27,7 @@ public static class DependencyInjection
                 s.Version = "v1";
             };
 
-            o.AutoTagPathSegmentIndex = 2;
+            o.AutoTagPathSegmentIndex = 0;
             o.EnableJWTBearerAuth = false;
         });
         

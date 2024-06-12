@@ -12,6 +12,7 @@ public static class DependencyInjection
             configuration => configuration.RegisterServicesFromAssembly(AssemblyMarker.Assembly));
 
         serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(AdminOnlyRequestBehavior<,>));
+        serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(WorkspaceBoundedRequestBehavior<,>));
 
         return serviceCollection;
     }

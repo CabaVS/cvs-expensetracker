@@ -5,6 +5,7 @@ using CabaVS.ExpenseTracker.Presentation.Extensions;
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CabaVS.ExpenseTracker.Presentation.Endpoints.Currencies;
@@ -18,7 +19,11 @@ internal sealed class CreateCurrencyEndpoint(ISender sender)
     {
         AllowAnonymous();
         Post("api/currencies");
-        Options(x => x.WithName(nameof(CreateCurrencyEndpoint)));
+        Options(x =>
+        {
+            x.WithName(nameof(CreateCurrencyEndpoint));
+            x.WithTags(EndpointTags.Currencies);
+        });
     }
 
     public override async Task<Results<CreatedAtRoute, BadRequest<Error>>> ExecuteAsync(

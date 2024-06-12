@@ -4,5 +4,6 @@ namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositorie
 
 public interface ICurrencyWriteRepository
 {
+    Task<Currency?> GetById(Guid id, CancellationToken ct = default);
     Task<Guid> Create(Currency currency, CancellationToken ct = default);
 }
