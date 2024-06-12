@@ -23,6 +23,7 @@ public static class DependencyInjection
         serviceCollection.AddSingleton<IUserReadRepository, UserReadRepository>();
         serviceCollection.AddSingleton<IWorkspaceReadRepository, WorkspaceReadRepository>();
         serviceCollection.AddSingleton<ICurrencyReadRepository, CurrencyReadRepository>();
+        serviceCollection.AddSingleton<IBalanceReadRepository, BalanceReadRepository>();
         
         return serviceCollection;
     }
