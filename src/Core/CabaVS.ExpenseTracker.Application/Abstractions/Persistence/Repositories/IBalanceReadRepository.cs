@@ -5,4 +5,5 @@ namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositorie
 public interface IBalanceReadRepository
 {
     Task<BalanceModel[]> GetAll(Guid workspaceId, CancellationToken ct = default);
+    Task<BalanceModel?> GetById(Guid workspaceId, Guid balanceId, CancellationToken ct = default);
 }

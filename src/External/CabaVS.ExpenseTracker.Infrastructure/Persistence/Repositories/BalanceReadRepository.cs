@@ -18,8 +18,27 @@ internal sealed class BalanceReadRepository(SqlConnectionFactory sqlConnectionFa
         using var connection = sqlConnectionFactory.Create();
         var models = await connection.QueryAsync<BalanceModel, CurrencyModel, BalanceModel>(
             sql,
-            (b, c) => b with { Currency = c },
+            _mapBalanceModelWithCurrency,
             new { workspaceId });
         return models.ToArray();
     }
+
+    public async Task<BalanceModel?> GetById(Guid workspaceId, Guid balanceId, CancellationToken ct = default)
+    {
+        const string sql = """
+                           SELECT TOP(1) [b].[Id], [b].[Name], [b].[Amount], [c].[Id], [c].[Name], [c].[Code], [c].[Symbol] FROM [dbo].[Balances] AS [b]
+                           INNER JOIN [dbo].[Currencies] AS [c] ON [c].[Id] = [b].[CurrencyId]
+                           WHERE [b].[Id] = @balanceId AND [b].[WorkspaceId] = @workspaceId
+                           """;
+        
+        using var connection = sqlConnectionFactory.Create();
+        var models = await connection.QueryAsync<BalanceModel, CurrencyModel, BalanceModel>(
+            sql,
+            _mapBalanceModelWithCurrency,
+            new { balanceId, workspaceId });
+        return models.SingleOrDefault();
+    }
+
+    private readonly Func<BalanceModel, CurrencyModel, BalanceModel> _mapBalanceModelWithCurrency =
+        (b, c) => b with { Currency = c };
 }

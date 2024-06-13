@@ -38,7 +38,9 @@ internal sealed class CreateBalanceEndpoint(ISender sender)
 
         var result = await sender.Send(command, ct);
         
-        return result.ToDefaultApiResponse(nameof(CreateBalanceEndpoint)); // TODO: Wrong endpoint
+        return result.ToDefaultApiResponse(
+            nameof(GetBalanceByIdEndpoint),
+            new { req.WorkspaceId, BalanceId = result.Value });
     }
     
     internal sealed record RequestModel(Guid WorkspaceId, string Name, decimal Amount, Guid CurrencyId);

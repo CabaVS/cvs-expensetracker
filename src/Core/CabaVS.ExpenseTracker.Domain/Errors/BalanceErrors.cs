@@ -11,4 +11,6 @@ public static class BalanceErrors
         StringErrors.IsNullOrWhiteSpace(nameof(Balance), nameof(Balance.Name));
     public static Error NameTooLong(string actualValue) =>
         StringErrors.TooLong(nameof(Balance), nameof(Balance.Name), BalanceName.MaxLength, actualValue);
+    
+    public static Error NotFoundById(Guid id) => GeneralErrors.NotFoundById(nameof(Balance), id);
 }

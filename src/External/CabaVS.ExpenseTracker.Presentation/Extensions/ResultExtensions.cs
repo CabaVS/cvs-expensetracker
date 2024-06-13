@@ -16,8 +16,13 @@ internal static class ResultExtensions
             ? TypedResults.Ok(result.Value)
             : TypedResults.BadRequest(result.Error);
     
-    public static Results<CreatedAtRoute, BadRequest<Error>> ToDefaultApiResponse(this Result<Guid> result, string routeName) =>
-        result.IsSuccess
-            ? TypedResults.CreatedAtRoute(routeName, new { Id = result.Value })
+    public static Results<CreatedAtRoute, BadRequest<Error>> ToDefaultApiResponse(
+        this Result<Guid> result,
+        string routeName,
+        object? routeValues = null)
+    {
+        return result.IsSuccess
+            ? TypedResults.CreatedAtRoute(routeName, routeValues ?? new { Id = result.Value })
             : TypedResults.BadRequest(result.Error);
+    }
 }
