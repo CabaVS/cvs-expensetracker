@@ -7,10 +7,10 @@ using MediatR;
 
 namespace CabaVS.ExpenseTracker.Application.Common.Behaviors;
 
-internal sealed class WorkspaceBoundedRequestBehavior<TRequest, TResponse>(
+internal sealed class WorkspaceAdminBoundedRequestBehavior<TRequest, TResponse>(
     ICurrentUserAccessor userAccessor,
     IUserReadRepository userReadRepository) : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IWorkspaceBoundedRequest
+    where TRequest : IWorkspaceAdminBoundedRequest
     where TResponse : Result
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
@@ -18,9 +18,14 @@ internal sealed class WorkspaceBoundedRequestBehavior<TRequest, TResponse>(
         var userId = await userAccessor.GetId(cancellationToken);
 
         var hasAccess = await userReadRepository.HasAccessToWorkspace(userId, request.WorkspaceId, cancellationToken);
-        return hasAccess
+        if (!hasAccess)
+            return FailedResultFactory.Create<TResponse>(
+                WorkspaceAccessErrors.NoAccess(request.WorkspaceId));
+
+        var hasAdminAccess = await userReadRepository.HasAdminAccessToWorkspace(userId, request.WorkspaceId, cancellationToken);
+        return hasAdminAccess
             ? await next()
             : FailedResultFactory.Create<TResponse>(
-                WorkspaceAccessErrors.NoAccess(request.WorkspaceId));
+                WorkspaceAccessErrors.NotAdmin(request.WorkspaceId));
     }
 }

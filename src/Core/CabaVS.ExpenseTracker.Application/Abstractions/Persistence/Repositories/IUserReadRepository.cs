@@ -3,4 +3,5 @@ namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositorie
 public interface IUserReadRepository
 {
     Task<bool> HasAccessToWorkspace(Guid userId, Guid workspaceId, CancellationToken ct = default);
+    Task<bool> HasAdminAccessToWorkspace(Guid userId, Guid workspaceId, CancellationToken ct = default);
 }

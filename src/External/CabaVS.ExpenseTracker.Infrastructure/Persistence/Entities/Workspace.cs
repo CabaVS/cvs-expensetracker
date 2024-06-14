@@ -21,6 +21,13 @@ internal sealed class Workspace
             UserWorkspaces = [ new UserWorkspace { WorkspaceId = workspace.Id, UserId = userId, IsAdmin = workspace.IsAdmin } ]
         };
     }
+
+    public DomainWorkspace ToDomain()
+    {
+        return DomainWorkspace
+            .Create(Id, Name, UserWorkspaces.Single().IsAdmin)
+            .Value;
+    }
 }
 
 internal sealed class WorkspaceTypeConfiguration : IEntityTypeConfiguration<Workspace>

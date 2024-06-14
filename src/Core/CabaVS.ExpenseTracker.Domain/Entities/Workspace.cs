@@ -6,7 +6,7 @@ namespace CabaVS.ExpenseTracker.Domain.Entities;
 
 public sealed class Workspace : Entity
 {
-    public WorkspaceName Name { get; }
+    public WorkspaceName Name { get; set; }
     public bool IsAdmin { get; }
 
     private Workspace(Guid id, WorkspaceName name, bool isAdmin) : base(id)
