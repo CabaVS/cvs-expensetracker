@@ -13,9 +13,7 @@ internal sealed class WorkspaceWriteRepository(ApplicationDbContext dbContext) :
             .AsNoTracking()
             .Include(w =>
                 w.UserWorkspaces
-                    .Where(uw => uw.UserId == userId)
-                    .Take(1))
-            .Where(w => w.UserWorkspaces.Count > 0)
+                    .Where(uw => uw.UserId == userId))
             .FirstOrDefaultAsync(w => w.Id == workspaceId, ct);
         return entity?.ToDomain();
     }
