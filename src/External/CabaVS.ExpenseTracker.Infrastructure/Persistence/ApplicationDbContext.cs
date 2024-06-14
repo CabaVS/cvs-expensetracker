@@ -20,4 +20,11 @@ internal sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyMarker.Assembly);
     }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder
+            .Properties<decimal>()
+            .HavePrecision(18, 2);
+    }
 }
