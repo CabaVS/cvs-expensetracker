@@ -35,4 +35,13 @@ internal sealed class WorkspaceWriteRepository(ApplicationDbContext dbContext) :
         
         return Task.CompletedTask;
     }
+
+    public Task Delete(DomainWorkspace workspace, Guid userId, CancellationToken ct = default)
+    {
+        var entity = Workspace.FromDomain(workspace, userId);
+
+        _ = dbContext.Workspaces.Remove(entity);
+
+        return Task.CompletedTask;
+    }
 }
