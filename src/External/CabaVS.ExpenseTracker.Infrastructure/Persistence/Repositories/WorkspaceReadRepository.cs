@@ -10,8 +10,7 @@ internal sealed class WorkspaceReadRepository(SqlConnectionFactory sqlConnection
     {
         const string sql = """
                            SELECT [w].[Id], [w].[Name], [uw].[IsAdmin] FROM [dbo].[Workspaces] AS [w]
-                           LEFT JOIN [dbo].[UserWorkspaces] AS [uw] ON [uw].[WorkspaceId] = [w].[Id]
-                           WHERE [uw].[UserId] = @userId
+                           INNER JOIN [dbo].[UserWorkspaces] AS [uw] ON [uw].[WorkspaceId] = [w].[Id] AND [uw].[UserId] = @userId
                            """;
         
         using var connection = sqlConnectionFactory.Create();
@@ -19,17 +18,16 @@ internal sealed class WorkspaceReadRepository(SqlConnectionFactory sqlConnection
         return models.ToArray();
     }
 
-    public async Task<WorkspaceModel?> GetById(Guid id, Guid userId, CancellationToken ct = default)
+    public async Task<WorkspaceModel?> GetById(Guid workspaceId, Guid userId, CancellationToken ct = default)
     {
         const string sql = """
                            SELECT TOP(1) [w].[Id], [w].[Name], [uw].[IsAdmin] FROM [dbo].[Workspaces] AS [w]
-                           LEFT JOIN [dbo].[UserWorkspaces] AS [uw] ON [uw].[WorkspaceId] = [w].[Id]
-                           WHERE [w].[Id] = @id
-                           AND [uw].[UserId] = @userId
+                           INNER JOIN [dbo].[UserWorkspaces] AS [uw] ON [uw].[WorkspaceId] = [w].[Id] AND [uw].[UserId] = @userId
+                           WHERE [w].[Id] = @workspaceId
                            """;
         
         using var connection = sqlConnectionFactory.Create();
-        var model = await connection.QueryFirstOrDefaultAsync<WorkspaceModel>(sql, new { id, userId });
+        var model = await connection.QueryFirstOrDefaultAsync<WorkspaceModel>(sql, new { workspaceId, userId });
         return model;
     }
 }

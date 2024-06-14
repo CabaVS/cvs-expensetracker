@@ -19,7 +19,7 @@ internal sealed class GetWorkspaceByIdEndpoint(ISender sender)
     public override void Configure()
     {
         AllowAnonymous();
-        Get("api/workspaces/{id:guid}");
+        Get("api/workspaces/{workspaceId:guid}");
         Options(x =>
         {
             x.WithName(nameof(GetWorkspaceByIdEndpoint));
@@ -31,14 +31,14 @@ internal sealed class GetWorkspaceByIdEndpoint(ISender sender)
         GetWorkspaceByIdEndpointRequest req,
         CancellationToken ct)
     {
-        var query = new GetWorkspaceByIdQuery(req.Id);
+        var query = new GetWorkspaceByIdQuery(req.WorkspaceId);
 
         var result = await sender.Send(query, ct);
 
         return result.ToDefaultApiResponse();
     }
 
-    internal sealed record GetWorkspaceByIdEndpointRequest(Guid Id);
+    internal sealed record GetWorkspaceByIdEndpointRequest(Guid WorkspaceId);
 }
 
 internal sealed class GetWorkspaceByIdEndpointSummary : Summary<GetWorkspaceByIdEndpoint>
@@ -48,7 +48,7 @@ internal sealed class GetWorkspaceByIdEndpointSummary : Summary<GetWorkspaceById
         Summary = "Get Workspace by ID";
         Description = "Gets a Workspace by provided ID.";
 
-        Params[nameof(GetWorkspaceByIdEndpoint.GetWorkspaceByIdEndpointRequest.Id)] = 
+        Params[nameof(GetWorkspaceByIdEndpoint.GetWorkspaceByIdEndpointRequest.WorkspaceId)] = 
             "Workspace ID to search by (simple GUID).";
         
         Response(

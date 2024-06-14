@@ -1,5 +1,6 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
+using CabaVS.ExpenseTracker.Application.Common.Abstractions;
 using CabaVS.ExpenseTracker.Application.Features.Workspaces.Models;
 using CabaVS.ExpenseTracker.Domain.Errors;
 using CabaVS.ExpenseTracker.Domain.Shared;
@@ -7,7 +8,7 @@ using MediatR;
 
 namespace CabaVS.ExpenseTracker.Application.Features.Workspaces.Queries;
 
-public sealed record GetWorkspaceByIdQuery(Guid Id) : IRequest<Result<WorkspaceModel>>;
+public sealed record GetWorkspaceByIdQuery(Guid WorkspaceId) : IRequest<Result<WorkspaceModel>>, IWorkspaceBoundedRequest;
 
 internal sealed class GetWorkspaceByIdQueryHandler(
     IWorkspaceReadRepository workspaceReadRepository,
@@ -17,8 +18,8 @@ internal sealed class GetWorkspaceByIdQueryHandler(
     {
         var userId = await currentUserAccessor.GetId(cancellationToken);
 
-        var model = await workspaceReadRepository.GetById(request.Id, userId, cancellationToken);
-        if (model is null) return WorkspaceErrors.NotFoundById(request.Id);
+        var model = await workspaceReadRepository.GetById(request.WorkspaceId, userId, cancellationToken);
+        if (model is null) return WorkspaceErrors.NotFoundById(request.WorkspaceId);
 
         return model;
     }
