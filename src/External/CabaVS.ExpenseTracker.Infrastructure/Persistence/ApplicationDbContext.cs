@@ -15,6 +15,9 @@ internal sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext
     public DbSet<Balance> Balances { get; set; }
     public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
     public DbSet<IncomeCategory> IncomeCategories { get; set; }
+    public DbSet<ExpenseTransaction> ExpenseTransactions { get; set; }
+    public DbSet<IncomeTransaction> IncomeTransactions { get; set; }
+    public DbSet<TransferTransaction> TransferTransactions { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
