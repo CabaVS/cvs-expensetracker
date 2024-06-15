@@ -15,5 +15,8 @@ internal sealed class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
     private readonly Lazy<IBalanceWriteRepository> _lazyBalanceWriteRepository = new(() => new BalanceWriteRepository(dbContext));
     public IBalanceWriteRepository BalanceWriteRepository => _lazyBalanceWriteRepository.Value;
     
+    private readonly Lazy<IIncomeCategoryWriteRepository> _lazyIncomeCategoryWriteRepository = new(() => new IncomeCategoryWriteRepository(dbContext));
+    public IIncomeCategoryWriteRepository IncomeCategoryWriteRepository => _lazyIncomeCategoryWriteRepository.Value;
+    
     public async Task SaveChanges(CancellationToken ct = default) => await dbContext.SaveChangesAsync(ct);
 }

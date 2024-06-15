@@ -40,7 +40,7 @@ internal sealed class CreateBalanceEndpoint(ISender sender)
         
         return result.ToDefaultApiResponse(
             nameof(GetBalanceByIdEndpoint),
-            new { req.WorkspaceId, BalanceId = result.Value });
+            id => new { req.WorkspaceId, BalanceId = id });
     }
     
     internal sealed record RequestModel(Guid WorkspaceId, string Name, decimal Amount, Guid CurrencyId);

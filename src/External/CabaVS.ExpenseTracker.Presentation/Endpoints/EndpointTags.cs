@@ -7,4 +7,6 @@ internal static class EndpointTags
     public const string Currencies = "Currencies";
 
     public const string Balances = "Balances";
+    
+    public const string IncomeCategories = "Income Categories";
 }
