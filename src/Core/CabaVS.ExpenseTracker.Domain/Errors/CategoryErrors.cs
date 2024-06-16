@@ -10,4 +10,6 @@ public static class CategoryErrors
         StringErrors.IsNullOrWhiteSpace("Category", "Name");
     public static Error NameTooLong(string actualValue) =>
         StringErrors.TooLong("Category", "Name", CategoryName.MaxLength, actualValue);
+    
+    public static Error NotFoundById(Guid id) => GeneralErrors.NotFoundById("Category", id);
 }

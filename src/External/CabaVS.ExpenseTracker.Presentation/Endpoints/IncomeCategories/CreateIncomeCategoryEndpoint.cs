@@ -35,7 +35,7 @@ internal sealed class CreateIncomeCategoryEndpoint(ISender sender) : Endpoint<
         var result = await sender.Send(command, ct);
         
         return result.ToDefaultApiResponse(
-            nameof(CreateIncomeCategoryEndpoint),
+            nameof(GetIncomeCategoryByIdEndpoint),
             id => new { req.WorkspaceId, BalanceId = id });
     }
 
