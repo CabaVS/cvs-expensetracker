@@ -8,6 +8,22 @@ namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 internal sealed class IncomeCategoryReadRepository(
     SqlConnectionFactory sqlConnectionFactory) : IIncomeCategoryReadRepository
 {
+    public async Task<IncomeCategoryModel[]> GetAll(Guid workspaceId, CancellationToken ct = default)
+    {
+        const string sql = """
+                           SELECT [ic].[Id], [ic].[Name], [c].[Id], [c].[Name], [c].[Code], [c].[Symbol] FROM [dbo].[IncomeCategories] AS [ic]
+                           INNER JOIN [dbo].[Currencies] AS [c] ON [c].[Id] = [ic].[CurrencyId]
+                           WHERE [ic].[WorkspaceId] = @workspaceId
+                           """;
+        
+        using var connection = sqlConnectionFactory.Create();
+        var models = await connection.QueryAsync(
+            sql,
+            _mapBalanceModelWithCurrency,
+            new { workspaceId });
+        return models.ToArray();
+    }
+
     public async Task<IncomeCategoryModel?> GetById(Guid id, Guid workspaceId, CancellationToken ct = default)
     {
         const string sql = """
@@ -17,7 +33,7 @@ internal sealed class IncomeCategoryReadRepository(
                            """;
         
         using var connection = sqlConnectionFactory.Create();
-        var models = await connection.QueryAsync<IncomeCategoryModel, CurrencyModel, IncomeCategoryModel>(
+        var models = await connection.QueryAsync(
             sql,
             _mapBalanceModelWithCurrency,
             new { id, workspaceId });

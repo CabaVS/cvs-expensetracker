@@ -16,7 +16,7 @@ internal sealed class BalanceReadRepository(SqlConnectionFactory sqlConnectionFa
                            """;
         
         using var connection = sqlConnectionFactory.Create();
-        var models = await connection.QueryAsync<BalanceModel, CurrencyModel, BalanceModel>(
+        var models = await connection.QueryAsync(
             sql,
             _mapBalanceModelWithCurrency,
             new { workspaceId });
@@ -32,7 +32,7 @@ internal sealed class BalanceReadRepository(SqlConnectionFactory sqlConnectionFa
                            """;
         
         using var connection = sqlConnectionFactory.Create();
-        var models = await connection.QueryAsync<BalanceModel, CurrencyModel, BalanceModel>(
+        var models = await connection.QueryAsync(
             sql,
             _mapBalanceModelWithCurrency,
             new { balanceId, workspaceId });

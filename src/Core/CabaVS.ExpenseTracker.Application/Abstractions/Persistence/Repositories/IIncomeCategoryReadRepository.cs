@@ -4,5 +4,6 @@ namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositorie
 
 public interface IIncomeCategoryReadRepository
 {
+    Task<IncomeCategoryModel[]> GetAll(Guid workspaceId, CancellationToken ct = default);
     Task<IncomeCategoryModel?> GetById(Guid id, Guid workspaceId, CancellationToken ct = default);
 }
