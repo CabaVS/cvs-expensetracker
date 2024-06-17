@@ -1,3 +1,4 @@
+using CabaVS.ExpenseTracker.Domain.Errors.Shared;
 using CabaVS.ExpenseTracker.Domain.Shared;
 
 namespace CabaVS.ExpenseTracker.Domain.Errors;
@@ -13,4 +14,6 @@ public static class TransactionErrors
         new(
             "Transaction.AmountShouldBeGreaterThanZero",
             "Amount should be greater than zero in Transaction.");
+    
+    public static Error NotFoundById(Guid id) => GeneralErrors.NotFoundById("Transaction", id);
 }

@@ -38,8 +38,8 @@ internal sealed class CreateIncomeTransactionEndpoint(ISender sender) : Endpoint
         var result = await sender.Send(command, ct);
 
         return result.ToDefaultApiResponse(
-            nameof(CreateIncomeTransactionEndpoint),
-            id => new { req.WorkspaceId, TransactionId = id });
+            nameof(GetIncomeTransactionByIdEndpoint),
+            id => new { req.WorkspaceId, IncomeTransactionId = id });
     }
     
     public sealed record RequestModel(

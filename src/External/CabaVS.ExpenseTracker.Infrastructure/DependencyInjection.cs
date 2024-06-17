@@ -1,7 +1,9 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence;
+using CabaVS.ExpenseTracker.Infrastructure.Persistence.Converters;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,11 +22,14 @@ public static class DependencyInjection
         serviceCollection.AddTransient<IUnitOfWork, UnitOfWork>();
 
         serviceCollection.AddSingleton<SqlConnectionFactory>();
+        SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
+        
         serviceCollection.AddSingleton<IUserReadRepository, UserReadRepository>();
         serviceCollection.AddSingleton<IWorkspaceReadRepository, WorkspaceReadRepository>();
         serviceCollection.AddSingleton<ICurrencyReadRepository, CurrencyReadRepository>();
         serviceCollection.AddSingleton<IBalanceReadRepository, BalanceReadRepository>();
         serviceCollection.AddSingleton<IIncomeCategoryReadRepository, IncomeCategoryReadRepository>();
+        serviceCollection.AddSingleton<IIncomeTransactionReadRepository, IncomeTransactionReadRepository>();
         
         return serviceCollection;
     }
