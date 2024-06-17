@@ -1,6 +1,7 @@
 using CabaVS.ExpenseTracker.Infrastructure.Persistence.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using DomainIncomeTransaction = CabaVS.ExpenseTracker.Domain.Entities.IncomeTransaction;
 
 namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Entities;
 
@@ -16,6 +17,23 @@ internal sealed class IncomeTransaction
     public Guid DestinationId { get; set; }
     public Balance Destination { get; set; } = default!;
     public decimal AmountInDestinationCurrency { get; set; }
+
+    public static IncomeTransaction FromDomain(DomainIncomeTransaction domain, Guid workspaceId)
+    {
+        return new IncomeTransaction
+        {
+            Id = domain.Id,
+            Date = domain.Date,
+            
+            AmountInSourceCurrency = domain.AmountInSourceCurrency,
+            SourceId = domain.Source.Id,
+            Source = IncomeCategory.FromDomain(domain.Source, workspaceId),
+            
+            AmountInDestinationCurrency = domain.AmountInDestinationCurrency,
+            DestinationId = domain.Destination.Id,
+            Destination = Balance.FromDomain(domain.Destination, workspaceId)
+        };
+    }
 }
 
 internal sealed class IncomeTransactionTypeConfiguration : IEntityTypeConfiguration<IncomeTransaction>

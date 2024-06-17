@@ -18,10 +18,10 @@ internal sealed class Balance
     public Guid WorkspaceId { get; set; }
     public Workspace Workspace { get; set; } = default!;
     
-    public DomainBalance ToDomain(Balance balance)
+    public DomainBalance ToDomain()
     {
         var currency = DomainCurrency
-            .Create(balance.Currency.Id, balance.Currency.Name, balance.Currency.Code, balance.Currency.Symbol)
+            .Create(Currency.Id, Currency.Name, Currency.Code, Currency.Symbol)
             .Value;
         
         return DomainBalance

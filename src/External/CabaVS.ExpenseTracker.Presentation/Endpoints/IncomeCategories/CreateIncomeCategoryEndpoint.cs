@@ -36,7 +36,7 @@ internal sealed class CreateIncomeCategoryEndpoint(ISender sender) : Endpoint<
         
         return result.ToDefaultApiResponse(
             nameof(GetIncomeCategoryByIdEndpoint),
-            id => new { req.WorkspaceId, BalanceId = id });
+            id => new { req.WorkspaceId, IncomeCategoryId = id });
     }
 
     public sealed record RequestModel(string Name, Guid CurrencyId, Guid WorkspaceId);

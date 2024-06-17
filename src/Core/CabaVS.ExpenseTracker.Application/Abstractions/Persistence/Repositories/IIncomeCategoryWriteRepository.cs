@@ -4,5 +4,6 @@ namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositorie
 
 public interface IIncomeCategoryWriteRepository
 {
+    Task<IncomeCategory?> GetById(Guid id, Guid workspaceId, CancellationToken ct = default);
     Task<Guid> Create(IncomeCategory incomeCategory, Guid workspaceId, CancellationToken ct = default);
 }

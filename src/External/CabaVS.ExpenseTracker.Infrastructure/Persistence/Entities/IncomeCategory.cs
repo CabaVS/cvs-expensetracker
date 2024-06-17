@@ -17,10 +17,10 @@ internal sealed class IncomeCategory
     public Guid WorkspaceId { get; set; }
     public Workspace Workspace { get; set; } = default!;
     
-    public DomainIncomeCategory ToDomain(IncomeCategory incomeCategory)
+    public DomainIncomeCategory ToDomain()
     {
         var currency = DomainCurrency
-            .Create(incomeCategory.Currency.Id, incomeCategory.Currency.Name, incomeCategory.Currency.Code, incomeCategory.Currency.Symbol)
+            .Create(Currency.Id, Currency.Name, Currency.Code, Currency.Symbol)
             .Value;
         
         return DomainIncomeCategory

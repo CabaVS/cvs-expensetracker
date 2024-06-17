@@ -10,4 +10,5 @@ public interface IUnitOfWork
     IWorkspaceWriteRepository WorkspaceWriteRepository { get; }
     IBalanceWriteRepository BalanceWriteRepository { get; }
     IIncomeCategoryWriteRepository IncomeCategoryWriteRepository { get; }
+    IIncomeTransactionWriteRepository IncomeTransactionWriteRepository { get; }
 }
