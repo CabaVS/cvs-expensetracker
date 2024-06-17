@@ -18,7 +18,7 @@ internal sealed class BalanceReadRepository(SqlConnectionFactory sqlConnectionFa
         using var connection = sqlConnectionFactory.Create();
         var models = await connection.QueryAsync(
             sql,
-            _mapBalanceModelWithCurrency,
+            _mapBalanceModel,
             new { workspaceId });
         return models.ToArray();
     }
@@ -34,11 +34,11 @@ internal sealed class BalanceReadRepository(SqlConnectionFactory sqlConnectionFa
         using var connection = sqlConnectionFactory.Create();
         var models = await connection.QueryAsync(
             sql,
-            _mapBalanceModelWithCurrency,
+            _mapBalanceModel,
             new { balanceId, workspaceId });
         return models.SingleOrDefault();
     }
 
-    private readonly Func<BalanceModel, CurrencyModel, BalanceModel> _mapBalanceModelWithCurrency =
+    private readonly Func<BalanceModel, CurrencyModel, BalanceModel> _mapBalanceModel =
         (b, c) => b with { Currency = c };
 }

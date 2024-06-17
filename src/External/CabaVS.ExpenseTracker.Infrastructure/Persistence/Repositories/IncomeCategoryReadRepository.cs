@@ -19,7 +19,7 @@ internal sealed class IncomeCategoryReadRepository(
         using var connection = sqlConnectionFactory.Create();
         var models = await connection.QueryAsync(
             sql,
-            _mapBalanceModelWithCurrency,
+            _mapIncomeCategoryModel,
             new { workspaceId });
         return models.ToArray();
     }
@@ -35,11 +35,11 @@ internal sealed class IncomeCategoryReadRepository(
         using var connection = sqlConnectionFactory.Create();
         var models = await connection.QueryAsync(
             sql,
-            _mapBalanceModelWithCurrency,
+            _mapIncomeCategoryModel,
             new { id, workspaceId });
         return models.SingleOrDefault();
     }
     
-    private readonly Func<IncomeCategoryModel, CurrencyModel, IncomeCategoryModel> _mapBalanceModelWithCurrency =
+    private readonly Func<IncomeCategoryModel, CurrencyModel, IncomeCategoryModel> _mapIncomeCategoryModel =
         (b, c) => b with { Currency = c };
 }
