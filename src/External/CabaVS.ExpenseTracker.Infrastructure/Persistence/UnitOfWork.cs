@@ -21,6 +21,9 @@ internal sealed class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
     private readonly Lazy<IIncomeCategoryRepository> _lazyIncomeCategoryRepository = new(() => new IncomeCategoryRepository(dbContext));
     public IIncomeCategoryRepository IncomeCategoryRepository => _lazyIncomeCategoryRepository.Value;
     
+    private readonly Lazy<IExpenseTransactionRepository> _lazyExpenseTransactionRepository = new(() => new ExpenseTransactionRepository(dbContext));
+    public IExpenseTransactionRepository ExpenseTransactionRepository => _lazyExpenseTransactionRepository.Value;
+    
     private readonly Lazy<IIncomeTransactionRepository> _lazyIncomeTransactionRepository = new(() => new IncomeTransactionRepository(dbContext));
     public IIncomeTransactionRepository IncomeTransactionRepository => _lazyIncomeTransactionRepository.Value;
     

@@ -11,5 +11,6 @@ public interface IUnitOfWork
     IBalanceRepository BalanceRepository { get; }
     IExpenseCategoryRepository ExpenseCategoryRepository { get; }
     IIncomeCategoryRepository IncomeCategoryRepository { get; }
+    IExpenseTransactionRepository ExpenseTransactionRepository { get; }
     IIncomeTransactionRepository IncomeTransactionRepository { get; }
 }
