@@ -50,38 +50,12 @@ public sealed class TransferTransaction : Entity
         if (amountInSourceCurrency <= 0 || amountInDestinationCurrency <= 0)
             return TransactionErrors.AmountShouldBeGreaterThanZero();
 
-        var tagsResult = TryConvertTags(tags);
+        var tagsResult = TransactionTag.CreateMultiple(tags);
         if (tagsResult.IsFailure) return tagsResult.Error;
         
         source.Amount -= amountInSourceCurrency;
         destination.Amount += amountInDestinationCurrency;
         
         return new TransferTransaction(id, dateInUtc, source, amountInSourceCurrency, destination, amountInDestinationCurrency);
-    }
-    
-    private static Result<List<TransactionTag>?> TryConvertTags(IEnumerable<string>? tags)
-    {
-        if (tags is null) return new List<TransactionTag>(0);
-        
-        var tagsRawList = tags.ToList();
-        if (tagsRawList.Count == 0) return new List<TransactionTag>(0);
-        
-        var tagsResultsList = tagsRawList.Select(TransactionTag.Create).ToList();
-
-        var firstFailed = tagsResultsList.FirstOrDefault(x => x.IsFailure);
-        if (firstFailed is not null)
-            return firstFailed.Error;
-
-        var tagsList = tagsResultsList.Select(x => x.Value).ToList();
-            
-        var tagsGroupedByCount = tagsList
-            .GroupBy(x => x)
-            .ToDictionary(x => x.Key, x => x.Count());
-
-        var (firstDuplicate, _) = tagsGroupedByCount.FirstOrDefault(x => x.Value > 1);
-        if (firstDuplicate is not null)
-            return TransactionErrors.TagDuplication(firstDuplicate.Value);
-
-        return tagsList;
     }
 }
