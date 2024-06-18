@@ -28,6 +28,7 @@ public static class DependencyInjection
         serviceCollection.AddSingleton<IWorkspaceReadRepository, WorkspaceReadRepository>();
         serviceCollection.AddSingleton<ICurrencyReadRepository, CurrencyReadRepository>();
         serviceCollection.AddSingleton<IBalanceReadRepository, BalanceReadRepository>();
+        serviceCollection.AddSingleton<IExpenseCategoryReadRepository, ExpenseCategoryReadRepository>();
         serviceCollection.AddSingleton<IIncomeCategoryReadRepository, IncomeCategoryReadRepository>();
         serviceCollection.AddSingleton<IIncomeTransactionReadRepository, IncomeTransactionReadRepository>();
         

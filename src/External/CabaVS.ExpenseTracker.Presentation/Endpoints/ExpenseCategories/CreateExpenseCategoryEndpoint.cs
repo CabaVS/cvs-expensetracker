@@ -35,7 +35,7 @@ internal sealed class CreateExpenseCategoryEndpoint(ISender sender) : Endpoint<
         var result = await sender.Send(command, ct);
         
         return result.ToDefaultApiResponse(
-            nameof(CreateExpenseCategoryEndpoint), // TODO
+            nameof(GetExpenseCategoryByIdEndpoint),
             id => new { req.WorkspaceId, ExpenseCategoryId = id });
     }
 
