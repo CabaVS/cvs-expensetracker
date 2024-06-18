@@ -22,8 +22,8 @@ public sealed class TransactionTag : ValueObject
     
     public static Result<TransactionTag> Create(string value)
     {
-        if (string.IsNullOrWhiteSpace(value)) return WorkspaceErrors.NameIsNullOrWhitespace();
-        if (value.Length > MaxLength) return WorkspaceErrors.NameTooLong(value);
+        if (string.IsNullOrWhiteSpace(value)) return TransactionErrors.TagIsNullOrWhitespace();
+        if (value.Length > MaxLength) return TransactionErrors.TagTooLong(value);
         if (value.Contains(',')) return TransactionErrors.TagContainsComma(value);
         
         return new TransactionTag(value);

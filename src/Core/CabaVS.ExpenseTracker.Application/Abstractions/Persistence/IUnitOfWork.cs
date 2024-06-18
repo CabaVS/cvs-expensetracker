@@ -9,8 +9,6 @@ public interface IUnitOfWork
     ICurrencyRepository CurrencyRepository { get; }
     IWorkspaceRepository WorkspaceRepository { get; }
     IBalanceRepository BalanceRepository { get; }
-    IExpenseCategoryRepository ExpenseCategoryRepository { get; }
-    IIncomeCategoryRepository IncomeCategoryRepository { get; }
-    IExpenseTransactionRepository ExpenseTransactionRepository { get; }
-    IIncomeTransactionRepository IncomeTransactionRepository { get; }
+    ICategoryRepository CategoryRepository { get; }
+    ITransactionRepository TransactionRepository { get; }
 }
