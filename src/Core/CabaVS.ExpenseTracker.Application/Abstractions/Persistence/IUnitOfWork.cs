@@ -6,10 +6,10 @@ public interface IUnitOfWork
 {
     Task SaveChanges(CancellationToken ct = default);
     
-    ICurrencyWriteRepository CurrencyWriteRepository { get; }
-    IWorkspaceWriteRepository WorkspaceWriteRepository { get; }
-    IBalanceWriteRepository BalanceWriteRepository { get; }
-    IExpenseCategoryWriteRepository ExpenseCategoryWriteRepository { get; }
-    IIncomeCategoryWriteRepository IncomeCategoryWriteRepository { get; }
-    IIncomeTransactionWriteRepository IncomeTransactionWriteRepository { get; }
+    ICurrencyRepository CurrencyRepository { get; }
+    IWorkspaceRepository WorkspaceRepository { get; }
+    IBalanceRepository BalanceRepository { get; }
+    IExpenseCategoryRepository ExpenseCategoryRepository { get; }
+    IIncomeCategoryRepository IncomeCategoryRepository { get; }
+    IIncomeTransactionRepository IncomeTransactionRepository { get; }
 }

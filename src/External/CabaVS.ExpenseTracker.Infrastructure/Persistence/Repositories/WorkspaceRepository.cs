@@ -5,7 +5,7 @@ using DomainWorkspace = CabaVS.ExpenseTracker.Domain.Entities.Workspace;
 
 namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 
-internal sealed class WorkspaceWriteRepository(ApplicationDbContext dbContext) : IWorkspaceWriteRepository
+internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWorkspaceRepository
 {
     public async Task<DomainWorkspace?> GetById(Guid workspaceId, Guid userId, CancellationToken ct = default)
     {

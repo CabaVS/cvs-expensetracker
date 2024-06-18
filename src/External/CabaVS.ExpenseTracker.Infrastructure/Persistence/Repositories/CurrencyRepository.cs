@@ -5,7 +5,7 @@ using DomainCurrency = CabaVS.ExpenseTracker.Domain.Entities.Currency;
 
 namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 
-internal sealed class CurrencyWriteRepository(ApplicationDbContext dbContext) : ICurrencyWriteRepository
+internal sealed class CurrencyRepository(ApplicationDbContext dbContext) : ICurrencyRepository
 {
     public async Task<DomainCurrency?> GetById(Guid id, CancellationToken ct = default)
     {

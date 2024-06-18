@@ -21,12 +21,12 @@ internal sealed class UpdateWorkspaceCommandHandler(
 
         var userId = await userAccessor.GetId(cancellationToken);
         
-        var workspace = await unitOfWork.WorkspaceWriteRepository.GetById(request.WorkspaceId, userId, cancellationToken);
+        var workspace = await unitOfWork.WorkspaceRepository.GetById(request.WorkspaceId, userId, cancellationToken);
         if (workspace is null) return WorkspaceErrors.NotFoundById(request.WorkspaceId);
 
         workspace.Name = workspaceNameResult.Value;
 
-        await unitOfWork.WorkspaceWriteRepository.Update(workspace, userId, cancellationToken);
+        await unitOfWork.WorkspaceRepository.Update(workspace, userId, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
         
         return Result.Success();

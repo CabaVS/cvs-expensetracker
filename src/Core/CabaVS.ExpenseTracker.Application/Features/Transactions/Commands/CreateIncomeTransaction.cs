@@ -17,11 +17,11 @@ internal sealed class CreateIncomeTransactionCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateIncomeTransactionCommand request, CancellationToken cancellationToken)
     {
-        var balance = await unitOfWork.BalanceWriteRepository.GetById(
+        var balance = await unitOfWork.BalanceRepository.GetById(
             request.BalanceId, request.WorkspaceId, cancellationToken);
         if (balance is null) return BalanceErrors.NotFoundById(request.BalanceId);
 
-        var incomeCategory = await unitOfWork.IncomeCategoryWriteRepository.GetById(
+        var incomeCategory = await unitOfWork.IncomeCategoryRepository.GetById(
             request.IncomeCategoryId, request.WorkspaceId, cancellationToken);
         if (incomeCategory is null) return CategoryErrors.NotFoundById(request.IncomeCategoryId);
 
@@ -34,7 +34,7 @@ internal sealed class CreateIncomeTransactionCommandHandler(
             request.AmountInBalanceCurrency);
         if (incomeTransactionResult.IsFailure) return incomeTransactionResult.Error;
 
-        var added = await unitOfWork.IncomeTransactionWriteRepository.Create(
+        var added = await unitOfWork.IncomeTransactionRepository.Create(
             incomeTransactionResult.Value, request.WorkspaceId, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
 

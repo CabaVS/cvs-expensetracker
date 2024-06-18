@@ -15,7 +15,7 @@ internal sealed class CreateBalanceCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateBalanceCommand request, CancellationToken cancellationToken)
     {
-        var currency = await unitOfWork.CurrencyWriteRepository.GetById(request.CurrencyId, cancellationToken);
+        var currency = await unitOfWork.CurrencyRepository.GetById(request.CurrencyId, cancellationToken);
         if (currency is null) return CurrencyErrors.NotFoundById(request.CurrencyId);
         
         var balanceResult = Balance.Create(
@@ -25,7 +25,7 @@ internal sealed class CreateBalanceCommandHandler(
             currency);
         if (balanceResult.IsFailure) return balanceResult.Error;
 
-        var added = await unitOfWork.BalanceWriteRepository.Create(balanceResult.Value, request.WorkspaceId, cancellationToken);
+        var added = await unitOfWork.BalanceRepository.Create(balanceResult.Value, request.WorkspaceId, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
 
         return added;

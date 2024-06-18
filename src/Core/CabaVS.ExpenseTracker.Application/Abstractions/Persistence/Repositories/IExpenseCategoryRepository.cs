@@ -2,7 +2,7 @@ using CabaVS.ExpenseTracker.Domain.Entities;
 
 namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 
-public interface IExpenseCategoryWriteRepository
+public interface IExpenseCategoryRepository
 {
     Task<Guid> Create(ExpenseCategory expenseCategory, Guid workspaceId, CancellationToken ct = default);
 }

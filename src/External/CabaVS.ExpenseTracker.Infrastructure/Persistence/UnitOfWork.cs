@@ -6,23 +6,23 @@ namespace CabaVS.ExpenseTracker.Infrastructure.Persistence;
 
 internal sealed class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
 {
-    private readonly Lazy<ICurrencyWriteRepository> _lazyCurrencyWriteRepository = new(() => new CurrencyWriteRepository(dbContext));
-    public ICurrencyWriteRepository CurrencyWriteRepository => _lazyCurrencyWriteRepository.Value;
+    private readonly Lazy<ICurrencyRepository> _lazyCurrencyRepository = new(() => new CurrencyRepository(dbContext));
+    public ICurrencyRepository CurrencyRepository => _lazyCurrencyRepository.Value;
     
-    private readonly Lazy<IWorkspaceWriteRepository> _lazyWorkspaceWriteRepository = new(() => new WorkspaceWriteRepository(dbContext));
-    public IWorkspaceWriteRepository WorkspaceWriteRepository => _lazyWorkspaceWriteRepository.Value;
+    private readonly Lazy<IWorkspaceRepository> _lazyWorkspaceRepository = new(() => new WorkspaceRepository(dbContext));
+    public IWorkspaceRepository WorkspaceRepository => _lazyWorkspaceRepository.Value;
     
-    private readonly Lazy<IBalanceWriteRepository> _lazyBalanceWriteRepository = new(() => new BalanceWriteRepository(dbContext));
-    public IBalanceWriteRepository BalanceWriteRepository => _lazyBalanceWriteRepository.Value;
+    private readonly Lazy<IBalanceRepository> _lazyBalanceRepository = new(() => new BalanceRepository(dbContext));
+    public IBalanceRepository BalanceRepository => _lazyBalanceRepository.Value;
     
-    private readonly Lazy<IExpenseCategoryWriteRepository> _lazyExpenseCategoryWriteRepository = new(() => new ExpenseCategoryWriteRepository(dbContext));
-    public IExpenseCategoryWriteRepository ExpenseCategoryWriteRepository => _lazyExpenseCategoryWriteRepository.Value;
+    private readonly Lazy<IExpenseCategoryRepository> _lazyExpenseCategoryRepository = new(() => new ExpenseCategoryRepository(dbContext));
+    public IExpenseCategoryRepository ExpenseCategoryRepository => _lazyExpenseCategoryRepository.Value;
     
-    private readonly Lazy<IIncomeCategoryWriteRepository> _lazyIncomeCategoryWriteRepository = new(() => new IncomeCategoryWriteRepository(dbContext));
-    public IIncomeCategoryWriteRepository IncomeCategoryWriteRepository => _lazyIncomeCategoryWriteRepository.Value;
+    private readonly Lazy<IIncomeCategoryRepository> _lazyIncomeCategoryRepository = new(() => new IncomeCategoryRepository(dbContext));
+    public IIncomeCategoryRepository IncomeCategoryRepository => _lazyIncomeCategoryRepository.Value;
     
-    private readonly Lazy<IIncomeTransactionWriteRepository> _lazyIncomeTransactionWriteRepository = new(() => new IncomeTransactionWriteRepository(dbContext));
-    public IIncomeTransactionWriteRepository IncomeTransactionWriteRepository => _lazyIncomeTransactionWriteRepository.Value;
+    private readonly Lazy<IIncomeTransactionRepository> _lazyIncomeTransactionRepository = new(() => new IncomeTransactionRepository(dbContext));
+    public IIncomeTransactionRepository IncomeTransactionRepository => _lazyIncomeTransactionRepository.Value;
     
     public async Task SaveChanges(CancellationToken ct = default) => await dbContext.SaveChangesAsync(ct);
 }

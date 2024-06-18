@@ -5,7 +5,7 @@ using DomainBalance = CabaVS.ExpenseTracker.Domain.Entities.Balance;
 
 namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 
-internal sealed class BalanceWriteRepository(ApplicationDbContext dbContext) : IBalanceWriteRepository
+internal sealed class BalanceRepository(ApplicationDbContext dbContext) : IBalanceRepository
 {
     public async Task<DomainBalance?> GetById(Guid id, Guid workspaceId, CancellationToken ct = default)
     {

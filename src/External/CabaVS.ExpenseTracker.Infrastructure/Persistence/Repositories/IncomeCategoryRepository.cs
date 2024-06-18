@@ -5,8 +5,8 @@ using DomainIncomeCategory = CabaVS.ExpenseTracker.Domain.Entities.IncomeCategor
 
 namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 
-internal sealed class IncomeCategoryWriteRepository(
-    ApplicationDbContext dbContext) : IIncomeCategoryWriteRepository
+internal sealed class IncomeCategoryRepository(
+    ApplicationDbContext dbContext) : IIncomeCategoryRepository
 {
     public async Task<DomainIncomeCategory?> GetById(Guid id, Guid workspaceId, CancellationToken ct = default)
     {

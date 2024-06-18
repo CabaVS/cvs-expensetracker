@@ -4,8 +4,8 @@ using DomainIncomeTransaction = CabaVS.ExpenseTracker.Domain.Entities.IncomeTran
 
 namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 
-internal sealed class IncomeTransactionWriteRepository(
-    ApplicationDbContext dbContext) : IIncomeTransactionWriteRepository
+internal sealed class IncomeTransactionRepository(
+    ApplicationDbContext dbContext) : IIncomeTransactionRepository
 {
     public async Task<Guid> Create(DomainIncomeTransaction incomeTransaction, Guid workspaceId, CancellationToken ct = default)
     {

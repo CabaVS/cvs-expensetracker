@@ -4,8 +4,8 @@ using ExpenseCategoryDomain = CabaVS.ExpenseTracker.Domain.Entities.ExpenseCateg
 
 namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 
-internal sealed class ExpenseCategoryWriteRepository(
-    ApplicationDbContext dbContext) : IExpenseCategoryWriteRepository
+internal sealed class ExpenseCategoryRepository(
+    ApplicationDbContext dbContext) : IExpenseCategoryRepository
 {
     public async Task<Guid> Create(ExpenseCategoryDomain expenseCategory, Guid workspaceId, CancellationToken ct = default)
     {

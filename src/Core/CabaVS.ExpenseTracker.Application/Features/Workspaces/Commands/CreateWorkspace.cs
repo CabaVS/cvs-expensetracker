@@ -19,7 +19,7 @@ internal sealed class CreateWorkspaceCommandHandler(
         var workspaceResult = Workspace.Create(Guid.NewGuid(), request.Name, true);
         if (workspaceResult.IsFailure) return workspaceResult.Error;
 
-        var id = await unitOfWork.WorkspaceWriteRepository.Create(
+        var id = await unitOfWork.WorkspaceRepository.Create(
             workspaceResult.Value,
             userId,
             cancellationToken);
