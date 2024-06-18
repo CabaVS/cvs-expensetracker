@@ -17,6 +17,8 @@ internal sealed class ExpenseTransaction
     public Guid DestinationId { get; set; }
     public ExpenseCategory Destination { get; set; } = default!;
     public decimal AmountInDestinationCurrency { get; set; }
+
+    public string[] Tags { get; set; } = default!;
     
     public static ExpenseTransaction FromDomain(DomainExpenseTransaction domain, Guid workspaceId)
     {
@@ -31,7 +33,9 @@ internal sealed class ExpenseTransaction
             
             AmountInDestinationCurrency = domain.AmountInDestinationCurrency,
             DestinationId = domain.Destination.Id,
-            Destination = ExpenseCategory.FromDomain(domain.Destination, workspaceId)
+            Destination = ExpenseCategory.FromDomain(domain.Destination, workspaceId),
+            
+            Tags = domain.Tags.Select(x => x.Value).ToArray()
         };
     }
 }
@@ -63,5 +67,9 @@ internal sealed class ExpenseTransactionTypeConfiguration : IEntityTypeConfigura
         
         builder.Property(x => x.AmountInDestinationCurrency)
             .IsRequired();
+
+        builder.Property(x => x.Tags)
+            .IsRequired()
+            .HasConversion<ArrayToCommaSeparatedStringsConverter>();
     }
 }

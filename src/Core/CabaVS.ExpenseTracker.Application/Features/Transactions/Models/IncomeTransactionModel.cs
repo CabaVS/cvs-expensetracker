@@ -6,9 +6,8 @@ namespace CabaVS.ExpenseTracker.Application.Features.Transactions.Models;
 public sealed record IncomeTransactionModel(
     Guid Id,
     DateOnly Date,
+    IncomeCategoryModel Source,
     decimal AmountInSourceCurrency,
-    decimal AmountInDestinationCurrency)
-{
-    public required IncomeCategoryModel Source { get; init; }
-    public required BalanceModel Destination { get; init; }
-}
+    BalanceModel Destination,
+    decimal AmountInDestinationCurrency,
+    string[] Tags);

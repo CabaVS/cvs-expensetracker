@@ -62,20 +62,7 @@ internal sealed class GetExpenseTransactionByIdEndpointSummary : Summary<GetExpe
             example: new ExpenseTransactionModel(
                 new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
                 new DateOnly(2020, 10, 20),
-                1234.56m,
-                1234.56m)
-            {
-                Destination = new ExpenseCategoryModel(
-                    new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
-                    "My Company")
-                {
-                    Currency = new CurrencyModel(
-                        new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
-                        "United States Dollar",
-                        "USD",
-                        "$")
-                },
-                Source = new BalanceModel(
+                new BalanceModel(
                     new Guid("E650E18C-0069-45B3-B56A-AB8C3BA8D8AA"),
                     "Card USD",
                     1234.56m)
@@ -85,8 +72,20 @@ internal sealed class GetExpenseTransactionByIdEndpointSummary : Summary<GetExpe
                         "United States Dollar",
                         "USD",
                         "$")
-                }
-            });
+                },
+                1234.56m,
+                new ExpenseCategoryModel(
+                    new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
+                    "Transportation")
+                {
+                    Currency = new CurrencyModel(
+                        new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
+                        "United States Dollar",
+                        "USD",
+                        "$")
+                },
+                1234.56m,
+                ["uber", "taxi"]));
         
         Response(
             (int)HttpStatusCode.BadRequest,

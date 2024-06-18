@@ -10,7 +10,8 @@ namespace CabaVS.ExpenseTracker.Application.Features.Transactions.Commands;
 public sealed record CreateExpenseTransactionCommand(
     Guid WorkspaceId, DateOnly Date,
     Guid ExpenseCategoryId, decimal AmountInExpenseCategoryCurrency,
-    Guid BalanceId, decimal AmountInBalanceCurrency) : IRequest<Result<Guid>>, IWorkspaceBoundedRequest;
+    Guid BalanceId, decimal AmountInBalanceCurrency,
+    IEnumerable<string> Tags) : IRequest<Result<Guid>>, IWorkspaceBoundedRequest;
 
 internal sealed class CreateExpenseTransactionCommandHandler(
     IUnitOfWork unitOfWork) : IRequestHandler<CreateExpenseTransactionCommand, Result<Guid>>
@@ -31,7 +32,8 @@ internal sealed class CreateExpenseTransactionCommandHandler(
             balance,
             expenseCategory,
             request.AmountInBalanceCurrency,
-            request.AmountInExpenseCategoryCurrency);
+            request.AmountInExpenseCategoryCurrency,
+            request.Tags);
         if (expenseTransactionResult.IsFailure) return expenseTransactionResult.Error;
 
         var added = await unitOfWork.ExpenseTransactionRepository.Create(

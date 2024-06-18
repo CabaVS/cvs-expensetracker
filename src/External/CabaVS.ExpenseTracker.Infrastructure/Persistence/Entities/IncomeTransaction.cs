@@ -17,6 +17,8 @@ internal sealed class IncomeTransaction
     public Guid DestinationId { get; set; }
     public Balance Destination { get; set; } = default!;
     public decimal AmountInDestinationCurrency { get; set; }
+    
+    public string[] Tags { get; set; } = default!;
 
     public static IncomeTransaction FromDomain(DomainIncomeTransaction domain, Guid workspaceId)
     {
@@ -31,7 +33,9 @@ internal sealed class IncomeTransaction
             
             AmountInDestinationCurrency = domain.AmountInDestinationCurrency,
             DestinationId = domain.Destination.Id,
-            Destination = Balance.FromDomain(domain.Destination, workspaceId)
+            Destination = Balance.FromDomain(domain.Destination, workspaceId),
+            
+            Tags = domain.Tags.Select(x => x.Value).ToArray()
         };
     }
 }
@@ -63,5 +67,9 @@ internal sealed class IncomeTransactionTypeConfiguration : IEntityTypeConfigurat
         
         builder.Property(x => x.AmountInDestinationCurrency)
             .IsRequired();
+        
+        builder.Property(x => x.Tags)
+            .IsRequired()
+            .HasConversion<ArrayToCommaSeparatedStringsConverter>();
     }
 }

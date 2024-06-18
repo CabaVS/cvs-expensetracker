@@ -14,7 +14,7 @@ internal sealed class IncomeTransactionReadRepository(
     {
         const string sql = """
                            SELECT
-                               [it].[Id], [it].[Date], [it].[AmountInSourceCurrency], [it].[AmountInDestinationCurrency],
+                               [it].[Id], [it].[Date], [it].[AmountInSourceCurrency], [it].[AmountInDestinationCurrency], [it].[Tags],
                                [ic].[Id], [ic].[Name],
                                    [icc].[Id], [icc].[Name], [icc].[Code], [icc].[Symbol],
                                [b].[Id], [b].[Name], [b].[Amount],
@@ -32,14 +32,14 @@ internal sealed class IncomeTransactionReadRepository(
             _mapIncomeCategoryModel,
             new { workspaceId },
             splitOn: "Id,Id,Id,Id");
-        return models.ToArray();
+        return models.Select(x => MapToApplicationModel(x)!).ToArray();
     }
 
     public async Task<IncomeTransactionModel?> GetById(Guid incomeTransactionId, Guid workspaceId, CancellationToken ct = default)
     {
         const string sql = """
                            SELECT TOP(1)
-                               [it].[Id], [it].[Date], [it].[AmountInSourceCurrency], [it].[AmountInDestinationCurrency],
+                               [it].[Id], [it].[Date], [it].[AmountInSourceCurrency], [it].[AmountInDestinationCurrency], [it].[Tags],
                                [ic].[Id], [ic].[Name],
                                    [icc].[Id], [icc].[Name], [icc].[Code], [icc].[Symbol],
                                [b].[Id], [b].[Name], [b].[Amount],
@@ -58,13 +58,36 @@ internal sealed class IncomeTransactionReadRepository(
             _mapIncomeCategoryModel,
             new { incomeTransactionId, workspaceId },
             splitOn: "Id,Id,Id,Id");
-        return models.SingleOrDefault();
+        return MapToApplicationModel(models.SingleOrDefault());
     }
     
-    private readonly Func<IncomeTransactionModel, IncomeCategoryModel, CurrencyModel, BalanceModel, CurrencyModel, IncomeTransactionModel> _mapIncomeCategoryModel =
+    private readonly Func<IncomeTransactionTableEntry, IncomeCategoryModel, CurrencyModel, BalanceModel, CurrencyModel, IncomeTransactionTableEntry> _mapIncomeCategoryModel =
         (it, ic, icc, b, bc) => it with
         {
             Source = ic with { Currency = icc },
             Destination = b with { Currency = bc }
         };
+    
+    private static IncomeTransactionModel? MapToApplicationModel(IncomeTransactionTableEntry? tableEntry) =>
+        tableEntry is not null
+            ? new IncomeTransactionModel(
+                tableEntry.Id,
+                tableEntry.Date,
+                tableEntry.Source,
+                tableEntry.AmountInSourceCurrency,
+                tableEntry.Destination,
+                tableEntry.AmountInDestinationCurrency,
+                tableEntry.Tags.Split(','))
+            : null;
+    
+    private sealed record IncomeTransactionTableEntry(
+        Guid Id,
+        DateOnly Date,
+        decimal AmountInSourceCurrency,
+        decimal AmountInDestinationCurrency,
+        string Tags)
+    {
+        public required IncomeCategoryModel Source { get; init; }
+        public required BalanceModel Destination { get; init; }
+    }
 }

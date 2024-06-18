@@ -62,10 +62,7 @@ internal sealed class GetIncomeTransactionByIdEndpointSummary : Summary<GetIncom
             example: new IncomeTransactionModel(
                 new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
                 new DateOnly(2020, 10, 20),
-                1234.56m,
-                1234.56m)
-            {
-                Source = new IncomeCategoryModel(
+                new IncomeCategoryModel(
                     new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
                     "My Company")
                 {
@@ -75,7 +72,8 @@ internal sealed class GetIncomeTransactionByIdEndpointSummary : Summary<GetIncom
                         "USD",
                         "$")
                 },
-                Destination = new BalanceModel(
+                1234.56m,
+                new BalanceModel(
                     new Guid("E650E18C-0069-45B3-B56A-AB8C3BA8D8AA"),
                     "Card USD",
                     1234.56m)
@@ -85,8 +83,9 @@ internal sealed class GetIncomeTransactionByIdEndpointSummary : Summary<GetIncom
                         "United States Dollar",
                         "USD",
                         "$")
-                }
-            });
+                },
+                1234.56m,
+                ["salary"]));
         
         Response(
             (int)HttpStatusCode.BadRequest,

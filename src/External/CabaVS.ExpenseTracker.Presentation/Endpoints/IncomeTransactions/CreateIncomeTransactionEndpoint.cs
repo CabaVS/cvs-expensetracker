@@ -33,7 +33,8 @@ internal sealed class CreateIncomeTransactionEndpoint(ISender sender) : Endpoint
             req.IncomeCategoryId,
             req.AmountInIncomeCategoryCurrency,
             req.BalanceId,
-            req.AmountInBalanceCurrency);
+            req.AmountInBalanceCurrency,
+            req.Tags);
 
         var result = await sender.Send(command, ct);
 
@@ -45,7 +46,8 @@ internal sealed class CreateIncomeTransactionEndpoint(ISender sender) : Endpoint
     public sealed record RequestModel(
         Guid WorkspaceId, DateOnly Date, 
         Guid BalanceId, decimal AmountInBalanceCurrency, 
-        Guid IncomeCategoryId, decimal AmountInIncomeCategoryCurrency);
+        Guid IncomeCategoryId, decimal AmountInIncomeCategoryCurrency,
+        IEnumerable<string> Tags);
 }
 
 internal sealed class CreateIncomeTransactionEndpointSummary : Summary<CreateIncomeTransactionEndpoint>
@@ -62,7 +64,8 @@ internal sealed class CreateIncomeTransactionEndpointSummary : Summary<CreateInc
             new CreateIncomeTransactionEndpoint.RequestModel(
                 Guid.Empty, new DateOnly(2020, 10, 20),
                 new Guid("4174BD42-2D83-417B-B2DD-48802C427040"), 1234.56m,
-                new Guid("8326BEC6-7BAD-47CA-9F10-79AD9F109753"), 4567.89m);
+                new Guid("8326BEC6-7BAD-47CA-9F10-79AD9F109753"), 4567.89m,
+                ["salary"]);
         
         Response(
             (int)HttpStatusCode.Created,

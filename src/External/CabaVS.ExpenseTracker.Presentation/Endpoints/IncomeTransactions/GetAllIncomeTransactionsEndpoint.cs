@@ -53,68 +53,66 @@ internal sealed class GetAllIncomeTransactionsEndpointSummary : Summary<GetAllIn
 
         Params[nameof(GetAllIncomeTransactionsEndpoint.RequestModel.WorkspaceId)] = 
             "Workspace ID (simple GUID, user should have access to it).";
-        
+
         Response(
             (int)HttpStatusCode.OK,
             "OK response with body.",
             example: new[]
             {
                 new IncomeTransactionModel(
-                new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
-                new DateOnly(2020, 10, 20),
-                1234.56m,
-                1234.56m)
-            {
-                Source = new IncomeCategoryModel(
                     new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
-                    "My Company")
-                {
-                    Currency = new CurrencyModel(
-                        new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
-                        "United States Dollar",
-                        "USD",
-                        "$")
-                },
-                Destination = new BalanceModel(
-                    new Guid("E650E18C-0069-45B3-B56A-AB8C3BA8D8AA"),
-                    "Card USD",
-                    1234.56m)
-                {
-                    Currency = new CurrencyModel(
-                        new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
-                        "United States Dollar",
-                        "USD",
-                        "$")
-                }
-            },
-            new IncomeTransactionModel(
-                new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
-                new DateOnly(2020, 10, 20),
-                1234.56m,
-                1234.56m)
-            {
-                Source = new IncomeCategoryModel(
+                    new DateOnly(2020, 10, 20),
+                    new IncomeCategoryModel(
+                        new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
+                        "My Company")
+                    {
+                        Currency = new CurrencyModel(
+                            new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
+                            "United States Dollar",
+                            "USD",
+                            "$")
+                    },
+                    1234.56m,
+                    new BalanceModel(
+                        new Guid("E650E18C-0069-45B3-B56A-AB8C3BA8D8AA"),
+                        "Card USD",
+                        1234.56m)
+                    {
+                        Currency = new CurrencyModel(
+                            new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
+                            "United States Dollar",
+                            "USD",
+                            "$")
+                    },
+                    1234.56m,
+                    ["salary"]),
+                new IncomeTransactionModel(
                     new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
-                    "My Company #2")
-                {
-                    Currency = new CurrencyModel(
-                        new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
-                        "United States Dollar",
-                        "USD",
-                        "$")
-                },
-                Destination = new BalanceModel(
-                    new Guid("E650E18C-0069-45B3-B56A-AB8C3BA8D8AA"),
-                    "Card USD",
-                    1234.56m)
-                {
-                    Currency = new CurrencyModel(
-                        new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
-                        "United States Dollar",
-                        "USD",
-                        "$")
-                }
-            }
+                    new DateOnly(2020, 10, 20),
+                    new IncomeCategoryModel(
+                        new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
+                        "My Other Company")
+                    {
+                        Currency = new CurrencyModel(
+                            new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
+                            "United States Dollar",
+                            "USD",
+                            "$")
+                    },
+                    1234.56m,
+                    new BalanceModel(
+                        new Guid("E650E18C-0069-45B3-B56A-AB8C3BA8D8AA"),
+                        "Card USD",
+                        1234.56m)
+                    {
+                        Currency = new CurrencyModel(
+                            new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
+                            "United States Dollar",
+                            "USD",
+                            "$")
+                    },
+                    1234.56m,
+                    ["salary"])
             });
         
         Response(
