@@ -17,10 +17,10 @@ internal sealed class ExpenseCategory
     public Guid WorkspaceId { get; set; }
     public Workspace Workspace { get; set; } = default!;
     
-    public DomainExpenseCategory ToDomain(ExpenseCategory expenseCategory)
+    public DomainExpenseCategory ToDomain()
     {
         var currency = DomainCurrency
-            .Create(expenseCategory.Currency.Id, expenseCategory.Currency.Name, expenseCategory.Currency.Code, expenseCategory.Currency.Symbol)
+            .Create(Currency.Id, Currency.Name, Currency.Code, Currency.Symbol)
             .Value;
         
         return DomainExpenseCategory
