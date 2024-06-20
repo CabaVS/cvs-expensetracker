@@ -4,5 +4,7 @@ namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositorie
 
 public interface IIncomeTransactionRepository
 {
+    Task<IncomeTransaction?> GetById(Guid incomeTransactionId, Guid workspaceId, CancellationToken ct = default);
     Task<Guid> Create(IncomeTransaction incomeTransaction, Guid workspaceId, CancellationToken ct = default);
+    Task Update(IncomeTransaction incomeTransaction, Guid workspaceId, CancellationToken ct = default);
 }

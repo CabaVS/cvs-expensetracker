@@ -45,16 +45,20 @@ public sealed class TransferTransaction : Entity
         Balance destination,
         decimal amountInSourceCurrency,
         decimal amountInDestinationCurrency,
-        IEnumerable<string>? tags = null)
+        IEnumerable<string>? tags = null,
+        bool recalculateBalances = false)
     {
         if (amountInSourceCurrency <= 0 || amountInDestinationCurrency <= 0)
             return TransactionErrors.AmountShouldBeGreaterThanZero();
 
         var tagsResult = TransactionTag.CreateMultiple(tags);
         if (tagsResult.IsFailure) return tagsResult.Error;
-        
-        source.Amount -= amountInSourceCurrency;
-        destination.Amount += amountInDestinationCurrency;
+
+        if (recalculateBalances)
+        {
+            source.Amount -= amountInSourceCurrency;
+            destination.Amount += amountInDestinationCurrency;
+        }
         
         return new TransferTransaction(id, dateInUtc, source, amountInSourceCurrency, destination, amountInDestinationCurrency);
     }

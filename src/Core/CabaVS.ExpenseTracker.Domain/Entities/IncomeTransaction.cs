@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using CabaVS.ExpenseTracker.Domain.Errors;
 using CabaVS.ExpenseTracker.Domain.Primitives;
 using CabaVS.ExpenseTracker.Domain.Shared;
@@ -8,15 +7,15 @@ namespace CabaVS.ExpenseTracker.Domain.Entities;
 
 public sealed class IncomeTransaction : Entity
 {
-    public DateOnly Date { get; }
+    public DateOnly Date { get; set; }
     
-    public IncomeCategory Source { get; }
-    public decimal AmountInSourceCurrency { get; }
+    public IncomeCategory Source { get; set; }
+    public decimal AmountInSourceCurrency { get; set; }
     
-    public Balance Destination { get; }
-    public decimal AmountInDestinationCurrency { get; }
+    public Balance Destination { get; private set; }
+    public decimal AmountInDestinationCurrency { get; private set; }
     
-    public IReadOnlyCollection<TransactionTag> Tags { get; }
+    public List<TransactionTag> Tags { get; set; }
     
     private IncomeTransaction(
         Guid id, 
@@ -35,7 +34,7 @@ public sealed class IncomeTransaction : Entity
         Destination = destination;
         AmountInDestinationCurrency = amountInDestinationCurrency;
         
-        Tags = new ReadOnlyCollection<TransactionTag>(tags ?? []);
+        Tags = tags ?? [];
     }
 
     public static Result<IncomeTransaction> Create(
@@ -45,16 +44,38 @@ public sealed class IncomeTransaction : Entity
         Balance destination,
         decimal amountInSourceCurrency,
         decimal amountInDestinationCurrency,
-        IEnumerable<string>? tags = null)
+        IEnumerable<string>? tags = null,
+        bool recalculateBalances = false)
     {
         if (amountInSourceCurrency <= 0 || amountInDestinationCurrency <= 0)
             return TransactionErrors.AmountShouldBeGreaterThanZero();
 
         var tagsResult = TransactionTag.CreateMultiple(tags);
         if (tagsResult.IsFailure) return tagsResult.Error;
-        
-        destination.Amount += amountInDestinationCurrency;
+
+        if (recalculateBalances)
+        {
+            destination.Amount += amountInDestinationCurrency;
+        }
         
         return new IncomeTransaction(id, dateInUtc, source, amountInSourceCurrency, destination, amountInDestinationCurrency);
+    }
+
+    public void ChangeDestination(Balance balance)
+    {
+        if (Destination == balance) return;
+
+        Destination.Amount -= AmountInDestinationCurrency;
+        Destination = balance;
+        Destination.Amount += AmountInDestinationCurrency;
+    }
+
+    public void ChangeDestinationAmount(decimal amountInBalanceCurrency)
+    {
+        if (AmountInDestinationCurrency == amountInBalanceCurrency) return;
+
+        Destination.Amount -= AmountInDestinationCurrency;
+        AmountInDestinationCurrency = amountInBalanceCurrency;
+        Destination.Amount += AmountInDestinationCurrency;
     }
 }

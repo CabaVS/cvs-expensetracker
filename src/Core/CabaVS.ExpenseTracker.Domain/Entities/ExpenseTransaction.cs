@@ -45,15 +45,19 @@ public sealed class ExpenseTransaction : Entity
         ExpenseCategory destination,
         decimal amountInSourceCurrency,
         decimal amountInDestinationCurrency,
-        IEnumerable<string>? tags = null)
+        IEnumerable<string>? tags = null,
+        bool recalculateBalances = false)
     {
         if (amountInSourceCurrency <= 0 || amountInDestinationCurrency <= 0)
             return TransactionErrors.AmountShouldBeGreaterThanZero();
 
         var tagsResult = TransactionTag.CreateMultiple(tags);
         if (tagsResult.IsFailure) return tagsResult.Error;
-        
-        source.Amount -= amountInSourceCurrency;
+
+        if (recalculateBalances)
+        {
+            source.Amount -= amountInSourceCurrency;
+        }
         
         return new ExpenseTransaction(
             id, dateInUtc, 

@@ -33,7 +33,8 @@ internal sealed class CreateIncomeTransactionCommandHandler(
             balance,
             request.AmountInIncomeCategoryCurrency,
             request.AmountInBalanceCurrency,
-            request.Tags);
+            request.Tags,
+            true);
         if (incomeTransactionResult.IsFailure) return incomeTransactionResult.Error;
 
         var added = await unitOfWork.IncomeTransactionRepository.Create(

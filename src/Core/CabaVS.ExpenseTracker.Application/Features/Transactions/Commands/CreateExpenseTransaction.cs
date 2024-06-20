@@ -33,7 +33,8 @@ internal sealed class CreateExpenseTransactionCommandHandler(
             expenseCategory,
             request.AmountInBalanceCurrency,
             request.AmountInExpenseCategoryCurrency,
-            request.Tags);
+            request.Tags,
+            true);
         if (expenseTransactionResult.IsFailure) return expenseTransactionResult.Error;
 
         var added = await unitOfWork.ExpenseTransactionRepository.Create(
