@@ -72,7 +72,8 @@ internal sealed class IncomeTransaction
                     .Value,
                 AmountInSourceCurrency,
                 AmountInDestinationCurrency,
-                Tags)
+                Tags,
+                false)
             .Value;
     }
 }

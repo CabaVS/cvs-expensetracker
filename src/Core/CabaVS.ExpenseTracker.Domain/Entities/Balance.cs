@@ -24,4 +24,55 @@ public sealed class Balance : Entity
 
         return new Balance(id, nameResult.Value, amount, currency);
     }
+
+    public void ApplyTransaction(ExpenseTransaction expenseTransaction)
+    {
+        if (expenseTransaction.Source != this) throw NotLinkedTransactionException;
+
+        Amount -= expenseTransaction.AmountInSourceCurrency;
+    }
+    
+    public void ApplyTransaction(IncomeTransaction incomeTransaction)
+    {
+        if (incomeTransaction.Destination != this) throw NotLinkedTransactionException;
+
+        Amount += incomeTransaction.AmountInDestinationCurrency;
+    }
+    
+    public void ApplyTransaction(TransferTransaction transferTransaction)
+    {
+        if (transferTransaction.Source == this)
+            Amount -= transferTransaction.AmountInSourceCurrency;
+        else if (transferTransaction.Destination == this)
+            Amount += transferTransaction.AmountInDestinationCurrency;
+        else
+            throw NotLinkedTransactionException;
+    }
+    
+    public void RollbackTransaction(ExpenseTransaction expenseTransaction)
+    {
+        if (expenseTransaction.Source != this) throw NotLinkedTransactionException;
+
+        Amount += expenseTransaction.AmountInSourceCurrency;
+    }
+    
+    public void RollbackTransaction(IncomeTransaction incomeTransaction)
+    {
+        if (incomeTransaction.Destination != this) throw NotLinkedTransactionException;
+
+        Amount -= incomeTransaction.AmountInDestinationCurrency;
+    }
+    
+    public void RollbackTransaction(TransferTransaction transferTransaction)
+    {
+        if (transferTransaction.Source == this)
+            Amount += transferTransaction.AmountInSourceCurrency;
+        else if (transferTransaction.Destination == this)
+            Amount -= transferTransaction.AmountInDestinationCurrency;
+        else
+            throw NotLinkedTransactionException;
+    }
+    
+    private static readonly InvalidOperationException NotLinkedTransactionException =
+        new("Unable to apply migration that is not linked to this Balance.");
 }

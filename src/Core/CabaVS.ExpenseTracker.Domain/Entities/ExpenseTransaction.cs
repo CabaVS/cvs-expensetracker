@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using CabaVS.ExpenseTracker.Domain.Errors;
 using CabaVS.ExpenseTracker.Domain.Primitives;
 using CabaVS.ExpenseTracker.Domain.Shared;
@@ -25,7 +24,7 @@ public sealed class ExpenseTransaction : Entity
         decimal amountInSourceCurrency, 
         ExpenseCategory destination,
         decimal amountInDestinationCurrency,
-        List<TransactionTag>? tags = null) : base(id)
+        List<TransactionTag> tags) : base(id)
     {
         Date = date;
 
@@ -35,7 +34,7 @@ public sealed class ExpenseTransaction : Entity
         Destination = destination;
         AmountInDestinationCurrency = amountInDestinationCurrency;
 
-        Tags = new ReadOnlyCollection<TransactionTag>(tags ?? []);
+        Tags = tags;
     }
 
     public static Result<ExpenseTransaction> Create(
@@ -45,24 +44,26 @@ public sealed class ExpenseTransaction : Entity
         ExpenseCategory destination,
         decimal amountInSourceCurrency,
         decimal amountInDestinationCurrency,
-        IEnumerable<string>? tags = null,
-        bool recalculateBalances = false)
+        IEnumerable<string> tags,
+        bool recalculateBalances)
     {
         if (amountInSourceCurrency <= 0 || amountInDestinationCurrency <= 0)
             return TransactionErrors.AmountShouldBeGreaterThanZero();
 
         var tagsResult = TransactionTag.CreateMultiple(tags);
         if (tagsResult.IsFailure) return tagsResult.Error;
-
-        if (recalculateBalances)
-        {
-            source.Amount -= amountInSourceCurrency;
-        }
         
-        return new ExpenseTransaction(
+        var transaction = new ExpenseTransaction(
             id, dateInUtc, 
             source, amountInSourceCurrency, 
             destination, amountInDestinationCurrency,
             tagsResult.Value);
+
+        if (recalculateBalances)
+        {
+            transaction.Source.ApplyTransaction(transaction);
+        }
+
+        return transaction;
     }
 }

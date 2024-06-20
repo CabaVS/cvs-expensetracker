@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using CabaVS.ExpenseTracker.Domain.Errors;
 using CabaVS.ExpenseTracker.Domain.Primitives;
 using CabaVS.ExpenseTracker.Domain.Shared;
@@ -16,7 +15,7 @@ public sealed class TransferTransaction : Entity
     public Balance Destination { get; }
     public decimal AmountInDestinationCurrency { get; }
     
-    public IReadOnlyCollection<TransactionTag> Tags { get; }
+    public List<TransactionTag> Tags { get; }
     
     private TransferTransaction(
         Guid id, 
@@ -25,7 +24,7 @@ public sealed class TransferTransaction : Entity
         decimal amountInSourceCurrency, 
         Balance destination,
         decimal amountInDestinationCurrency,
-        List<TransactionTag>? tags = null) : base(id)
+        List<TransactionTag> tags) : base(id)
     {
         Date = date;
 
@@ -34,8 +33,8 @@ public sealed class TransferTransaction : Entity
         
         Destination = destination;
         AmountInDestinationCurrency = amountInDestinationCurrency;
-        
-        Tags = new ReadOnlyCollection<TransactionTag>(tags ?? []);
+
+        Tags = tags;
     }
 
     public static Result<TransferTransaction> Create(
@@ -45,21 +44,27 @@ public sealed class TransferTransaction : Entity
         Balance destination,
         decimal amountInSourceCurrency,
         decimal amountInDestinationCurrency,
-        IEnumerable<string>? tags = null,
-        bool recalculateBalances = false)
+        IEnumerable<string>? tags,
+        bool recalculateBalances)
     {
         if (amountInSourceCurrency <= 0 || amountInDestinationCurrency <= 0)
             return TransactionErrors.AmountShouldBeGreaterThanZero();
 
         var tagsResult = TransactionTag.CreateMultiple(tags);
         if (tagsResult.IsFailure) return tagsResult.Error;
+        
+        var transaction = new TransferTransaction(
+            id, dateInUtc, 
+            source, amountInSourceCurrency, 
+            destination, amountInDestinationCurrency,
+            tagsResult.Value);
 
         if (recalculateBalances)
         {
-            source.Amount -= amountInSourceCurrency;
-            destination.Amount += amountInDestinationCurrency;
+            transaction.Source.ApplyTransaction(transaction);
+            transaction.Destination.ApplyTransaction(transaction);
         }
-        
-        return new TransferTransaction(id, dateInUtc, source, amountInSourceCurrency, destination, amountInDestinationCurrency);
+
+        return transaction;
     }
 }

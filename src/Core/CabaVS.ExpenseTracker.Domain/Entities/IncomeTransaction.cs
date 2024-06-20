@@ -24,7 +24,7 @@ public sealed class IncomeTransaction : Entity
         decimal amountInSourceCurrency, 
         Balance destination,
         decimal amountInDestinationCurrency,
-        List<TransactionTag>? tags = null) : base(id)
+        List<TransactionTag> tags) : base(id)
     {
         Date = date;
 
@@ -34,7 +34,7 @@ public sealed class IncomeTransaction : Entity
         Destination = destination;
         AmountInDestinationCurrency = amountInDestinationCurrency;
         
-        Tags = tags ?? [];
+        Tags = tags;
     }
 
     public static Result<IncomeTransaction> Create(
@@ -44,21 +44,27 @@ public sealed class IncomeTransaction : Entity
         Balance destination,
         decimal amountInSourceCurrency,
         decimal amountInDestinationCurrency,
-        IEnumerable<string>? tags = null,
-        bool recalculateBalances = false)
+        IEnumerable<string> tags,
+        bool recalculateBalances)
     {
         if (amountInSourceCurrency <= 0 || amountInDestinationCurrency <= 0)
             return TransactionErrors.AmountShouldBeGreaterThanZero();
 
         var tagsResult = TransactionTag.CreateMultiple(tags);
         if (tagsResult.IsFailure) return tagsResult.Error;
-
+        
+        var transaction = new IncomeTransaction(
+            id, dateInUtc,
+            source, amountInSourceCurrency,
+            destination, amountInDestinationCurrency,
+            tagsResult.Value);
+        
         if (recalculateBalances)
         {
-            destination.Amount += amountInDestinationCurrency;
+            transaction.Destination.ApplyTransaction(transaction);
         }
-        
-        return new IncomeTransaction(id, dateInUtc, source, amountInSourceCurrency, destination, amountInDestinationCurrency);
+
+        return transaction;
     }
 
     public void ChangeDestination(Balance balance)
