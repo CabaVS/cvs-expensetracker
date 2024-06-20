@@ -26,4 +26,13 @@ internal sealed class BalanceRepository(ApplicationDbContext dbContext) : IBalan
 
         return added.Entity.Id;
     }
+
+    public Task Update(DomainBalance balance, Guid workspaceId, CancellationToken ct = default)
+    {
+        var entity = Balance.FromDomain(balance, workspaceId);
+
+        _ = dbContext.Balances.Update(entity);
+
+        return Task.CompletedTask;
+    }
 }
