@@ -15,13 +15,13 @@ internal sealed class CreateExpenseCategoryCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateExpenseCategoryCommand request, CancellationToken cancellationToken)
     {
-        var currency = await unitOfWork.CurrencyRepository.GetById(request.CurrencyId, cancellationToken);
+        var currency = await unitOfWork.BuildCurrencyRepository().GetById(request.CurrencyId, cancellationToken);
         if (currency is null) return CurrencyErrors.NotFoundById(request.CurrencyId);
 
         var expenseCategoryResult = ExpenseCategory.Create(Guid.NewGuid(), request.Name, currency);
         if (expenseCategoryResult.IsFailure) return expenseCategoryResult.Error;
 
-        var added = await unitOfWork.ExpenseCategoryRepository.Create(
+        var added = await unitOfWork.BuildExpenseCategoryRepository().Create(
             expenseCategoryResult.Value,
             request.WorkspaceId,
             cancellationToken);

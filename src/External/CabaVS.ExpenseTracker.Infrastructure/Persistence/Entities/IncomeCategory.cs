@@ -35,6 +35,7 @@ internal sealed class IncomeCategory
             Id = incomeCategory.Id,
             Name = incomeCategory.Name.Value,
             CurrencyId = incomeCategory.Currency.Id,
+            Currency = Currency.FromDomain(incomeCategory.Currency),
             WorkspaceId = workspaceId
         };
     }

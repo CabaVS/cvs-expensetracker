@@ -15,7 +15,7 @@ internal sealed class CreateIncomeCategoryCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateIncomeCategoryCommand request, CancellationToken cancellationToken)
     {
-        var currency = await unitOfWork.CurrencyRepository.GetById(request.CurrencyId, cancellationToken);
+        var currency = await unitOfWork.BuildCurrencyRepository().GetById(request.CurrencyId, cancellationToken);
         if (currency is null) return CurrencyErrors.NotFoundById(request.CurrencyId);
 
         var incomeCategoryResult = IncomeCategory.Create(
@@ -24,7 +24,7 @@ internal sealed class CreateIncomeCategoryCommandHandler(
             currency);
         if (incomeCategoryResult.IsFailure) return incomeCategoryResult.Error;
 
-        var added = await unitOfWork.IncomeCategoryRepository.Create(
+        var added = await unitOfWork.BuildIncomeCategoryRepository().Create(
             incomeCategoryResult.Value, request.WorkspaceId, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
 

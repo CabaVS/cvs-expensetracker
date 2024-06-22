@@ -1,45 +1,40 @@
+using System.Linq.Expressions;
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Features.Categories.Models;
 using CabaVS.ExpenseTracker.Application.Features.Currencies.Models;
-using Dapper;
+using CabaVS.ExpenseTracker.Infrastructure.Persistence.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 
-internal sealed class IncomeCategoryReadRepository(
-    SqlConnectionFactory sqlConnectionFactory) : IIncomeCategoryReadRepository
+internal sealed class IncomeCategoryReadRepository(ApplicationDbContext dbContext) : IIncomeCategoryReadRepository
 {
     public async Task<IncomeCategoryModel[]> GetAll(Guid workspaceId, CancellationToken ct = default)
     {
-        const string sql = """
-                           SELECT [ic].[Id], [ic].[Name], [c].[Id], [c].[Name], [c].[Code], [c].[Symbol] FROM [dbo].[IncomeCategories] AS [ic]
-                           INNER JOIN [dbo].[Currencies] AS [c] ON [c].[Id] = [ic].[CurrencyId]
-                           WHERE [ic].[WorkspaceId] = @workspaceId
-                           """;
-        
-        using var connection = sqlConnectionFactory.Create();
-        var models = await connection.QueryAsync(
-            sql,
-            _mapIncomeCategoryModel,
-            new { workspaceId });
-        return models.ToArray();
+        return await dbContext.IncomeCategories
+            .Include(ic => ic.Currency)
+            .Where(ic => ic.WorkspaceId == workspaceId)
+            .Select(EntityToModelProjection)
+            .ToArrayAsync(ct);
     }
 
-    public async Task<IncomeCategoryModel?> GetById(Guid id, Guid workspaceId, CancellationToken ct = default)
+    public async Task<IncomeCategoryModel?> GetById(Guid incomeCategoryId, Guid workspaceId, CancellationToken ct = default)
     {
-        const string sql = """
-                           SELECT TOP(1) [ic].[Id], [ic].[Name], [c].[Id], [c].[Name], [c].[Code], [c].[Symbol] FROM [dbo].[IncomeCategories] AS [ic]
-                           INNER JOIN [dbo].[Currencies] AS [c] ON [c].[Id] = [ic].[CurrencyId]
-                           WHERE [ic].[Id] = @id AND [ic].[WorkspaceId] = @workspaceId
-                           """;
-        
-        using var connection = sqlConnectionFactory.Create();
-        var models = await connection.QueryAsync(
-            sql,
-            _mapIncomeCategoryModel,
-            new { id, workspaceId });
-        return models.SingleOrDefault();
+        return await dbContext.IncomeCategories
+            .Include(ic => ic.Currency)
+            .Where(ic => ic.Id == incomeCategoryId)
+            .Where(ic => ic.WorkspaceId == workspaceId)
+            .Select(EntityToModelProjection)
+            .FirstOrDefaultAsync(ct);
     }
     
-    private readonly Func<IncomeCategoryModel, CurrencyModel, IncomeCategoryModel> _mapIncomeCategoryModel =
-        (b, c) => b with { Currency = c };
+    private static readonly Expression<Func<IncomeCategory, IncomeCategoryModel>> EntityToModelProjection =
+        incomeCategory => new IncomeCategoryModel(
+        incomeCategory.Id, 
+        incomeCategory.Name,
+        new CurrencyModel(
+            incomeCategory.Currency.Id,
+            incomeCategory.Currency.Name,
+            incomeCategory.Currency.Code,
+            incomeCategory.Currency.Symbol));
 }

@@ -14,7 +14,7 @@ internal sealed class DeleteExpenseCategoryCommandHandler(
 {
     public async Task<Result> Handle(DeleteExpenseCategoryCommand request, CancellationToken cancellationToken)
     {
-        var repository = unitOfWork.ExpenseCategoryRepository;
+        var repository = unitOfWork.BuildExpenseCategoryRepository();
 
         var expenseCategory = await repository.GetById(request.Id, request.WorkspaceId, cancellationToken);
         if (expenseCategory is null) return CategoryErrors.NotFoundById(request.Id);

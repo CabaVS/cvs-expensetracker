@@ -35,6 +35,7 @@ internal sealed class ExpenseCategory
             Id = expenseCategory.Id,
             Name = expenseCategory.Name.Value,
             CurrencyId = expenseCategory.Currency.Id,
+            Currency = Currency.FromDomain(expenseCategory.Currency),
             WorkspaceId = workspaceId
         };
     }

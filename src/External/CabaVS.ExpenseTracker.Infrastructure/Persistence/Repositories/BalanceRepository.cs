@@ -35,4 +35,13 @@ internal sealed class BalanceRepository(ApplicationDbContext dbContext) : IBalan
 
         return Task.CompletedTask;
     }
+
+    public Task Delete(DomainBalance balance, Guid workspaceId, CancellationToken ct = default)
+    {
+        var entity = Balance.FromDomain(balance, workspaceId);
+        
+        _ = dbContext.Balances.Remove(entity);
+
+        return Task.CompletedTask;
+    }
 }

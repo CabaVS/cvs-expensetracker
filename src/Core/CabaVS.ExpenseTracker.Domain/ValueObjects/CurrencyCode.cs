@@ -23,13 +23,10 @@ public sealed class CurrencyCode : ValueObject
 
     public static Result<CurrencyCode> Create(string value)
     {
-        if (string.IsNullOrWhiteSpace(value)) return CurrencyErrors.CodeIsEmptyOrWhitespace();
-        
-        return value.Length switch
-        {
-            > MaxLength => CurrencyErrors.CodeTooLong(value),
-            < MinLength => CurrencyErrors.CodeTooShort(value),
-            _ => new CurrencyCode(value)
-        };
+        return Result<string>.Success(value)
+            .EnsureStringNotNullOrWhitespace(CurrencyErrors.CodeIsEmptyOrWhitespace())
+            .EnsureStringNotTooLong(MaxLength, CurrencyErrors.CodeTooLong(value))
+            .EnsureStringNotTooShort(MinLength, CurrencyErrors.CodeTooShort(value))
+            .Map(x => new CurrencyCode(x));
     }
 }

@@ -7,11 +7,11 @@ using MediatR;
 
 namespace CabaVS.ExpenseTracker.Application.Features.Transactions.Queries;
 
-public sealed record GetIncomeTransactionByIdQuery(
-    Guid IncomeTransactionId, Guid WorkspaceId) : IRequest<Result<IncomeTransactionModel>>, IWorkspaceBoundedRequest;
+public sealed record GetIncomeTransactionByIdQuery(Guid IncomeTransactionId, Guid WorkspaceId)
+    : IRequest<Result<IncomeTransactionModel>>, IWorkspaceBoundedRequest;
 
-internal sealed class GetIncomeTransactionByIdQueryHandler(
-    IIncomeTransactionReadRepository incomeTransactionReadRepository) : IRequestHandler<GetIncomeTransactionByIdQuery, Result<IncomeTransactionModel>>
+internal sealed class GetIncomeTransactionByIdQueryHandler(IIncomeTransactionReadRepository incomeTransactionReadRepository)
+    : IRequestHandler<GetIncomeTransactionByIdQuery, Result<IncomeTransactionModel>>
 {
     public async Task<Result<IncomeTransactionModel>> Handle(GetIncomeTransactionByIdQuery request, CancellationToken cancellationToken)
     {

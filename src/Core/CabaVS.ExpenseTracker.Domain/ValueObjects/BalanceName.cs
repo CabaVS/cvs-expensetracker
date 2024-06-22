@@ -22,9 +22,9 @@ public sealed class BalanceName : ValueObject
     
     public static Result<BalanceName> Create(string value)
     {
-        if (string.IsNullOrWhiteSpace(value)) return BalanceErrors.NameIsNullOrWhitespace();
-        if (value.Length > MaxLength) return BalanceErrors.NameTooLong(value);
-        
-        return new BalanceName(value);
+        return Result<string>.Success(value)
+            .EnsureStringNotNullOrWhitespace(BalanceErrors.NameIsNullOrWhitespace())
+            .EnsureStringNotTooLong(MaxLength, BalanceErrors.NameTooLong(value))
+            .Map(x => new BalanceName(x));
     }
 }

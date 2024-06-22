@@ -56,24 +56,20 @@ internal sealed class GetAllIncomeCategoriesEndpointSummary : Summary<GetAllInco
             {
                 new IncomeCategoryModel(
                     new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
-                    "My Company")
-                {
-                    Currency = new CurrencyModel(
+                    "My Company",
+                    new CurrencyModel(
                         new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
                         "United States Dollar",
                         "USD",
-                        "$")
-                },
+                        "$")),
                 new IncomeCategoryModel(
                     new Guid("FF3D352C-FD4A-442B-8ACE-D35A80520303"),
-                    "My Partner's Company")
-                {
-                    Currency = new CurrencyModel(
+                    "My Partner's Company",
+                    new CurrencyModel(
                         new Guid("8DC3B3C7-E1C6-4192-87A6-4A67192ADB94"),
                         "Euro",
                         "EUR",
-                        "€")
-                }
+                        "€"))
             });
         
         Response(

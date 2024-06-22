@@ -36,33 +36,12 @@ internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWor
         return Task.CompletedTask;
     }
 
-    public async Task Delete(DomainWorkspace workspace, Guid userId, CancellationToken ct = default)
+    public Task Delete(DomainWorkspace workspace, Guid userId, CancellationToken ct = default)
     {
         var entity = Workspace.FromDomain(workspace, userId);
+        
         _ = dbContext.Workspaces.Remove(entity);
-
-        var expenseTransactions = await dbContext.ExpenseTransactions
-            .Where(t => 
-                t.Source.WorkspaceId == entity.Id ||
-                t.Destination.WorkspaceId == entity.Id)
-            .Select(t => new ExpenseTransaction { Id = t.Id })
-            .ToArrayAsync(ct);
-        dbContext.ExpenseTransactions.RemoveRange(expenseTransactions);
         
-        var incomeTransactions = await dbContext.IncomeTransactions
-            .Where(t => 
-                t.Source.WorkspaceId == entity.Id ||
-                t.Destination.WorkspaceId == entity.Id)
-            .Select(t => new IncomeTransaction { Id = t.Id })
-            .ToArrayAsync(ct);
-        dbContext.IncomeTransactions.RemoveRange(incomeTransactions);
-        
-        var transferTransactions = await dbContext.TransferTransactions
-            .Where(t => 
-                t.Source.WorkspaceId == entity.Id ||
-                t.Destination.WorkspaceId == entity.Id)
-            .Select(t => new TransferTransaction { Id = t.Id })
-            .ToArrayAsync(ct);
-        dbContext.TransferTransactions.RemoveRange(transferTransactions);
+        return Task.CompletedTask;
     }
 }

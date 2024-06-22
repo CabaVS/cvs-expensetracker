@@ -57,25 +57,21 @@ internal sealed class GetAllBalancesEndpointSummary : Summary<GetAllBalancesEndp
                 new BalanceModel(
                     new Guid("19790A33-C18F-4F21-B52A-FB73FCAB6C46"),
                     "Card USD",
-                    1234.56m)
-                {
-                    Currency = new CurrencyModel(
+                    1234.56m,
+                    new CurrencyModel(
                         new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
                         "United States Dollar",
                         "USD",
-                        "$")
-                },
+                        "$")),
                 new BalanceModel(
                     new Guid("1529F891-319B-4DFF-8943-A25750C8BCB3"),
                     "Cash EUR",
-                    789.00m)
-                {
-                    Currency = new CurrencyModel(
+                    789.00m,
+                    new CurrencyModel(
                         new Guid("8DC3B3C7-E1C6-4192-87A6-4A67192ADB94"),
                         "Euro",
                         "EUR",
-                        "€")
-                }
+                        "€"))
             });
         
         Response(

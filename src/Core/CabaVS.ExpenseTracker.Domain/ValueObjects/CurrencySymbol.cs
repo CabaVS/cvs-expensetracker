@@ -22,9 +22,9 @@ public sealed class CurrencySymbol : ValueObject
 
     public static Result<CurrencySymbol> Create(string value)
     {
-        if (string.IsNullOrWhiteSpace(value)) return CurrencyErrors.SymbolIsNullOrWhitespace();
-        if (value.Length > MaxLength) return CurrencyErrors.SymbolTooLong(value);
-        
-        return new CurrencySymbol(value);
+        return Result<string>.Success(value)
+            .EnsureStringNotNullOrWhitespace(CurrencyErrors.SymbolIsNullOrWhitespace())
+            .EnsureStringNotTooLong(MaxLength, CurrencyErrors.SymbolTooLong(value))
+            .Map(x => new CurrencySymbol(x));
     }
 }

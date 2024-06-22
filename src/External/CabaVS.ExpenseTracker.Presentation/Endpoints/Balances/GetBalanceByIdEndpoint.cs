@@ -58,16 +58,14 @@ internal sealed class GetBalanceByIdEndpointSummary : Summary<GetBalanceByIdEndp
             (int)HttpStatusCode.OK,
             "OK response with body.",
             example: new BalanceModel(
-                new Guid("E650E18C-0069-45B3-B56A-AB8C3BA8D8AA"),
+                new Guid("19790A33-C18F-4F21-B52A-FB73FCAB6C46"),
                 "Card USD",
-                1234.56m)
-            {
-                Currency = new CurrencyModel(
+                1234.56m,
+                new CurrencyModel(
                     new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
                     "United States Dollar",
                     "USD",
-                    "$")
-            });
+                    "$")));
         
         Response(
             (int)HttpStatusCode.BadRequest,

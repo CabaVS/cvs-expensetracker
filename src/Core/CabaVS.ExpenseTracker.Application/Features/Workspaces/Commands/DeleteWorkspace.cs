@@ -17,10 +17,10 @@ internal sealed class DeleteWorkspaceCommandHandler(
     {
         var userId = await currentUserAccessor.GetId(cancellationToken);
 
-        var workspace = await unitOfWork.WorkspaceRepository.GetById(request.WorkspaceId, userId, cancellationToken);
+        var workspace = await unitOfWork.BuildWorkspaceRepository().GetById(request.WorkspaceId, userId, cancellationToken);
         if (workspace is null) return WorkspaceErrors.NotFoundById(request.WorkspaceId);
 
-        await unitOfWork.WorkspaceRepository.Delete(workspace, userId, cancellationToken);
+        await unitOfWork.BuildWorkspaceRepository().Delete(workspace, userId, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
         
         return Result.Success();

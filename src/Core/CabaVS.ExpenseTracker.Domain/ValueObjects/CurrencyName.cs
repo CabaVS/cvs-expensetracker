@@ -22,9 +22,9 @@ public sealed class CurrencyName : ValueObject
 
     public static Result<CurrencyName> Create(string value)
     {
-        if (string.IsNullOrWhiteSpace(value)) return CurrencyErrors.NameIsNullOrWhitespace();
-        if (value.Length > MaxLength) return CurrencyErrors.NameTooLong(value);
-        
-        return new CurrencyName(value);
+        return Result<string>.Success(value)
+            .EnsureStringNotNullOrWhitespace(CurrencyErrors.NameIsNullOrWhitespace())
+            .EnsureStringNotTooLong(MaxLength, CurrencyErrors.NameTooLong(value))
+            .Map(x => new CurrencyName(x));
     }
 }

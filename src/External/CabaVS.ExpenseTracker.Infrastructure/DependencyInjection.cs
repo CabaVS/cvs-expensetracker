@@ -1,9 +1,7 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence;
-using CabaVS.ExpenseTracker.Infrastructure.Persistence.Converters;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
-using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,18 +18,15 @@ public static class DependencyInjection
             ServiceLifetime.Transient);
         
         serviceCollection.AddTransient<IUnitOfWork, UnitOfWork>();
-
-        serviceCollection.AddSingleton<SqlConnectionFactory>();
-        SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
         
-        serviceCollection.AddSingleton<IUserReadRepository, UserReadRepository>();
-        serviceCollection.AddSingleton<IWorkspaceReadRepository, WorkspaceReadRepository>();
-        serviceCollection.AddSingleton<ICurrencyReadRepository, CurrencyReadRepository>();
-        serviceCollection.AddSingleton<IBalanceReadRepository, BalanceReadRepository>();
-        serviceCollection.AddSingleton<IExpenseCategoryReadRepository, ExpenseCategoryReadRepository>();
-        serviceCollection.AddSingleton<IIncomeCategoryReadRepository, IncomeCategoryReadRepository>();
-        serviceCollection.AddSingleton<IExpenseTransactionReadRepository, ExpenseTransactionReadRepository>();
-        serviceCollection.AddSingleton<IIncomeTransactionReadRepository, IncomeTransactionReadRepository>();
+        serviceCollection.AddTransient<IUserReadRepository, UserReadRepository>();
+        serviceCollection.AddTransient<IWorkspaceReadRepository, WorkspaceReadRepository>();
+        serviceCollection.AddTransient<ICurrencyReadRepository, CurrencyReadRepository>();
+        serviceCollection.AddTransient<IBalanceReadRepository, BalanceReadRepository>();
+        serviceCollection.AddTransient<IExpenseCategoryReadRepository, ExpenseCategoryReadRepository>();
+        serviceCollection.AddTransient<IIncomeCategoryReadRepository, IncomeCategoryReadRepository>();
+        serviceCollection.AddTransient<IExpenseTransactionReadRepository, ExpenseTransactionReadRepository>();
+        serviceCollection.AddTransient<IIncomeTransactionReadRepository, IncomeTransactionReadRepository>();
         
         return serviceCollection;
     }

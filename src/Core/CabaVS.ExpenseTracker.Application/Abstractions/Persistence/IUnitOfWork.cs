@@ -5,12 +5,12 @@ namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
 public interface IUnitOfWork
 {
     Task SaveChanges(CancellationToken ct = default);
-    
-    ICurrencyRepository CurrencyRepository { get; }
-    IWorkspaceRepository WorkspaceRepository { get; }
-    IBalanceRepository BalanceRepository { get; }
-    IExpenseCategoryRepository ExpenseCategoryRepository { get; }
-    IIncomeCategoryRepository IncomeCategoryRepository { get; }
-    IExpenseTransactionRepository ExpenseTransactionRepository { get; }
-    IIncomeTransactionRepository IncomeTransactionRepository { get; }
+
+    ICurrencyRepository BuildCurrencyRepository();
+    IWorkspaceRepository BuildWorkspaceRepository();
+    IBalanceRepository BuildBalanceRepository();
+    IExpenseCategoryRepository BuildExpenseCategoryRepository();
+    IIncomeCategoryRepository BuildIncomeCategoryRepository();
+    IExpenseTransactionRepository BuildExpenseTransactionRepository();
+    IIncomeTransactionRepository BuildIncomeTransactionRepository();
 }

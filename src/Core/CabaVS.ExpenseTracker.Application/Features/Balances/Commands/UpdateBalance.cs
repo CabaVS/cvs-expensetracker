@@ -15,7 +15,7 @@ internal sealed class UpdateBalanceCommandHandler(IUnitOfWork unitOfWork)
 {
     public async Task<Result> Handle(UpdateBalanceCommand request, CancellationToken cancellationToken)
     {
-        var balanceRepository = unitOfWork.BalanceRepository;
+        var balanceRepository = unitOfWork.BuildBalanceRepository();
 
         var balance = await balanceRepository.GetById(request.BalanceId, request.WorkspaceId, cancellationToken);
         if (balance is null) return BalanceErrors.NotFoundById(request.BalanceId);

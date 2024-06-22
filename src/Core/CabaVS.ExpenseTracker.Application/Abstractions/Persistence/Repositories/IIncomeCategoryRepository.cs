@@ -6,4 +6,6 @@ public interface IIncomeCategoryRepository
 {
     Task<IncomeCategory?> GetById(Guid id, Guid workspaceId, CancellationToken ct = default);
     Task<Guid> Create(IncomeCategory incomeCategory, Guid workspaceId, CancellationToken ct = default);
+    Task Update(IncomeCategory incomeCategory, Guid workspaceId, CancellationToken ct = default);
+    Task Delete(IncomeCategory incomeCategory, Guid workspaceId, CancellationToken ct = default);
 }

@@ -19,6 +19,44 @@ internal sealed class ExpenseTransaction
     public decimal AmountInDestinationCurrency { get; set; }
 
     public string[] Tags { get; set; } = default!;
+
+    public DomainExpenseTransaction ToDomain()
+    {
+        return DomainExpenseTransaction
+            .Create(
+                Id,
+                Date,
+                Domain.Entities.Balance
+                    .Create(
+                        Source.Id,
+                        Source.Name,
+                        Source.Amount,
+                        Domain.Entities.Currency
+                            .Create(
+                                Source.Currency.Id,
+                                Source.Currency.Name,
+                                Source.Currency.Code,
+                                Source.Currency.Symbol)
+                            .Value)
+                    .Value,
+                Domain.Entities.ExpenseCategory
+                    .Create(
+                        Destination.Id,
+                        Destination.Name,
+                        Domain.Entities.Currency
+                            .Create(
+                                Destination.Currency.Id,
+                                Destination.Currency.Name,
+                                Destination.Currency.Code,
+                                Destination.Currency.Symbol)
+                            .Value)
+                    .Value,
+                AmountInSourceCurrency,
+                AmountInDestinationCurrency,
+                Tags,
+                false)
+            .Value;
+    }
     
     public static ExpenseTransaction FromDomain(DomainExpenseTransaction domain, Guid workspaceId)
     {

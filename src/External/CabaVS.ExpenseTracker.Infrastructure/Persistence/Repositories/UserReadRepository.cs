@@ -1,31 +1,24 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
-using Dapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 
-internal sealed class UserReadRepository(SqlConnectionFactory sqlConnectionFactory) : IUserReadRepository
+internal sealed class UserReadRepository(ApplicationDbContext dbContext) : IUserReadRepository
 {
     public async Task<bool> HasAccessToWorkspace(Guid userId, Guid workspaceId, CancellationToken ct = default)
     {
-        const string sql = """
-                           SELECT COUNT(1) FROM [dbo].[UserWorkspaces]
-                           WHERE [UserId] = @userId AND [WorkspaceId] = @workspaceId
-                           """;
-        
-        using var connection = sqlConnectionFactory.Create();
-        var isExists = await connection.ExecuteScalarAsync<bool>(sql, new { userId, workspaceId });
-        return isExists;
+        return await dbContext.UserWorkspaces
+            .Where(uw => uw.UserId == userId)
+            .Where(uw => uw.WorkspaceId == workspaceId)
+            .AnyAsync(ct);
     }
 
     public async Task<bool> HasAdminAccessToWorkspace(Guid userId, Guid workspaceId, CancellationToken ct = default)
     {
-        const string sql = """
-                           SELECT COUNT(1) FROM [dbo].[UserWorkspaces]
-                           WHERE [UserId] = @userId AND [WorkspaceId] = @workspaceId AND [IsAdmin] = 1
-                           """;
-        
-        using var connection = sqlConnectionFactory.Create();
-        var isExists = await connection.ExecuteScalarAsync<bool>(sql, new { userId, workspaceId });
-        return isExists;
+        return await dbContext.UserWorkspaces
+            .Where(uw => uw.UserId == userId)
+            .Where(uw => uw.WorkspaceId == workspaceId)
+            .Where(uw => uw.IsAdmin)
+            .AnyAsync(ct);
     }
 }

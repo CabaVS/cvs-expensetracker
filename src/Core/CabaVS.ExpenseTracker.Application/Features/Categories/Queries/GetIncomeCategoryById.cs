@@ -7,12 +7,11 @@ using MediatR;
 
 namespace CabaVS.ExpenseTracker.Application.Features.Categories.Queries;
 
-public sealed record GetIncomeCategoryByIdQuery(
-    Guid WorkspaceId,
-    Guid CategoryId) : IRequest<Result<IncomeCategoryModel>>, IWorkspaceBoundedRequest;
+public sealed record GetIncomeCategoryByIdQuery(Guid WorkspaceId, Guid CategoryId)
+    : IRequest<Result<IncomeCategoryModel>>, IWorkspaceBoundedRequest;
 
-internal sealed class GetIncomeCategoryByIdQueryHandler(
-    IIncomeCategoryReadRepository incomeCategoryReadRepository) : IRequestHandler<GetIncomeCategoryByIdQuery, Result<IncomeCategoryModel>>
+internal sealed class GetIncomeCategoryByIdQueryHandler(IIncomeCategoryReadRepository incomeCategoryReadRepository)
+    : IRequestHandler<GetIncomeCategoryByIdQuery, Result<IncomeCategoryModel>>
 {
     public async Task<Result<IncomeCategoryModel>> Handle(GetIncomeCategoryByIdQuery request, CancellationToken cancellationToken)
     {

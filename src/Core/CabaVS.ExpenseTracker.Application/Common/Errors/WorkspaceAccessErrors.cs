@@ -1,13 +1,11 @@
+using CabaVS.ExpenseTracker.Domain.Errors;
 using CabaVS.ExpenseTracker.Domain.Shared;
 
 namespace CabaVS.ExpenseTracker.Application.Common.Errors;
 
 public static class WorkspaceAccessErrors
 {
-    public static Error NoAccess(Guid workspaceId) =>
-        new(
-            "WorkspaceAccess.NoAccess", 
-            $"Workspace '{workspaceId}' doesn't exist or Current User has no access over it.");
+    public static Error NoAccess(Guid workspaceId) => WorkspaceErrors.NotFoundById(workspaceId);
     public static Error NotAdmin(Guid workspaceId) =>
         new(
             "WorkspaceAccess.NotAdmin", 

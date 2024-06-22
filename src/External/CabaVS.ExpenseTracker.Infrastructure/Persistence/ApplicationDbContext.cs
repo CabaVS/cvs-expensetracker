@@ -1,4 +1,5 @@
 using CabaVS.ExpenseTracker.Infrastructure.Persistence.Entities;
+using CabaVS.ExpenseTracker.Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
 
 namespace CabaVS.ExpenseTracker.Infrastructure.Persistence;
@@ -18,7 +19,12 @@ internal sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext
     public DbSet<ExpenseTransaction> ExpenseTransactions { get; set; }
     public DbSet<IncomeTransaction> IncomeTransactions { get; set; }
     public DbSet<TransferTransaction> TransferTransactions { get; set; }
-    
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(new TransactionsRemovalInterceptor());
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyMarker.Assembly);

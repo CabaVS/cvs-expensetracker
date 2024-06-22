@@ -22,9 +22,9 @@ public sealed class CategoryName : ValueObject
     
     public static Result<CategoryName> Create(string value)
     {
-        if (string.IsNullOrWhiteSpace(value)) return CategoryErrors.NameIsNullOrWhitespace();
-        if (value.Length > MaxLength) return CategoryErrors.NameTooLong(value);
-        
-        return new CategoryName(value);
+        return Result<string>.Success(value)
+            .EnsureStringNotNullOrWhitespace(CategoryErrors.NameIsNullOrWhitespace())
+            .EnsureStringNotTooLong(MaxLength, CategoryErrors.NameTooLong(value))
+            .Map(x => new CategoryName(x));
     }
 }

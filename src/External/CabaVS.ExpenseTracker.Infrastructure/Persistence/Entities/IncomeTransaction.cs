@@ -41,35 +41,43 @@ internal sealed class IncomeTransaction
 
     public DomainIncomeTransaction ToDomain()
     {
+        var currencyForIncomeCategory = Domain.Entities.Currency
+            .Create(
+                Source.Currency.Id,
+                Source.Currency.Name,
+                Source.Currency.Code,
+                Source.Currency.Symbol)
+            .Value;
+
+        var incomeCategory = Domain.Entities.IncomeCategory
+            .Create(
+                Source.Id,
+                Source.Name,
+                currencyForIncomeCategory)
+            .Value;
+
+        var currencyForBalance = Domain.Entities.Currency
+            .Create(
+                Destination.Currency.Id,
+                Destination.Currency.Name,
+                Destination.Currency.Code,
+                Destination.Currency.Symbol)
+            .Value;
+
+        var balance = Domain.Entities.Balance
+            .Create(
+                Destination.Id,
+                Destination.Name,
+                Destination.Amount,
+                currencyForBalance)
+            .Value;
+        
         return DomainIncomeTransaction
             .Create(
                 Id,
                 Date,
-                Domain.Entities.IncomeCategory
-                    .Create(
-                        Source.Id,
-                        Source.Name,
-                        Domain.Entities.Currency
-                            .Create(
-                                Source.Currency.Id,
-                                Source.Currency.Name,
-                                Source.Currency.Code,
-                                Source.Currency.Symbol)
-                            .Value)
-                    .Value,
-                Domain.Entities.Balance
-                    .Create(
-                        Destination.Id,
-                        Destination.Name,
-                        Destination.Amount,
-                        Domain.Entities.Currency
-                            .Create(
-                                Destination.Currency.Id,
-                                Destination.Currency.Name,
-                                Destination.Currency.Code,
-                                Destination.Currency.Symbol)
-                            .Value)
-                    .Value,
+                incomeCategory,
+                balance,
                 AmountInSourceCurrency,
                 AmountInDestinationCurrency,
                 Tags,

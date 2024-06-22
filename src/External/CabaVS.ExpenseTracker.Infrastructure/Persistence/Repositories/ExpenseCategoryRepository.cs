@@ -1,14 +1,13 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
-using ExpenseCategoryDomain = CabaVS.ExpenseTracker.Domain.Entities.ExpenseCategory;
+using DomainExpenseCategory = CabaVS.ExpenseTracker.Domain.Entities.ExpenseCategory;
 
 namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 
-internal sealed class ExpenseCategoryRepository(
-    ApplicationDbContext dbContext) : IExpenseCategoryRepository
+internal sealed class ExpenseCategoryRepository(ApplicationDbContext dbContext) : IExpenseCategoryRepository
 {
-    public async Task<ExpenseCategoryDomain?> GetById(Guid id, Guid workspaceId, CancellationToken ct = default)
+    public async Task<DomainExpenseCategory?> GetById(Guid id, Guid workspaceId, CancellationToken ct = default)
     {
         var entity = await dbContext.ExpenseCategories
             .AsNoTracking()
@@ -19,7 +18,7 @@ internal sealed class ExpenseCategoryRepository(
         return entity?.ToDomain();
     }
 
-    public async Task<Guid> Create(ExpenseCategoryDomain expenseCategory, Guid workspaceId, CancellationToken ct = default)
+    public async Task<Guid> Create(DomainExpenseCategory expenseCategory, Guid workspaceId, CancellationToken ct = default)
     {
         var entity = ExpenseCategory.FromDomain(expenseCategory, workspaceId);
 
@@ -28,11 +27,20 @@ internal sealed class ExpenseCategoryRepository(
         return added.Entity.Id;
     }
 
-    public Task Delete(ExpenseCategoryDomain expenseCategory, Guid workspaceId, CancellationToken ct = default)
+    public Task Update(DomainExpenseCategory expenseCategory, Guid workspaceId, CancellationToken ct = default)
     {
         var entity = ExpenseCategory.FromDomain(expenseCategory, workspaceId);
 
-        dbContext.ExpenseCategories.Remove(entity);
+        _ = dbContext.ExpenseCategories.Update(entity);
+
+        return Task.CompletedTask;
+    }
+
+    public Task Delete(DomainExpenseCategory expenseCategory, Guid workspaceId, CancellationToken ct = default)
+    {
+        var entity = ExpenseCategory.FromDomain(expenseCategory, workspaceId);
+
+        _ = dbContext.ExpenseCategories.Remove(entity);
 
         return Task.CompletedTask;
     }

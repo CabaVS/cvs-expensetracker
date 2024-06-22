@@ -20,7 +20,7 @@ internal sealed class CreateCurrencyCommandHandler(
             request.Symbol);
         if (currencyResult.IsFailure) return currencyResult.Error;
 
-        var id = await unitOfWork.CurrencyRepository.Create(currencyResult.Value, cancellationToken);
+        var id = await unitOfWork.BuildCurrencyRepository().Create(currencyResult.Value, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
 
         return id;

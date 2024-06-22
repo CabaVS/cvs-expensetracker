@@ -18,11 +18,11 @@ internal sealed class CreateExpenseTransactionCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateExpenseTransactionCommand request, CancellationToken cancellationToken)
     {
-        var balance = await unitOfWork.BalanceRepository.GetById(
+        var balance = await unitOfWork.BuildBalanceRepository().GetById(
             request.BalanceId, request.WorkspaceId, cancellationToken);
         if (balance is null) return BalanceErrors.NotFoundById(request.BalanceId);
 
-        var expenseCategory = await unitOfWork.ExpenseCategoryRepository.GetById(
+        var expenseCategory = await unitOfWork.BuildExpenseCategoryRepository().GetById(
             request.ExpenseCategoryId, request.WorkspaceId, cancellationToken);
         if (expenseCategory is null) return CategoryErrors.NotFoundById(request.ExpenseCategoryId);
 
@@ -37,7 +37,7 @@ internal sealed class CreateExpenseTransactionCommandHandler(
             true);
         if (expenseTransactionResult.IsFailure) return expenseTransactionResult.Error;
 
-        var added = await unitOfWork.ExpenseTransactionRepository.Create(
+        var added = await unitOfWork.BuildExpenseTransactionRepository().Create(
             expenseTransactionResult.Value, request.WorkspaceId, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
 

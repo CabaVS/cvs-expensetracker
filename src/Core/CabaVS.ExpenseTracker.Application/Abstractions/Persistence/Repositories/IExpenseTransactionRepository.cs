@@ -4,5 +4,8 @@ namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositorie
 
 public interface IExpenseTransactionRepository
 {
+    Task<ExpenseTransaction?> GetById(Guid expenseTransactionId, Guid workspaceId, CancellationToken ct = default);
     Task<Guid> Create(ExpenseTransaction expenseTransaction, Guid workspaceId, CancellationToken ct = default);
+    Task Update(ExpenseTransaction expenseTransaction, Guid workspaceId, CancellationToken ct = default);
+    Task Delete(ExpenseTransaction expenseTransaction, Guid workspaceId, CancellationToken ct = default);
 }

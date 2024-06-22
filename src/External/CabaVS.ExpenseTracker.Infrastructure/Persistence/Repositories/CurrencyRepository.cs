@@ -23,4 +23,22 @@ internal sealed class CurrencyRepository(ApplicationDbContext dbContext) : ICurr
 
         return added.Entity.Id;
     }
+
+    public Task Update(DomainCurrency currency, CancellationToken ct = default)
+    {
+        var entity = Currency.FromDomain(currency);
+
+        _ = dbContext.Currencies.Update(entity);
+
+        return Task.CompletedTask;
+    }
+
+    public Task Delete(DomainCurrency currency, CancellationToken ct = default)
+    {
+        var entity = Currency.FromDomain(currency);
+
+        _ = dbContext.Currencies.Remove(entity);
+
+        return Task.CompletedTask;
+    }
 }

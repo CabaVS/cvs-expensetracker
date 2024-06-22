@@ -1,8 +1,6 @@
 using CabaVS.ExpenseTracker.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using DomainBalance = CabaVS.ExpenseTracker.Domain.Entities.Balance;
-using DomainCurrency = CabaVS.ExpenseTracker.Domain.Entities.Currency;
 
 namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Entities;
 
@@ -18,18 +16,24 @@ internal sealed class Balance
     public Guid WorkspaceId { get; set; }
     public Workspace Workspace { get; set; } = default!;
     
-    public DomainBalance ToDomain()
+    public Domain.Entities.Balance ToDomain()
     {
-        var currency = DomainCurrency
-            .Create(Currency.Id, Currency.Name, Currency.Code, Currency.Symbol)
-            .Value;
-        
-        return DomainBalance
-            .Create(Id, Name, Amount, currency)
+        return Domain.Entities.Balance
+            .Create(
+                Id, 
+                Name, 
+                Amount, 
+                Domain.Entities.Currency
+                    .Create(
+                        Currency.Id, 
+                        Currency.Name, 
+                        Currency.Code, 
+                        Currency.Symbol)
+                    .Value)
             .Value;
     }
 
-    public static Balance FromDomain(DomainBalance balance, Guid workspaceId)
+    public static Balance FromDomain(Domain.Entities.Balance balance, Guid workspaceId)
     {
         return new Balance
         {
@@ -37,6 +41,7 @@ internal sealed class Balance
             Name = balance.Name.Value,
             Amount = balance.Amount,
             CurrencyId = balance.Currency.Id,
+            Currency = Currency.FromDomain(balance.Currency),
             WorkspaceId = workspaceId
         };
     }

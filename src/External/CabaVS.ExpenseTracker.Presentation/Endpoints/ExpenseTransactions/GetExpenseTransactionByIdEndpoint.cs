@@ -1,7 +1,4 @@
 using System.Net;
-using CabaVS.ExpenseTracker.Application.Features.Balances.Models;
-using CabaVS.ExpenseTracker.Application.Features.Categories.Models;
-using CabaVS.ExpenseTracker.Application.Features.Currencies.Models;
 using CabaVS.ExpenseTracker.Application.Features.Transactions.Models;
 using CabaVS.ExpenseTracker.Application.Features.Transactions.Queries;
 using CabaVS.ExpenseTracker.Domain.Shared;
@@ -62,28 +59,13 @@ internal sealed class GetExpenseTransactionByIdEndpointSummary : Summary<GetExpe
             example: new ExpenseTransactionModel(
                 new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
                 new DateOnly(2020, 10, 20),
-                new BalanceModel(
+                new BalanceUnderTransactionModel(
                     new Guid("E650E18C-0069-45B3-B56A-AB8C3BA8D8AA"),
-                    "Card USD",
-                    1234.56m)
-                {
-                    Currency = new CurrencyModel(
-                        new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
-                        "United States Dollar",
-                        "USD",
-                        "$")
-                },
+                    "Card USD"),
                 1234.56m,
-                new ExpenseCategoryModel(
+                new CategoryUnderTransactionModel(
                     new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
-                    "Transportation")
-                {
-                    Currency = new CurrencyModel(
-                        new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
-                        "United States Dollar",
-                        "USD",
-                        "$")
-                },
+                    "Transportation"),
                 1234.56m,
                 ["uber", "taxi"]));
         

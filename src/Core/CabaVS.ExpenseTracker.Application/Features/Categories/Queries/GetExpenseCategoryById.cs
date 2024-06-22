@@ -7,18 +7,17 @@ using MediatR;
 
 namespace CabaVS.ExpenseTracker.Application.Features.Categories.Queries;
 
-public sealed record GetExpenseCategoryByIdQuery(
-    Guid WorkspaceId,
-    Guid CategoryId) : IRequest<Result<ExpenseCategoryModel>>, IWorkspaceBoundedRequest;
+public sealed record GetExpenseCategoryByIdQuery(Guid WorkspaceId, Guid ExpenseCategoryId)
+    : IRequest<Result<ExpenseCategoryModel>>, IWorkspaceBoundedRequest;
 
-internal sealed class GetExpenseCategoryByIdQueryHandler(
-    IExpenseCategoryReadRepository expenseCategoryReadRepository) : IRequestHandler<GetExpenseCategoryByIdQuery, Result<ExpenseCategoryModel>>
+internal sealed class GetExpenseCategoryByIdQueryHandler(IExpenseCategoryReadRepository expenseCategoryReadRepository)
+    : IRequestHandler<GetExpenseCategoryByIdQuery, Result<ExpenseCategoryModel>>
 {
     public async Task<Result<ExpenseCategoryModel>> Handle(GetExpenseCategoryByIdQuery request, CancellationToken cancellationToken)
     {
         var model = await expenseCategoryReadRepository.GetById(
-            request.CategoryId, request.WorkspaceId, cancellationToken);
-        if (model is null) return CategoryErrors.NotFoundById(request.CategoryId);
+            request.ExpenseCategoryId, request.WorkspaceId, cancellationToken);
+        if (model is null) return CategoryErrors.NotFoundById(request.ExpenseCategoryId);
 
         return model;
     }

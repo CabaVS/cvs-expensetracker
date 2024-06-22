@@ -22,9 +22,9 @@ public sealed class WorkspaceName : ValueObject
 
     public static Result<WorkspaceName> Create(string value)
     {
-        if (string.IsNullOrWhiteSpace(value)) return WorkspaceErrors.NameIsNullOrWhitespace();
-        if (value.Length > MaxLength) return WorkspaceErrors.NameTooLong(value);
-        
-        return new WorkspaceName(value);
+        return Result<string>.Success(value)
+            .EnsureStringNotNullOrWhitespace(WorkspaceErrors.NameIsNullOrWhitespace())
+            .EnsureStringNotTooLong(MaxLength, WorkspaceErrors.NameTooLong(value))
+            .Map(x => new WorkspaceName(x));
     }
 }

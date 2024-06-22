@@ -59,14 +59,12 @@ internal sealed class GetExpenseCategoryByIdEndpointSummary : Summary<GetExpense
             "OK response with body.",
             example: new ExpenseCategoryModel(
                 new Guid("0D64417A-AC39-44C5-857A-01BECE08700D"),
-                "Household")
-            {
-                Currency = new CurrencyModel(
+                "Household",
+                new CurrencyModel(
                     new Guid("AE6320FD-AE15-44AE-B65D-18C6541042DD"),
                     "United States Dollar",
                     "USD",
-                    "$")
-            });
+                    "$")));
         
         Response(
             (int)HttpStatusCode.BadRequest,

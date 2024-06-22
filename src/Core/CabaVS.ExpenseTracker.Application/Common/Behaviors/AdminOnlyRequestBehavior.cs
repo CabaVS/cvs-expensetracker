@@ -1,5 +1,6 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
 using CabaVS.ExpenseTracker.Application.Common.Abstractions;
+using CabaVS.ExpenseTracker.Application.Common.Errors;
 using CabaVS.ExpenseTracker.Domain.Shared;
 using MediatR;
 
@@ -16,6 +17,6 @@ internal sealed class AdminOnlyRequestBehavior<TRequest, TResponse>(
         return currentUser.IsAdmin
             ? await next()
             : FailedResultFactory.Create<TResponse>(
-                new Error("Admin.PermissionsRequired", "Admin permissions required for this operation."));
+                AdminAccessErrors.NotAdmin());
     }
 }

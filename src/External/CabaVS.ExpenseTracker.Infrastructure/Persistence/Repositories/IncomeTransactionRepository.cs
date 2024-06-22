@@ -5,8 +5,7 @@ using DomainIncomeTransaction = CabaVS.ExpenseTracker.Domain.Entities.IncomeTran
 
 namespace CabaVS.ExpenseTracker.Infrastructure.Persistence.Repositories;
 
-internal sealed class IncomeTransactionRepository(ApplicationDbContext dbContext)
-    : IIncomeTransactionRepository
+internal sealed class IncomeTransactionRepository(ApplicationDbContext dbContext) : IIncomeTransactionRepository
 {
     public async Task<DomainIncomeTransaction?> GetById(Guid incomeTransactionId, Guid workspaceId, CancellationToken ct = default)
     {
@@ -38,9 +37,16 @@ internal sealed class IncomeTransactionRepository(ApplicationDbContext dbContext
     {
         var entity = IncomeTransaction.FromDomain(incomeTransaction, workspaceId);
 
-        dbContext.IncomeTransactions.Update(entity);
-        dbContext.IncomeCategories.Update(entity.Source);
-        dbContext.Balances.Update(entity.Destination);
+        _ = dbContext.IncomeTransactions.Update(entity);
+
+        return Task.CompletedTask;
+    }
+
+    public Task Delete(DomainIncomeTransaction incomeTransaction, Guid workspaceId, CancellationToken ct = default)
+    {
+        var entity = IncomeTransaction.FromDomain(incomeTransaction, workspaceId);
+
+        _ = dbContext.IncomeTransactions.Remove(entity);
 
         return Task.CompletedTask;
     }
