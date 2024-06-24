@@ -4,6 +4,7 @@ obj/
 
 # Rider IDE
 .idea/
+*.DotSettings.user
 
 # Application logs
 logs/

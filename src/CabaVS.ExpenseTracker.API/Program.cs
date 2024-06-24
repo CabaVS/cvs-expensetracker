@@ -25,3 +25,6 @@ app.UseFastEndpoints();
 app.UseSerilogRequestLogging();
 
 app.Run();
+
+// ReSharper disable once ClassNeverInstantiated.Global
+public partial class Program {}

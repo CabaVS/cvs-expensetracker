@@ -15,4 +15,8 @@
       <ProjectReference Include="..\..\Core\CabaVS.ExpenseTracker.Application\CabaVS.ExpenseTracker.Application.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="CabaVS.ExpenseTracker.IntegrationTests" />
+    </ItemGroup>
+
 </Project>

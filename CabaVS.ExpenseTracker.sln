@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CabaVS.ExpenseTracker.Infra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CabaVS.ExpenseTracker.API", "src\CabaVS.ExpenseTracker.API\CabaVS.ExpenseTracker.API.csproj", "{0437EFBC-8589-4800-BD50-1F54C267ECC6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CabaVS.ExpenseTracker.IntegrationTests", "tests\CabaVS.ExpenseTracker.IntegrationTests\CabaVS.ExpenseTracker.IntegrationTests.csproj", "{1C7B12B7-A5E1-4556-AF65-F489E4F4A271}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,7 @@ Global
 		{53AFCBBA-BCA5-4A61-AB5B-40A625274A80} = {9DB42229-31CE-4E75-8245-6E0617FF18FD}
 		{072ABBF3-E3C9-4320-BB50-4CF21818EE24} = {9DB42229-31CE-4E75-8245-6E0617FF18FD}
 		{0437EFBC-8589-4800-BD50-1F54C267ECC6} = {EBE6C230-59CC-4E4D-B1AC-1AB1893EFF89}
+		{1C7B12B7-A5E1-4556-AF65-F489E4F4A271} = {FBCC923E-5459-4801-B087-C54CB7B0A4E6}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6FA95B21-A35A-4298-886E-6105DD638725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -65,5 +68,9 @@ Global
 		{0437EFBC-8589-4800-BD50-1F54C267ECC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0437EFBC-8589-4800-BD50-1F54C267ECC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0437EFBC-8589-4800-BD50-1F54C267ECC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C7B12B7-A5E1-4556-AF65-F489E4F4A271}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C7B12B7-A5E1-4556-AF65-F489E4F4A271}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C7B12B7-A5E1-4556-AF65-F489E4F4A271}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C7B12B7-A5E1-4556-AF65-F489E4F4A271}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
