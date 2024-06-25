@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using CabaVS.ExpenseTracker.Application.Features.Workspaces.Models;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence;
+using CabaVS.ExpenseTracker.Infrastructure.Persistence.Entities;
 using CabaVS.ExpenseTracker.IntegrationTests.Common;
 using CabaVS.ExpenseTracker.Presentation.Endpoints.Workspaces;
 using FluentAssertions;
@@ -118,9 +119,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var content = ToJsonContent(request);
         
         // Assert database state (before request)
-        var workspace = await dbContext.Workspaces
-            .AsNoTracking()
-            .SingleAsync(w => w.Id == workspaceId);
+        var workspace = await FetchSingleWorkspace();
         workspace.Name.Should().NotBe(request.Name);
         
         // Execute request
@@ -134,9 +133,72 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         response.Should().BeEmpty();
         
         // Assert database state (after request)
-        workspace = await dbContext.Workspaces
-            .AsNoTracking()
-            .SingleAsync(w => w.Id == workspaceId);
+        workspace = await FetchSingleWorkspace();
         workspace.Name.Should().Be(request.Name);
+        
+        return;
+
+        Task<Workspace> FetchSingleWorkspace() =>
+            dbContext.Workspaces
+                .AsNoTracking()
+                .Where(w => w.Id == workspaceId)
+                .SingleAsync();
     }
+
+    [Fact, TestOrder(Order = 4)]
+    public async Task Delete_ShouldBe_Successful_UserIsAdminOnThatWorkspace()
+    {
+        // Ensure shared state
+        var userId = SharedState.Instance[StateKeys.AuthenticatedUser];
+        var workspaceId = SharedState.Instance[StateKeys.WorkspaceCreatedThroughEndpoint];
+        
+        // Get DbContext
+        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        
+        // Prepare request data
+        var url = $"api/workspaces/{workspaceId}";
+        
+        // Assert database state (before request)
+        var userWorkspaceExists = await UserWorkspaceExists();
+        userWorkspaceExists.Should().BeTrue();
+        
+        // Execute request
+        var endpointResponse = await Client.DeleteAsync(url); 
+        
+        // Assert response
+        endpointResponse.Should().BeSuccessful();
+        endpointResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var response = await endpointResponse.Content.ReadAsStringAsync();
+        response.Should().BeEmpty();
+        
+        // Assert database state (after request)
+        userWorkspaceExists = await UserWorkspaceExists();
+        userWorkspaceExists.Should().BeFalse();
+
+        var workspaceExists = await dbContext.Workspaces.AnyAsync(w => w.Id == workspaceId);
+        workspaceExists.Should().BeFalse();
+        
+        return;
+
+        Task<bool> UserWorkspaceExists() =>
+            dbContext.UserWorkspaces
+                .AsNoTracking()
+                .Where(uw => uw.WorkspaceId == workspaceId)
+                .Where(uw => uw.UserId == userId)
+                .Where(uw => uw.IsAdmin)
+                .AnyAsync();
+    }
+    
+    // TODO: Get All should return multiple Workspaces if multiple exists for User
+    // TODO: Get by Id should return a Workspace if User have access to it
+    // TODO: Get by Id should return an error if Workspace doesn't exists
+    // TODO: Get by Id should return an error if User doesn't belong to that Workspace
+    // TODO: Create should return an error if model is not valid
+    // TODO: Update should return an error if model is not valid
+    // TODO: Update should return an error if Workspace doesn't exists
+    // TODO: Update should return an error if User doesn't belong to that Workspace
+    // TODO: Delete should return an error if Workspace doesn't exists
+    // TODO: Delete should return an error if User doesn't belong to that Workspace
+    // TODO: Delete should delete all children entities of that Workspace (B, EC, IC, ET, IT, TT)
 }
