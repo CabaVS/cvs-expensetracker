@@ -13,6 +13,7 @@ public static class DependencyInjection
 
         serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(AdminOnlyRequestBehavior<,>));
         serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(WorkspaceBoundedRequestBehavior<,>));
+        serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(WorkspaceAdminBoundedRequestBehavior<,>));
 
         return serviceCollection;
     }

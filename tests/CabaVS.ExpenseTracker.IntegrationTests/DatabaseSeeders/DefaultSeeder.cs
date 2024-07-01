@@ -15,6 +15,8 @@ internal static class DefaultSeeder
         SeedWorkspaces();
         BindUsersToWorkspaces();
         
+        SeedCurrencies();
+        
         transaction.Commit();
         return;
 
@@ -61,6 +63,14 @@ internal static class DefaultSeeder
                 .ToArray();
             
             dbContext.UserWorkspaces.AddRange(userWorkspaces);
+            dbContext.SaveChanges();
+        }
+
+        void SeedCurrencies()
+        {
+            var currencies = new CurrencyFaker().Generate(3);
+
+            dbContext.Currencies.AddRange(currencies);
             dbContext.SaveChanges();
         }
     }

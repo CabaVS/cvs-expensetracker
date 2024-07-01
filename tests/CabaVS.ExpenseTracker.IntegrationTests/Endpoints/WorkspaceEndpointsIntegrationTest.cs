@@ -1,9 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
+using CabaVS.ExpenseTracker.Application.Common.Errors;
 using CabaVS.ExpenseTracker.Application.Features.Workspaces.Models;
+using CabaVS.ExpenseTracker.Domain.Shared;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence.Entities;
 using CabaVS.ExpenseTracker.IntegrationTests.Common;
+using CabaVS.ExpenseTracker.IntegrationTests.FakeData;
 using CabaVS.ExpenseTracker.IntegrationTests.Injected;
 using CabaVS.ExpenseTracker.Presentation.Endpoints.Workspaces;
 using FluentAssertions;
@@ -193,18 +196,262 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
                 .Where(uw => uw.IsAdmin)
                 .AnyAsync();
     }
+    
+    [Fact, TestOrder(Order = 5)]
+    public async Task GetAll_ShouldReturn_Collection_WhenUserHaveMultipleWorkspaces()
+    {
+        // Get DbContext
+        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        
+        // Prepare request data
+        const string url = "api/workspaces";
+        
+        // Change data directly through database
+        var generatedWorkspaces = new WorkspaceFaker()
+            .Generate(2)
+            .Select((x, i) =>
+            {
+                x.UserWorkspaces =
+                [
+                    new UserWorkspace
+                    {
+                        WorkspaceId = x.Id,
+                        UserId = CurrentUserAccessorInjected.AuthorizedUser.Id,
+                        IsAdmin = i % 2 == 0
+                    }
+                ];
+                return x;
+            })
+            .ToArray();
+        
+        await dbContext.Workspaces.AddRangeAsync(generatedWorkspaces);
+        await dbContext.SaveChangesAsync();
+        
+        // Assert database state (before request)
+        var numberOfWorkspacesInDatabase = await dbContext.Workspaces.CountAsync();
+        numberOfWorkspacesInDatabase.Should().BeGreaterThan(generatedWorkspaces.Length);
+        
+        // Execute request
+        var endpointResponse = await Client.GetAsync(url); 
+        
+        // Assert response
+        endpointResponse.Should().BeSuccessful();
+        endpointResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var response = await endpointResponse.Content.ReadFromJsonAsync<WorkspaceModel[]>();
+        response.Should().BeEquivalentTo(
+            generatedWorkspaces.Select(
+                x => new WorkspaceModel(x.Id, x.Name, x.UserWorkspaces.Single().IsAdmin)));
+    }
+    
+    [Fact, TestOrder(Order = 6)]
+    public async Task GetById_ShouldReturn_OK_WhenUserIsAdminOfWorkspace()
+    {
+        // Get DbContext
+        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        
+        // Ensure shared state
+        var workspace = await dbContext.Workspaces
+            .AsNoTracking()
+            .Where(w => w.UserWorkspaces
+                .Any(uw => uw.UserId == CurrentUserAccessorInjected.AuthorizedUser.Id && uw.IsAdmin))
+            .SingleOrDefaultAsync();
+        if (workspace is null)
+        {
+            throw new InvalidOperationException(
+                "Shared state is not valid. Unable to find previously created Workspace Id.");
+        }
+        
+        // Prepare request data
+        var url = $"api/workspaces/{workspace.Id}";
+        
+        // Execute request
+        var endpointResponse = await Client.GetAsync(url); 
+        
+        // Assert response
+        endpointResponse.Should().BeSuccessful();
+        endpointResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var response = await endpointResponse.Content.ReadFromJsonAsync<WorkspaceModel>();
+        response.Should().Be(new WorkspaceModel(workspace.Id, workspace.Name, true));
+    }
+    
+    [Fact, TestOrder(Order = 7)]
+    public async Task GetById_ShouldReturn_OK_WhenUserIsNotAdminOfWorkspace()
+    {
+        // Get DbContext
+        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        
+        // Ensure shared state
+        var workspace = await dbContext.Workspaces
+            .AsNoTracking()
+            .Where(w => w.UserWorkspaces
+                .Any(uw => uw.UserId == CurrentUserAccessorInjected.AuthorizedUser.Id && !uw.IsAdmin))
+            .SingleOrDefaultAsync();
+        if (workspace is null)
+        {
+            throw new InvalidOperationException(
+                "Shared state is not valid. Unable to find previously created Workspace Id.");
+        }
+        
+        // Prepare request data
+        var url = $"api/workspaces/{workspace.Id}";
+        
+        // Execute request
+        var endpointResponse = await Client.GetAsync(url); 
+        
+        // Assert response
+        endpointResponse.Should().BeSuccessful();
+        endpointResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var response = await endpointResponse.Content.ReadFromJsonAsync<WorkspaceModel>();
+        response.Should().Be(new WorkspaceModel(workspace.Id, workspace.Name, false));
+    }
+    
+    [Fact, TestOrder(Order = 8)]
+    public async Task GetById_ShouldReturn_Error_WhenUserDoesNotBelongToWorkspace()
+    {
+        // Get DbContext
+        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        
+        // Ensure shared state
+        var workspace = await dbContext.Workspaces
+            .AsNoTracking()
+            .Where(w => w.UserWorkspaces
+                .All(uw => uw.UserId != CurrentUserAccessorInjected.AuthorizedUser.Id))
+            .FirstOrDefaultAsync();
+        if (workspace is null)
+        {
+            throw new InvalidOperationException(
+                "Shared state is not valid. Unable to find previously created Workspace Id.");
+        }
+        
+        // Prepare request data
+        var url = $"api/workspaces/{workspace.Id}";
+        
+        // Execute request
+        var endpointResponse = await Client.GetAsync(url); 
+        
+        // Assert response
+        endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+
+        var response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
+        response.Should().Be(WorkspaceAccessErrors.NoAccess(workspace.Id));
+    }
+    
+    [Fact, TestOrder(Order = 9)]
+    public async Task Delete_ShouldNot_BeSuccessful_WhenUserIsNotAdminOverWorkspace()
+    {
+        // Get DbContext
+        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        
+        // Assert database state (before request)
+        var workspace = await dbContext.Workspaces
+            .AsNoTracking()
+            .Include(w => w.UserWorkspaces)
+            .Where(w => w.UserWorkspaces
+                .Any(uw => uw.UserId == CurrentUserAccessorInjected.AuthorizedUser.Id && !uw.IsAdmin))
+            .SingleOrDefaultAsync();
+        if (workspace is null) throw new InvalidOperationException();
+        
+        // Prepare request data
+        var url = $"api/workspaces/{workspace.Id}";
+        
+        // Execute request
+        var endpointResponse = await Client.DeleteAsync(url); 
+        
+        // Assert response
+        endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest);
+        
+        var response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
+        response.Should().Be(WorkspaceAccessErrors.NotAdmin(workspace.Id));
+        
+        // Assert database state (after request)
+        var userWorkspaceExists = await dbContext.UserWorkspaces
+            .AsNoTracking()
+            .Where(uw => uw.WorkspaceId == workspace.Id)
+            .AnyAsync();
+        userWorkspaceExists.Should().BeTrue();
+
+        var workspaceExists = await dbContext.Workspaces.AnyAsync(w => w.Id == workspace.Id);
+        workspaceExists.Should().BeTrue();
+    }
+    
+    [Fact, TestOrder(Order = 10)]
+    public async Task Delete_Should_BeSuccessful_And_RemoveAllChildrenItems_WhenUserIsAdminOverWorkspace()
+    {
+        // Get DbContext
+        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        
+        // Assert database state (before request)
+        var workspace = await dbContext.Workspaces
+            .AsNoTracking()
+            .Where(w => w.UserWorkspaces
+                .Any(uw => uw.UserId == CurrentUserAccessorInjected.AuthorizedUser.Id && uw.IsAdmin))
+            .SingleOrDefaultAsync();
+        if (workspace is null) throw new InvalidOperationException();
+
+        var currencyId = await dbContext.Currencies
+            .Select(c => c.Id)
+            .FirstOrDefaultAsync();
+        if (currencyId == default) throw new InvalidOperationException();
+        
+        // Change data directly through database
+        Balance balance = new BalanceFaker(workspace.Id, currencyId);
+        await dbContext.Balances.AddAsync(balance);
+        await dbContext.SaveChangesAsync();
+        
+        IncomeCategory incomeCategory = new IncomeCategoryFaker(workspace.Id, currencyId);
+        await dbContext.IncomeCategories.AddAsync(incomeCategory);
+        await dbContext.SaveChangesAsync();
+        
+        var incomeTransactions = new IncomeTransactionFaker(incomeCategory.Id, balance.Id).Generate(10);
+        await dbContext.IncomeTransactions.AddRangeAsync(incomeTransactions);
+        await dbContext.SaveChangesAsync();
+        
+        await AssertChildrenExistence(workspace.Id, true);
+        
+        // Prepare request data
+        var url = $"api/workspaces/{workspace.Id}";
+        
+        // Execute request
+        var endpointResponse = await Client.DeleteAsync(url); 
+        
+        // Assert response
+        endpointResponse.Should().BeSuccessful();
+        endpointResponse.Should().HaveStatusCode(HttpStatusCode.OK);
+        
+        var response = await endpointResponse.Content.ReadAsStringAsync();
+        response.Should().BeEmpty();
+        
+        // Assert database state (after request)
+        var userWorkspaceExists = await dbContext.UserWorkspaces
+            .AsNoTracking()
+            .Where(uw => uw.WorkspaceId == workspace.Id)
+            .AnyAsync();
+        userWorkspaceExists.Should().BeFalse();
+
+        var workspaceExists = await dbContext.Workspaces.AnyAsync(w => w.Id == workspace.Id);
+        workspaceExists.Should().BeFalse();
+
+        await AssertChildrenExistence(workspace.Id, false);
+
+        return;
+
+        async Task AssertChildrenExistence(Guid workspaceId, bool shouldExist)
+        {
+            var balancesExists = await dbContext.Balances.AnyAsync(b => b.WorkspaceId == workspaceId);
+            balancesExists.Should().Be(shouldExist);
+        
+            var incomeCategoriesExists = await dbContext.IncomeCategories.AnyAsync(ic => ic.WorkspaceId == workspaceId);
+            incomeCategoriesExists.Should().Be(shouldExist);
+        
+            var incomeTransactionsExists = await dbContext.IncomeTransactions.AnyAsync(it =>
+                it.Source.WorkspaceId == workspaceId || 
+                it.Destination.WorkspaceId == workspaceId);
+            incomeTransactionsExists.Should().Be(shouldExist);
+        }
+    }
 
     private static Guid? _createdWorkspaceId;
-
-    // TODO: Get All should return multiple Workspaces if multiple exists for User
-    // TODO: Get by Id should return a Workspace if User have access to it
-    // TODO: Get by Id should return an error if Workspace doesn't exists
-    // TODO: Get by Id should return an error if User doesn't belong to that Workspace
-    // TODO: Create should return an error if model is not valid
-    // TODO: Update should return an error if model is not valid
-    // TODO: Update should return an error if Workspace doesn't exists
-    // TODO: Update should return an error if User doesn't belong to that Workspace
-    // TODO: Delete should return an error if Workspace doesn't exists
-    // TODO: Delete should return an error if User doesn't belong to that Workspace
-    // TODO: Delete should delete all children entities of that Workspace (B, EC, IC, ET, IT, TT)
 }
