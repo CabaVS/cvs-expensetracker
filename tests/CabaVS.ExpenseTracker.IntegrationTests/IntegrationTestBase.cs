@@ -2,8 +2,6 @@ using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence;
-using CabaVS.ExpenseTracker.IntegrationTests.DatabaseSeeders;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
@@ -13,12 +11,10 @@ namespace CabaVS.ExpenseTracker.IntegrationTests;
 [TestCaseOrderer(
     ordererTypeName: "CabaVS.ExpenseTracker.IntegrationTests.Common.TestCaseOrderer",
     ordererAssemblyName: "CabaVS.ExpenseTracker.IntegrationTests")]
-public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebAppFactory>, IAsyncLifetime
+public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebAppFactory>, IDisposable
 {
-    private static readonly object Lock = new();
     private static readonly JsonSerializerOptions JsonSerializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-    private static bool _dbSeeded;
-    
+
     private readonly IServiceScope _scope;
     
     protected readonly HttpClient Client;
@@ -32,22 +28,8 @@ public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebAppF
         Client = factory.CreateClient();
         
         _scope = factory.Services.CreateScope();
-        var dbContext = _scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-        if (!_dbSeeded)
-        {
-            lock (Lock)
-            {
-                if (!_dbSeeded)
-                {
-                    dbContext.Database.Migrate();
-                    DefaultSeeder.Seed(dbContext);
-                    _dbSeeded = true;
-                }
-            }
-        }
-
-        DbContext = dbContext;
+        
+        DbContext = _scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     }
 
     protected static StringContent ToJsonContent<T>(T obj)
@@ -56,11 +38,12 @@ public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebAppF
         return new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
     }
 
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    public Task DisposeAsync()
+    public void Dispose()
     {
+        Client.Dispose();
+        
         _scope.Dispose();
-        return Task.CompletedTask;
+        
+        GC.SuppressFinalize(this);
     }
 }

@@ -1,6 +1,7 @@
 using CabaVS.ExpenseTracker.Infrastructure.Persistence;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence.Entities;
-using CabaVS.ExpenseTracker.IntegrationTests.Common;
+using CabaVS.ExpenseTracker.IntegrationTests.FakeData;
+using CabaVS.ExpenseTracker.IntegrationTests.Injected;
 
 namespace CabaVS.ExpenseTracker.IntegrationTests.DatabaseSeeders;
 
@@ -8,23 +9,19 @@ internal static class DefaultSeeder
 {
     public static void Seed(ApplicationDbContext dbContext)
     {
+        using var transaction = dbContext.Database.BeginTransaction();
+
         SeedUsers();
         SeedWorkspaces();
         BindUsersToWorkspaces();
+        
+        transaction.Commit();
         return;
 
         void SeedUsers()
         {
-            var authenticatedUser = new User { Id = SharedState.Instance[StateKeys.AuthenticatedUser] };
-            dbContext.Users.Add(authenticatedUser);
-
-            var users = Enumerable.Range(1, 4)
-                .Select(x =>
-                {
-                    var user = new User { Id = Guid.NewGuid() };
-                    SharedState.Instance.Add($"User_{x}", user.Id);
-                    return user;
-                });
+            var users = new UserFaker().Generate(4);
+            users.Add(new UserFaker(CurrentUserAccessorInjected.AuthorizedUser.Id));
             
             dbContext.Users.AddRange(users);
             dbContext.SaveChanges();
@@ -32,18 +29,7 @@ internal static class DefaultSeeder
 
         void SeedWorkspaces()
         {
-            var workspaces = Enumerable.Range(1, 8)
-                .Select(x =>
-                {
-                    var workspace = new Workspace
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = $"Workspace {x}"
-                    };
-                    
-                    SharedState.Instance.Add($"Workspace_{x}", workspace.Id);
-                    return workspace;
-                });
+            var workspaces = new WorkspaceFaker().Generate(8);
             
             dbContext.Workspaces.AddRange(workspaces);
             dbContext.SaveChanges();
@@ -51,27 +37,31 @@ internal static class DefaultSeeder
 
         void BindUsersToWorkspaces()
         {
-            var userWorkspaces = Enumerable.Range(1, 4)
-                .SelectMany(x => new UserWorkspace[]
-                {
-                    new()
+            var usersToBind = dbContext.Users
+                .Where(u => u.Id != CurrentUserAccessorInjected.AuthorizedUser.Id)
+                .Select(u => u.Id)
+                .ToArray();
+            var workspacesToBind = dbContext.Workspaces
+                .Select(w => w.Id)
+                .ToArray();
+
+            if (usersToBind.Length == 0 || workspacesToBind.Length == 0)
+                throw new InvalidOperationException("Users or Workspaces not found.");
+            if (workspacesToBind.Length / usersToBind.Length != 2)
+                throw new InvalidOperationException("Number of Workspaces should be twice as number of Users.");
+
+            var userWorkspaces = usersToBind
+                .Select((u, i) =>
+                    new UserWorkspace[]
                     {
-                        UserId = SharedState.Instance[$"User_{x}"],
-                        WorkspaceId = SharedState.Instance[$"Workspace_{x * 2 - 1}"],
-                        IsAdmin = false
-                    },
-                    new()
-                    {
-                        UserId = SharedState.Instance[$"User_{x}"],
-                        WorkspaceId = SharedState.Instance[$"Workspace_{x * 2}"],
-                        IsAdmin = true
-                    }
-                });
+                        new() { UserId = u, WorkspaceId = workspacesToBind[i], IsAdmin = true },
+                        new() { UserId = u, WorkspaceId = workspacesToBind[i + usersToBind.Length], IsAdmin = false }
+                    })
+                .SelectMany(x => x)
+                .ToArray();
             
             dbContext.UserWorkspaces.AddRange(userWorkspaces);
             dbContext.SaveChanges();
         }
     }
-
-    
 }

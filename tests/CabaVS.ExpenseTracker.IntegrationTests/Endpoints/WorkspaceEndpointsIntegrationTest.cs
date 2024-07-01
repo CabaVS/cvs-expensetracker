@@ -4,6 +4,7 @@ using CabaVS.ExpenseTracker.Application.Features.Workspaces.Models;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence.Entities;
 using CabaVS.ExpenseTracker.IntegrationTests.Common;
+using CabaVS.ExpenseTracker.IntegrationTests.Injected;
 using CabaVS.ExpenseTracker.Presentation.Endpoints.Workspaces;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,8 @@ using Microsoft.Net.Http.Headers;
 
 namespace CabaVS.ExpenseTracker.IntegrationTests.Endpoints;
 
-public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFactory factory) : IntegrationTestBase(factory)
+public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFactory factory)
+    : IntegrationTestBase(factory)
 {
     [Fact, TestOrder(Order = 1)]
     public async Task GetAll_ShouldReturn_EmptyArray_WhenUserIsNotPartOfAnyWorkspace()
@@ -44,10 +46,10 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
 
         // Prepare request data
+        const string url = "api/workspaces";
+        
         var request = new CreateWorkspaceEndpoint.RequestModel(
             "My Workspace");
-
-        const string url = "api/workspaces";
         var content = ToJsonContent(request);
         
         // Assert database state (before request)
@@ -73,7 +75,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
 
         var createdUserWorkspaces = await dbContext.UserWorkspaces
             .AsNoTracking()
-            .Where(uw => uw.UserId == SharedState.Instance[StateKeys.AuthenticatedUser])
+            .Where(uw => uw.UserId == CurrentUserAccessorInjected.AuthorizedUser.Id)
             .ToArrayAsync();
         createdUserWorkspaces.Should().HaveCount(1);
 
@@ -88,20 +90,16 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
 
         var workspace = createdWorkspaces.Single();
         workspace.Name.Should().Be(request.Name);
-        
+
         // Change shared state
-        SharedState.Instance.Add(
-            StateKeys.WorkspaceCreatedThroughEndpoint,
-            createdWorkspaces.Single().Id);
+        _createdWorkspaceId = createdWorkspaces.Single().Id;
     }
 
     [Fact, TestOrder(Order = 3)]
     public async Task Update_ShouldBe_Successful_WhenModelIsValid()
     {
         // Ensure shared state
-        if (!SharedState.Instance.TryGetValue(
-                StateKeys.WorkspaceCreatedThroughEndpoint,
-                out var workspaceId))
+        if (_createdWorkspaceId is not { } workspaceId)
         {
             throw new InvalidOperationException(
                 "Shared state is not valid. Unable to find previously created Workspace Id.");
@@ -111,11 +109,11 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
 
         // Prepare request data
+        var url = $"api/workspaces/{workspaceId}";
+        
         var request = new UpdateWorkspaceEndpoint.RequestModel(
             Guid.Empty,
             "My Workspace UPD.");
-        
-        var url = $"api/workspaces/{workspaceId}";
         var content = ToJsonContent(request);
         
         // Assert database state (before request)
@@ -149,8 +147,11 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
     public async Task Delete_ShouldBe_Successful_UserIsAdminOnThatWorkspace()
     {
         // Ensure shared state
-        var userId = SharedState.Instance[StateKeys.AuthenticatedUser];
-        var workspaceId = SharedState.Instance[StateKeys.WorkspaceCreatedThroughEndpoint];
+        if (_createdWorkspaceId is not { } workspaceId)
+        {
+            throw new InvalidOperationException(
+                "Shared state is not valid. Unable to find previously created Workspace Id.");
+        }
         
         // Get DbContext
         var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
@@ -179,17 +180,22 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var workspaceExists = await dbContext.Workspaces.AnyAsync(w => w.Id == workspaceId);
         workspaceExists.Should().BeFalse();
         
+        // Change shared state
+        _createdWorkspaceId = null;
+        
         return;
 
         Task<bool> UserWorkspaceExists() =>
             dbContext.UserWorkspaces
                 .AsNoTracking()
                 .Where(uw => uw.WorkspaceId == workspaceId)
-                .Where(uw => uw.UserId == userId)
+                .Where(uw => uw.UserId == CurrentUserAccessorInjected.AuthorizedUser.Id)
                 .Where(uw => uw.IsAdmin)
                 .AnyAsync();
     }
-    
+
+    private static Guid? _createdWorkspaceId;
+
     // TODO: Get All should return multiple Workspaces if multiple exists for User
     // TODO: Get by Id should return a Workspace if User have access to it
     // TODO: Get by Id should return an error if Workspace doesn't exists
