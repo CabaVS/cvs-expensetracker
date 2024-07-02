@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+env:
+  DOTNET_VERSION: "8.0.6"
+  PATH_SLN: "./CabaVS.ExpenseTracker.sln"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore ${{ env.PATH_SLN }}
+
+      - name: Build
+        run: dotnet build ${{ env.PATH_SLN }} --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test ${{ env.PATH_SLN }} --configuration Release --no-restore --no-build
