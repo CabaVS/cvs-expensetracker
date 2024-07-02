@@ -7,8 +7,9 @@ on:
       - master
 
 env:
-  DOTNET_VERSION: "8.0.6"
+  DOTNET_VERSION: "8.x"
   PATH_SLN: "./CabaVS.ExpenseTracker.sln"
+  PATH_INTEGRATION_TESTS: "./tests/CabaVS.ExpenseTracker.IntegrationTests/CabaVS.ExpenseTracker.IntegrationTests.csproj"
 
 jobs:
   build:
@@ -28,5 +29,5 @@ jobs:
       - name: Build
         run: dotnet build ${{ env.PATH_SLN }} --configuration Release --no-restore
 
-      - name: Test
-        run: dotnet test ${{ env.PATH_SLN }} --configuration Release --no-restore --no-build
+      - name: Integration Tests
+        run: dotnet test ${{ env.PATH_INTEGRATION_TESTS }} --configuration Release --no-restore --no-build
