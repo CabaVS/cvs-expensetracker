@@ -29,6 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{E2585C28
 	ProjectSection(SolutionItems) = preProject
 		.azure\main.bicep = .azure\main.bicep
 		.azure\main.parameters.dev.json = .azure\main.parameters.dev.json
+		.azure\main.parameters.prod.json = .azure\main.parameters.prod.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git", "Git", "{E45DAFA2-06C4-461D-97D8-53C20D327256}"
