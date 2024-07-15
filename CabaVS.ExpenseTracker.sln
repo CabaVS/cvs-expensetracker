@@ -4,11 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{89F57B97-C9B9-4A14-B610-D385496FF383}"
-	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
-		cvs-efcore-migrations.ps1 = cvs-efcore-migrations.ps1
-		.github\workflows\main.yml = .github\workflows\main.yml
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EBE6C230-59CC-4E4D-B1AC-1AB1893EFF89}"
 EndProject
@@ -30,6 +25,26 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CabaVS.ExpenseTracker.API",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CabaVS.ExpenseTracker.IntegrationTests", "tests\CabaVS.ExpenseTracker.IntegrationTests\CabaVS.ExpenseTracker.IntegrationTests.csproj", "{1C7B12B7-A5E1-4556-AF65-F489E4F4A271}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{E2585C28-1F47-4478-8423-7A1751B8753D}"
+	ProjectSection(SolutionItems) = preProject
+		.azure\main.bicep = .azure\main.bicep
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git", "Git", "{E45DAFA2-06C4-461D-97D8-53C20D327256}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub", "GitHub", "{BA596B69-A53A-43D5-94DA-ACBFFA0D535E}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\main.yml = .github\workflows\main.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Custom Scripts", "Custom Scripts", "{8B9DAC6D-2528-4AD9-ADFA-7ABD85BFA0C3}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\cvs-efcore-migrations.ps1 = scripts\cvs-efcore-migrations.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +62,10 @@ Global
 		{072ABBF3-E3C9-4320-BB50-4CF21818EE24} = {9DB42229-31CE-4E75-8245-6E0617FF18FD}
 		{0437EFBC-8589-4800-BD50-1F54C267ECC6} = {EBE6C230-59CC-4E4D-B1AC-1AB1893EFF89}
 		{1C7B12B7-A5E1-4556-AF65-F489E4F4A271} = {FBCC923E-5459-4801-B087-C54CB7B0A4E6}
+		{E2585C28-1F47-4478-8423-7A1751B8753D} = {89F57B97-C9B9-4A14-B610-D385496FF383}
+		{E45DAFA2-06C4-461D-97D8-53C20D327256} = {89F57B97-C9B9-4A14-B610-D385496FF383}
+		{BA596B69-A53A-43D5-94DA-ACBFFA0D535E} = {89F57B97-C9B9-4A14-B610-D385496FF383}
+		{8B9DAC6D-2528-4AD9-ADFA-7ABD85BFA0C3} = {89F57B97-C9B9-4A14-B610-D385496FF383}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6FA95B21-A35A-4298-886E-6105DD638725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
