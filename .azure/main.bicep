@@ -2,13 +2,11 @@
 @allowed(['dev', 'prod'])
 param environmentName string = 'dev'
 
-@description('The Azure region into which the resources should be deployed.')
 param location string = resourceGroup().location
-
 param appServicePlanSku string = 'F1'
 param linuxFxVersion string
 
-var solutionName = 'cvs-expensetracker'
+var solutionName = 'cvs-et'
 
 var appServicePlanName = '${solutionName}-asp-${environmentName}'
 var webAppBackendName = '${solutionName}-backend-app-${environmentName}'
