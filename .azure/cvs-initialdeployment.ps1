@@ -13,7 +13,7 @@ $kvName = "$solutionName-kv-$environment"
 
 Write-Host "Creating a RG and Azure Key Vault..."
 New-AzResourceGroup -Name $rgName -Location $loc
-New-AzKeyVault -VaultName $kvName -ResourceGroupName $rgName -Location $loc
+New-AzKeyVault -VaultName $kvName -ResourceGroupName $rgName -Location $loc -EnabledForTemplateDeployment
 
 Write-Host "Allowing access to Azure Key Vault for current user..."
 $currentSubscriptionId = (Get-AzContext).Subscription.Id
@@ -23,13 +23,9 @@ New-AzRoleAssignment -ObjectId $currentUserId -RoleDefinitionName "Key Vault Adm
 Write-Host "Waiting for 10 seconds..."
 Start-Sleep -Seconds 10
 
-Write-Host "Generating DB user..."
-$randomString = -join ((65..90) + (97..122) | Get-Random -Count 10 | ForEach-Object { [char]$_ })
-$sqluser = "cvs-dbuser-$randomString"
-
-Write-Host "Generating DB password..."
-$passwordLength = 30
-$sqlpassword = -join ((65..90) + (97..122) | Get-Random -Count $passwordLength | ForEach-Object { [char]$_ })
+Write-Host "Generating DB user and DB password..."
+$sqluser = "cvs-dbuser-" + (-join ((65..90) + (97..122) | Get-Random -Count 10 | ForEach-Object { [char]$_ }))
+$sqlpassword = -join ([guid]::NewGuid().ToString().ToCharArray() | Sort-Object { Get-Random })
 
 Write-Host "Inserting generated secrets into Azure Key Vault..."
 $sqluserSecure = ConvertTo-SecureString $sqluser -AsPlainText -Force
