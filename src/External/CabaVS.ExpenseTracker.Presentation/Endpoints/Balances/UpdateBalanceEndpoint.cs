@@ -17,7 +17,6 @@ internal sealed class UpdateBalanceEndpoint(ISender sender)
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Put("api/workspaces/{workspaceId:guid}/balances/{balanceId}");
         Options(x =>
         {

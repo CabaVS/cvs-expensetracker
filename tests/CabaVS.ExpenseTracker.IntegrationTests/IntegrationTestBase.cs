@@ -2,6 +2,8 @@ using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using CabaVS.ExpenseTracker.Infrastructure.Persistence;
+using CabaVS.ExpenseTracker.Presentation.Auth;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
@@ -25,9 +27,11 @@ public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebAppF
     
     protected IntegrationTestBase(IntegrationTestWebAppFactory factory)
     {
-        Client = factory.CreateClient();
-        
         _scope = factory.Services.CreateScope();
+        var configuration = _scope.ServiceProvider.GetRequiredService<IConfiguration>();
+        
+        Client = factory.CreateClient();
+        Client.DefaultRequestHeaders.Add(ApiKeyAuth.HeaderName, configuration["Auth:ApiKey"]);
         
         DbContext = _scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     }

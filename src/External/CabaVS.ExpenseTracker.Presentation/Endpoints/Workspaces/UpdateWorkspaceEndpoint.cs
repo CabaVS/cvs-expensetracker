@@ -15,7 +15,6 @@ internal sealed class UpdateWorkspaceEndpoint(
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Put("api/workspaces/{workspaceId:guid}");
         Options(x =>
         {

@@ -18,7 +18,6 @@ internal sealed class GetAllIncomeTransactionsEndpoint(ISender sender)
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Get("api/workspaces/{workspaceId:guid}/income-transactions");
         Options(x =>
         {

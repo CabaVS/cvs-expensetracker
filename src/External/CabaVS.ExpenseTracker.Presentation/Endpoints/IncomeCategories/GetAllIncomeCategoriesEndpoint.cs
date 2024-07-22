@@ -18,7 +18,6 @@ internal sealed class GetAllIncomeCategoriesEndpoint(ISender sender) : Endpoint<
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Get("api/workspaces/{workspaceId:guid}/income-categories");
         Options(x =>
         {

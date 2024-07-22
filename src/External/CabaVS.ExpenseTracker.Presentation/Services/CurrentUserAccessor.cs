@@ -1,17 +1,20 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
+using Microsoft.AspNetCore.Http;
 
 namespace CabaVS.ExpenseTracker.Presentation.Services;
 
-internal sealed class CurrentUserAccessor : ICurrentUserAccessor
+internal sealed class CurrentUserAccessor(IHttpContextAccessor httpContextAccessor) : ICurrentUserAccessor
 {
     public Task<AuthorizedUserModel> Get(CancellationToken ct = default)
     {
         // TODO: Implement actual logic instead of hardcoded model
+        var claims = httpContextAccessor.HttpContext!.User.Claims.ToArray();
+        
         return Task.FromResult(
             new AuthorizedUserModel(
-                new Guid("59327D2E-2829-43CC-9A9F-4D2B1BDC271A"),
-                "Test User",
-                true));
+                Guid.Parse(claims.Single(x => x.Type == "UserId").Value),
+                claims.Single(x => x.Type == "FullName").Value,
+                bool.Parse(claims.Single(x => x.Type == "IsAdmin").Value)));
     }
 
     public async Task<Guid> GetId(CancellationToken ct = default) => (await Get(ct)).Id;

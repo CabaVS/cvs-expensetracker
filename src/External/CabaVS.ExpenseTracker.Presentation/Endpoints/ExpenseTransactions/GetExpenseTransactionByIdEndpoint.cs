@@ -18,7 +18,6 @@ internal sealed class GetExpenseTransactionByIdEndpoint(ISender sender)
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Get("api/workspaces/{workspaceId:guid}/expense-transactions/{expenseTransactionId:guid}");
         Options(x =>
         {

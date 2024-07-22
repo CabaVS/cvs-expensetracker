@@ -19,7 +19,6 @@ internal sealed class GetExpenseCategoryByIdEndpoint(ISender sender)
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Get("api/workspaces/{workspaceId:guid}/expense-categories/{expenseCategoryId:guid}");
         Options(x =>
         {

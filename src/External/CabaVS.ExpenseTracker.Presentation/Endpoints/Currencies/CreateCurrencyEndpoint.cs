@@ -17,7 +17,7 @@ internal sealed class CreateCurrencyEndpoint(ISender sender)
 {
     public override void Configure()
     {
-        AllowAnonymous();
+        Policies("AdminOnly");
         Post("api/currencies");
         Options(x =>
         {

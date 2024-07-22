@@ -17,7 +17,6 @@ internal sealed class CreateBalanceEndpoint(ISender sender)
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Post("api/workspaces/{workspaceId:guid}/balances");
         Options(x =>
         {

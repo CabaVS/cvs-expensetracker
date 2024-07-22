@@ -16,7 +16,6 @@ internal sealed class CreateExpenseCategoryEndpoint(ISender sender) : Endpoint<
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Post("api/workspaces/{workspaceId:guid}/expense-categories");
         Options(x =>
         {

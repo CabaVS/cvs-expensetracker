@@ -16,7 +16,6 @@ internal sealed class CreateExpenseTransactionEndpoint(ISender sender) : Endpoin
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Post("api/workspaces/{workspaceId:guid}/expense-transactions");
         Options(x =>
         {

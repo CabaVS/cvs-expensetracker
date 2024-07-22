@@ -17,7 +17,6 @@ internal sealed class CreateWorkspaceEndpoint(ISender sender)
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Post("api/workspaces");
         Options(x =>
         {

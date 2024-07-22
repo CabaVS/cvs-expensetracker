@@ -15,7 +15,6 @@ internal sealed class DeleteWorkspaceEndpoint(
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Delete("api/workspaces/{workspaceId:guid}");
         Options(x =>
         {

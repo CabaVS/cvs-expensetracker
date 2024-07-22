@@ -15,7 +15,6 @@ internal sealed class DeleteExpenseCategoryEndpoint(ISender sender) : Endpoint<
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Delete("api/workspaces/{workspaceId:guid}/expense-categories/{expenseCategoryId:guid}");
         Options(x =>
         {

@@ -14,7 +14,6 @@ internal sealed class GetAllWorkspacesEndpoint(ISender sender) : EndpointWithout
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Get("api/workspaces");
         Options(x =>
         {

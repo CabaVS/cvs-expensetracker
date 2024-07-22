@@ -16,7 +16,6 @@ internal sealed class CreateIncomeCategoryEndpoint(ISender sender) : Endpoint<
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Post("api/workspaces/{workspaceId:guid}/income-categories");
         Options(x =>
         {

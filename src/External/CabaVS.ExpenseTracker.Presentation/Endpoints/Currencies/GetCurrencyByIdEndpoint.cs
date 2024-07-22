@@ -18,7 +18,6 @@ internal sealed class GetCurrencyByIdEndpoint(ISender sender)
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Get("api/currencies/{id:guid}");
         Options(x =>
         {

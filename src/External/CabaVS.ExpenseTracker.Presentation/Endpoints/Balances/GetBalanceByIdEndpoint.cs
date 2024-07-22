@@ -19,7 +19,6 @@ internal sealed class GetBalanceByIdEndpoint(ISender sender)
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Get("api/workspaces/{workspaceId:guid}/balances/{balanceId:guid}");
         Options(x =>
         {

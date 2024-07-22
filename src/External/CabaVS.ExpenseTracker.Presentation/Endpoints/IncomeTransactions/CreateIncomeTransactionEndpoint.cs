@@ -16,7 +16,6 @@ internal sealed class CreateIncomeTransactionEndpoint(ISender sender) : Endpoint
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Post("api/workspaces/{workspaceId:guid}/income-transactions");
         Options(x =>
         {

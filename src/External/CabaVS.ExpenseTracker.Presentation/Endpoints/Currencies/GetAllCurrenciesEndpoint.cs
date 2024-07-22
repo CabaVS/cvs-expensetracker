@@ -14,7 +14,6 @@ internal sealed class GetAllCurrenciesEndpoint(ISender sender) : EndpointWithout
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Get("api/currencies");
         Options(x =>
         {

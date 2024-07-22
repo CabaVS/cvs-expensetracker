@@ -19,7 +19,6 @@ internal sealed class GetIncomeCategoryByIdEndpoint(ISender sender)
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Get("api/workspaces/{workspaceId:guid}/income-categories/{incomeCategoryId:guid}");
         Options(x =>
         {
