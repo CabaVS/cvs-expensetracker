@@ -14,7 +14,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    environment: et-dev
     steps:
       - uses: actions/checkout@v3
 
@@ -30,4 +30,6 @@ jobs:
         run: dotnet build ${{ env.PATH_SLN }} --configuration Release --no-restore
 
       - name: Integration Tests
+        env:
+          Auth__ApiKey: ${{ secrets.APIKEY }}
         run: dotnet test ${{ env.PATH_INTEGRATION_TESTS }} --configuration Release --no-restore --no-build
