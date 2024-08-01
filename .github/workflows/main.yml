@@ -10,6 +10,8 @@ env:
   DOTNET_VERSION: "8.x"
   PATH_SLN: "./CabaVS.ExpenseTracker.sln"
   PATH_INTEGRATION_TESTS: "./tests/CabaVS.ExpenseTracker.IntegrationTests/CabaVS.ExpenseTracker.IntegrationTests.csproj"
+  PATH_BACKEND_PROJECT_PATH: './src/CabaVS.ExpenseTracker.API/CabaVS.ExpenseTracker.API.csproj'
+  PATH_BACKEND_OUTPUT: './built-backend'
 
 jobs:
   build:
@@ -17,6 +19,9 @@ jobs:
     environment: et-dev
     steps:
       - uses: actions/checkout@v4
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -33,3 +38,15 @@ jobs:
         env:
           Auth__ApiKey: ${{ secrets.APIKEY }}
         run: dotnet test ${{ env.PATH_INTEGRATION_TESTS }} --configuration Release --no-restore --no-build
+        
+      - name: Publish Backend
+        run: dotnet publish ${{ env.PATH_BACKEND_PROJECT_PATH }} --configuration Release --no-restore --no-build --output ${{ env.PATH_BACKEND_OUTPUT }}
+      
+      - name: Publish Backend to Azure
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          package: ${{ env.PATH_BACKEND_OUTPUT }}
+
+      - name: logout
+        run: az logout
