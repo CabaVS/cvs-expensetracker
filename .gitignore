@@ -4,3 +4,4 @@ obj/
 
 # Rider IDE
 .idea/
+*.sln.DotSettings.user

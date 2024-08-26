@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src-frontend", "src-fronten
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src-backend", "src-backend", "{3EB27D60-ABE7-49A3-8767-D1C10117241C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CabaVS.ExpenseTracker.Web", "src-frontend\CabaVS.ExpenseTracker.Web\CabaVS.ExpenseTracker.Web.csproj", "{5B1A1A9F-30C4-462A-9D83-F98008F9AB11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,5 +28,12 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A1432BFC-5A4C-4B31-949C-067D1D293044} = {2A46D7C7-6D4E-4A22-A79E-7802BFD29849}
+		{5B1A1A9F-30C4-462A-9D83-F98008F9AB11} = {BE448E06-B88F-42EA-9340-EDCDFA29EAC9}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B1A1A9F-30C4-462A-9D83-F98008F9AB11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B1A1A9F-30C4-462A-9D83-F98008F9AB11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B1A1A9F-30C4-462A-9D83-F98008F9AB11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B1A1A9F-30C4-462A-9D83-F98008F9AB11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
