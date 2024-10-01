@@ -1,4 +1,4 @@
-namespace CabaVS.ExpenseTracker.Web.Common;
+namespace CabaVS.ExpenseTracker.Web.Constants;
 
 internal static class ViewDataKeys
 {
