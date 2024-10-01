@@ -24,6 +24,15 @@
                         </li>
                     </ul>
                 </div>
+                @if (User.Identity?.IsAuthenticated != true)
+                {
+                    <a class="nav-link text-dark" asp-area="" asp-page="/Login">Home</a>
+                }
+                else
+                {
+                    <span>Current user: @User.Identity.Name</span>
+                    <a class="nav-link text-dark" asp-area="" asp-page="/Logout">Logout</a>
+                }
             </div>
         </nav>
     </header>
