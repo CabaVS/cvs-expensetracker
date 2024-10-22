@@ -1,0 +1,7 @@
+# .NET build folders
+bin/
+obj/
+
+# Rider IDE
+.idea/
+*.DotSettings.user
