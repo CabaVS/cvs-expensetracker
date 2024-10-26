@@ -1,0 +1,22 @@
+using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
+using CabaVS.ExpenseTracker.Application.Common.Errors;
+using CabaVS.ExpenseTracker.Application.Common.Requests;
+using CabaVS.ExpenseTracker.Domain.Shared;
+using MediatR;
+
+namespace CabaVS.ExpenseTracker.Application.Common.Behaviors;
+
+internal sealed class AuthenticatedUserRequestBehavior<TRequest, TResponse>(
+    ICurrentUserAccessor currentUserAccessor) : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IAuthenticatedUserRequest
+    where TResponse : Result
+{
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    {
+        var currentUser = await currentUserAccessor.GetCurrentUser(cancellationToken);
+        return currentUser is not null
+            ? await next()
+            : FailedResultFactory.Create<TResponse>(
+                UserAuthenticationErrors.NotAuthenticated());
+    }
+}
