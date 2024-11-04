@@ -9,7 +9,7 @@ var environment = builder.Environment;
 builder.Services
     .AddApplication()
     .AddPersistence(configuration)
-    .AddPresentation(environment);
+    .AddPresentation(configuration, environment);
 
 builder.WebHost
     .UseKestrel(options => options.AddServerHeader = false);

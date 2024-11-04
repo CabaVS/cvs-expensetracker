@@ -23,10 +23,6 @@ internal sealed class CreateWorkspaceEndpoint(ISender sender)
             x.WithName(nameof(CreateWorkspaceEndpoint));
             x.WithTags(EndpointTags.Workspaces);
         });
-
-#if DEBUG
-        AllowAnonymous();
-#endif
     }
     
     public override async Task<Results<CreatedAtRoute, BadRequest<Error>>> ExecuteAsync(

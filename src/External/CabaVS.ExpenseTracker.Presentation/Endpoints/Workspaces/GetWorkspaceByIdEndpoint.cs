@@ -24,10 +24,6 @@ internal sealed class GetWorkspaceByIdEndpoint(ISender sender)
             x.WithName(nameof(GetWorkspaceByIdEndpoint));
             x.WithTags(EndpointTags.Workspaces);
         });
-        
-#if DEBUG
-        AllowAnonymous();
-#endif
     }
 
     public override async Task<Results<Ok<WorkspaceModel>, BadRequest<Error>>> ExecuteAsync(
