@@ -20,6 +20,7 @@ public static class DependencyInjection
 
         services.AddTransient<IUnitOfWork, UnitOfWork>();
 
+        services.AddTransient<IUserReadRepository, UserReadRepository>();
         services.AddTransient<IWorkspaceReadRepository, WorkspaceReadRepository>();
 
         return services;

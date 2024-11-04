@@ -1,5 +1,6 @@
 using System.Text;
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
+using CabaVS.ExpenseTracker.Presentation.Middleware;
 using CabaVS.ExpenseTracker.Presentation.Services;
 using FastEndpoints;
 using FastEndpoints.Swagger;
@@ -45,6 +46,8 @@ public static class DependencyInjection
             });
         services.AddAuthorization();
 
+        services.AddScoped<UserCreationMiddleware>();
+
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
         
         // Further configuration is only for Development environment
@@ -71,6 +74,8 @@ public static class DependencyInjection
 
         app.UseAuthentication();
         app.UseAuthorization();
+
+        app.UseMiddleware<UserCreationMiddleware>();
 
         // Further configuration is only for Development environment
         if (!app.Environment.IsDevelopment()) return app;

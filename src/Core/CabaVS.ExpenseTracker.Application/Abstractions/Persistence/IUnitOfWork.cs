@@ -6,5 +6,6 @@ public interface IUnitOfWork
 {
     Task SaveChanges(CancellationToken cancellationToken = default);
     
+    IUserRepository BuildUserRepository();
     IWorkspaceRepository BuildWorkspaceRepository();
 }
