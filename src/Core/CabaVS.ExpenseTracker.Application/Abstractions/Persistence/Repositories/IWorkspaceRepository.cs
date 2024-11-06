@@ -4,7 +4,6 @@ namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositorie
 
 public interface IWorkspaceRepository
 {
-    Task<Workspace[]> GetAll(Guid userId, CancellationToken cancellationToken = default);
     Task<Workspace?> GetById(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default);
     
     Task<Guid> Create(Workspace workspace, CancellationToken cancellationToken = default);
@@ -13,4 +12,5 @@ public interface IWorkspaceRepository
     
     Task RegisterUser(Guid workspaceId, Guid userId, bool isAdmin, CancellationToken cancellationToken = default);
     Task UnregisterUser(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default);
+    Task MakeAnAdmin(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default);
 }

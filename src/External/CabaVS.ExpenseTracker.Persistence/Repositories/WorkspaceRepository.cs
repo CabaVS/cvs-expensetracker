@@ -6,23 +6,20 @@ namespace CabaVS.ExpenseTracker.Persistence.Repositories;
 
 internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWorkspaceRepository
 {
-    public async Task<Domain.Entities.Workspace[]> GetAll(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<Domain.Entities.Workspace?> GetById(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default)
     {
-        var workspaces = await dbContext.UserWorkspaces
+        var workspace = await dbContext.UserWorkspaces
             .AsNoTracking()
             .Where(uw => uw.UserId == userId)
             .Select(uw => uw.Workspace)
-            .ToArrayAsync(cancellationToken);
+            .SingleOrDefaultAsync(cancellationToken);
+        if (workspace is null)
+        {
+            return null;
+        }
 
-        var converted = workspaces
-            .Select(w => w.ConvertToDomain())
-            .ToArray();
+        var converted = workspace.ConvertToDomain();
         return converted;
-    }
-
-    public Task<Domain.Entities.Workspace?> GetById(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
     }
 
     public async Task<Guid> Create(Domain.Entities.Workspace workspace, CancellationToken cancellationToken = default)
@@ -35,12 +32,18 @@ internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWor
 
     public Task Update(Domain.Entities.Workspace workspace, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var converted = Workspace.ConvertFromDomain(workspace);
+        
+        _ = dbContext.Workspaces.Update(converted);
+        return Task.CompletedTask;
     }
 
     public Task Delete(Domain.Entities.Workspace workspace, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var converted = Workspace.ConvertFromDomain(workspace);
+        
+        _ = dbContext.Workspaces.Remove(converted);
+        return Task.CompletedTask;
     }
 
     public async Task RegisterUser(Guid workspaceId, Guid userId, bool isAdmin, CancellationToken cancellationToken = default)
@@ -55,8 +58,25 @@ internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWor
         await dbContext.UserWorkspaces.AddAsync(userWorkspace, cancellationToken);
     }
 
-    public Task UnregisterUser(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default)
+    public async Task UnregisterUser(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var userWorkspace = await dbContext.UserWorkspaces
+            .Where(uw => uw.WorkspaceId == workspaceId)
+            .Where(uw => uw.UserId == userId)
+            .SingleAsync(cancellationToken);
+        
+        dbContext.UserWorkspaces.Remove(userWorkspace);
+    }
+
+    public async Task MakeAnAdmin(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default)
+    {
+        var userWorkspace = await dbContext.UserWorkspaces
+            .Where(uw => uw.WorkspaceId == workspaceId)
+            .Where(uw => uw.UserId == userId)
+            .SingleAsync(cancellationToken);
+        
+        userWorkspace.IsAdmin = true;
+        
+        dbContext.UserWorkspaces.Update(userWorkspace);
     }
 }
