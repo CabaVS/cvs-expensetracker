@@ -79,4 +79,14 @@ internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWor
         
         dbContext.UserWorkspaces.Update(userWorkspace);
     }
+
+    public async Task<bool> IsAdmin(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default)
+    {
+        var isAdmin = await dbContext.UserWorkspaces
+            .Where(uw => uw.WorkspaceId == workspaceId)
+            .Where(uw => uw.UserId == userId)
+            .Where(uw => uw.IsAdmin)
+            .AnyAsync(cancellationToken);
+        return isAdmin;
+    }
 }
