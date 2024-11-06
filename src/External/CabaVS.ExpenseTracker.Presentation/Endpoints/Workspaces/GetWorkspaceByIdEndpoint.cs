@@ -45,7 +45,7 @@ internal sealed class GetWorkspaceByIdEndpointSummary : Summary<GetWorkspaceById
     public GetWorkspaceByIdEndpointSummary()
     {
         Summary = "Get Workspace by ID";
-        Description = "Gets a Workspace by provided ID.";
+        Description = "Gets a Workspace by provided ID. Ensures that User has access over this Workspace.";
 
         Params[nameof(GetWorkspaceByIdEndpoint.GetWorkspaceByIdEndpointRequest.WorkspaceId)] = 
             "Workspace ID to search by (simple GUID).";
