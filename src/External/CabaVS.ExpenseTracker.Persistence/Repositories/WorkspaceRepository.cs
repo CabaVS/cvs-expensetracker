@@ -10,15 +10,12 @@ internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWor
     {
         var workspace = await dbContext.UserWorkspaces
             .AsNoTracking()
+            .Where(uw => uw.WorkspaceId == workspaceId)
             .Where(uw => uw.UserId == userId)
             .Select(uw => uw.Workspace)
             .SingleOrDefaultAsync(cancellationToken);
-        if (workspace is null)
-        {
-            return null;
-        }
 
-        var converted = workspace.ConvertToDomain();
+        var converted = workspace?.ConvertToDomain();
         return converted;
     }
 
