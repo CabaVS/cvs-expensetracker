@@ -21,13 +21,11 @@ internal sealed class UpdateWorkspaceCommandHandler(
         
         var workspace = await repository.GetById(request.WorkspaceId, user.Id, cancellationToken);
         if (workspace is null) return WorkspaceErrors.NotFoundById(request.WorkspaceId);
-        
-        if (!await repository.IsAdmin(request.WorkspaceId, user.Id, cancellationToken))
-            return WorkspaceErrors.AdminRightsRequired(request.WorkspaceId);
-        
-        var updateNameResult = WorkspaceName.Create(request.Name);
+
+        var updateNameResult = workspace.UpdateName(
+            request.Name,
+            await repository.IsAdmin(request.WorkspaceId, user.Id, cancellationToken));
         if (updateNameResult.IsFailure) return updateNameResult.Error;
-        workspace.Name = updateNameResult.Value;
         
         await repository.Update(workspace, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
