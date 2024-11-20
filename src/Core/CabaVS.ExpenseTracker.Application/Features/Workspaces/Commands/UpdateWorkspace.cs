@@ -3,7 +3,6 @@ using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
 using CabaVS.ExpenseTracker.Application.Common.Requests;
 using CabaVS.ExpenseTracker.Domain.Errors;
 using CabaVS.ExpenseTracker.Domain.Shared;
-using CabaVS.ExpenseTracker.Domain.ValueObjects;
 using MediatR;
 
 namespace CabaVS.ExpenseTracker.Application.Features.Workspaces.Commands;

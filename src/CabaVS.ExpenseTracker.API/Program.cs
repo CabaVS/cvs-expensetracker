@@ -19,3 +19,6 @@ var app = builder.Build();
 app.UsePresentationWithFastEndpoints();
 
 app.Run();
+
+// Required by xUnit public tests
+public partial class Program;
