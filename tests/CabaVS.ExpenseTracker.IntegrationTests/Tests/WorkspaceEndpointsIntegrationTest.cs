@@ -1,6 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
 using CabaVS.ExpenseTracker.Application.Features.Workspaces.Models;
+using CabaVS.ExpenseTracker.Domain.Errors;
+using CabaVS.ExpenseTracker.Domain.Shared;
+using CabaVS.ExpenseTracker.IntegrationTests.Injected;
 using CabaVS.ExpenseTracker.Persistence;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -25,10 +28,52 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var endpointResponse = await Client.GetAsync(url);
         
         // Assert
-        endpointResponse.Should().BeSuccessful();
-        endpointResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        endpointResponse.Should().HaveStatusCode(HttpStatusCode.OK, "Expected OK status code to be returned");
 
         var response = await endpointResponse.Content.ReadFromJsonAsync<WorkspaceModel[]>();
         response.Should().BeEquivalentTo(Array.Empty<WorkspaceModel>(), $"Expected empty array of {nameof(WorkspaceModel)}.");
+    }
+    
+    [Fact, TestOrder(Order = 2)]
+    public async Task GetById_ShouldReturn_NotFound_WhenWorkspaceDoesNotExist()
+    {
+        // Arrange
+        var workspaceId = Guid.NewGuid();
+        var url = $"api/workspaces/{workspaceId}";
+        
+        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        
+        var workspaceByGeneratedIdExist = await dbContext.Workspaces.AnyAsync(w => w.Id == workspaceId);
+        workspaceByGeneratedIdExist.Should().BeFalse();
+        
+        // Act
+        var endpointResponse = await Client.GetAsync(url);
+        
+        // Assert
+        endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
+
+        var response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
+        response.Should().Be(WorkspaceErrors.NotFoundById(workspaceId), "Expected NotFound error to be returned.");
+    }
+    
+    [Fact, TestOrder(Order = 2)]
+    public async Task GetById_ShouldReturn_NotFound_WhenUserDoesNotHaveAccessToWorkspace()
+    {
+        // Arrange
+        var workspaceId = await ConvertTo<ApplicationDbContext>(DbContext)
+            .UserWorkspaces
+            .Where(uw => uw.UserId != CurrentUserAccessorInjected.AuthenticatedUserId)
+            .Select(uw => uw.WorkspaceId)
+            .FirstAsync();
+        var url = $"api/workspaces/{workspaceId}";
+        
+        // Act
+        var endpointResponse = await Client.GetAsync(url);
+        
+        // Assert
+        endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
+
+        var response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
+        response.Should().Be(WorkspaceErrors.NotFoundById(workspaceId), "Expected NotFound error to be returned.");
     }
 }
