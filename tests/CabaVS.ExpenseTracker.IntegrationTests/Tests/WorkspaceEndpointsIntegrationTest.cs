@@ -56,7 +56,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         response.Should().Be(WorkspaceErrors.NotFoundById(workspaceId), "Expected NotFound error to be returned.");
     }
     
-    [Fact, TestOrder(Order = 2)]
+    [Fact, TestOrder(Order = 3)]
     public async Task GetById_ShouldReturn_NotFound_WhenUserDoesNotHaveAccessToWorkspace()
     {
         // Arrange
