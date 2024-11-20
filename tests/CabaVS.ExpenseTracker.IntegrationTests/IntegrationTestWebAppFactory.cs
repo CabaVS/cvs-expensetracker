@@ -2,6 +2,7 @@ using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
 using CabaVS.ExpenseTracker.IntegrationTests.Injected;
 using CabaVS.ExpenseTracker.IntegrationTests.Seeders;
 using CabaVS.ExpenseTracker.Persistence;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -48,6 +49,8 @@ public sealed class IntegrationTestWebAppFactory : WebApplicationFactory<Program
 
             services.RemoveAll<ICurrentUserAccessor>();
             services.AddScoped<ICurrentUserAccessor>(_ => new CurrentUserAccessorInjected());
+            
+            services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
         });
     }
 }

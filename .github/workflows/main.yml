@@ -30,9 +30,4 @@ jobs:
         run: dotnet build ${{ env.PATH_SLN }} --configuration Release --no-restore
 
       - name: Run Integration Tests
-        env:
-          ApiToken: ${{ secrets.APITOKEN }}
-          Authentication__JwtBearer__SigningKey: ${{ secrets.AUTHENTICATION__JWTBEARER__SIGNINGKEY }}
-          Authentication__JwtBearer__Issuer: ${{ secrets.AUTHENTICATION__JWTBEARER__ISSUER }}
-          Authentication__JwtBearer__Audience: ${{ secrets.AUTHENTICATION__JWTBEARER__AUDIENCE }}
         run: dotnet test ${{ env.PATH_INTEGRATION_TESTS }} --configuration Release --no-restore --no-build

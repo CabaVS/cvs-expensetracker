@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
 using CabaVS.ExpenseTracker.Presentation.Middleware;
@@ -34,7 +35,7 @@ public static class DependencyInjection
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(
                             configuration["Authentication:JwtBearer:SigningKey"] ??
-                            throw new InvalidOperationException("SigningKey is not configured."))),
+                            Random.Shared.NextDouble().ToString(CultureInfo.InvariantCulture))),
                     ValidIssuer = configuration["Authentication:JwtBearer:Issuer"],
                     ValidAudience = configuration["Authentication:JwtBearer:Audience"],
                     

@@ -2,9 +2,7 @@ using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using CabaVS.ExpenseTracker.Persistence;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Net.Http.Headers;
 
 namespace CabaVS.ExpenseTracker.IntegrationTests;
 
@@ -23,16 +21,8 @@ public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebAppF
     protected IntegrationTestBase(IntegrationTestWebAppFactory factory)
     {
         _scope = factory.Services.CreateScope();
-
-        // Tests configuration, not an application itself
-        var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<IntegrationTestBase>()
-            .AddEnvironmentVariables()
-            .Build();
         
         Client = factory.CreateClient();
-        Client.DefaultRequestHeaders.Add(HeaderNames.Authorization, $"Bearer {configuration.GetValue<string>("ApiToken")}");
-        
         DbContext = _scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     }
     
