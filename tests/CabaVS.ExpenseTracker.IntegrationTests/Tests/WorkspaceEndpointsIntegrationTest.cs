@@ -22,7 +22,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         numberOfWorkspacesInDatabase.Should().BeGreaterThan(0, "Number of workspaces should be greater than 0.");
         
         // Act
-        var endpointResponse = await Client.GetAsync(url); 
+        var endpointResponse = await Client.GetAsync(url);
         
         // Assert
         endpointResponse.Should().BeSuccessful();
