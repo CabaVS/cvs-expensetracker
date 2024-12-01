@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CabaVS.ExpenseTracker.IntegrationTests;
 
+[TestCaseOrderer("CabaVS.ExpenseTracker.IntegrationTests.TestCaseOrderer", "CabaVS.ExpenseTracker.IntegrationTests")]
 public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebAppFactory>, IDisposable
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
