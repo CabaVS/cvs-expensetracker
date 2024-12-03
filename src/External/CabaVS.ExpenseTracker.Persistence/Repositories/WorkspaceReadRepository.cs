@@ -24,4 +24,23 @@ internal sealed class WorkspaceReadRepository(ApplicationDbContext dbContext) : 
             .SingleOrDefaultAsync(cancellationToken);
         return model;
     }
+    
+    public async Task<bool> IsAdmin(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default)
+    {
+        var isAdmin = await dbContext.UserWorkspaces
+            .Where(uw => uw.WorkspaceId == workspaceId)
+            .Where(uw => uw.UserId == userId)
+            .Where(uw => uw.IsAdmin)
+            .AnyAsync(cancellationToken);
+        return isAdmin;
+    }
+
+    public async Task<bool> IsMemberOfWorkspace(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default)
+    {
+        var isMemberOfWorkspace = await dbContext.UserWorkspaces
+            .Where(uw => uw.WorkspaceId == workspaceId)
+            .Where(uw => uw.UserId == userId)
+            .AnyAsync(cancellationToken);
+        return isMemberOfWorkspace;
+    }
 }

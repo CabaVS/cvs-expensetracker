@@ -1,4 +1,5 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
+using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
 using CabaVS.ExpenseTracker.Application.Common.Requests;
 using CabaVS.ExpenseTracker.Domain.Errors;
@@ -11,6 +12,7 @@ public sealed record UpdateWorkspaceCommand(Guid WorkspaceId, string Name) : IRe
 
 internal sealed class UpdateWorkspaceCommandHandler(
     IUnitOfWork unitOfWork,
+    IWorkspaceReadRepository workspaceReadRepository,
     ICurrentUserAccessor currentUserAccessor) : IRequestHandler<UpdateWorkspaceCommand, Result>
 {
     public async Task<Result> Handle(UpdateWorkspaceCommand request, CancellationToken cancellationToken)
@@ -23,7 +25,7 @@ internal sealed class UpdateWorkspaceCommandHandler(
 
         var updateNameResult = workspace.UpdateName(
             request.Name,
-            await repository.IsAdmin(request.WorkspaceId, user.Id, cancellationToken));
+            await workspaceReadRepository.IsAdmin(request.WorkspaceId, user.Id, cancellationToken));
         if (updateNameResult.IsFailure) return updateNameResult.Error;
         
         await repository.Update(workspace, cancellationToken);

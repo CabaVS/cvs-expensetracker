@@ -1,4 +1,5 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
+using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
 using CabaVS.ExpenseTracker.Application.Common.Requests;
 using CabaVS.ExpenseTracker.Domain.Errors;
@@ -11,6 +12,7 @@ public sealed record DeleteWorkspaceCommand(Guid WorkspaceId) : IRequest<Result>
 
 internal sealed class DeleteWorkspaceCommandHandler(
     IUnitOfWork unitOfWork,
+    IWorkspaceReadRepository workspaceReadRepository,
     ICurrentUserAccessor currentUserAccessor) : IRequestHandler<DeleteWorkspaceCommand, Result>
 {
     public async Task<Result> Handle(DeleteWorkspaceCommand request, CancellationToken cancellationToken)
@@ -21,7 +23,7 @@ internal sealed class DeleteWorkspaceCommandHandler(
         var workspace = await repository.GetById(request.WorkspaceId, user.Id, cancellationToken);
         if (workspace is null) return WorkspaceErrors.NotFoundById(request.WorkspaceId);
 
-        var isAdminOverWorkspace = await repository.IsAdmin(request.WorkspaceId, user.Id, cancellationToken);
+        var isAdminOverWorkspace = await workspaceReadRepository.IsAdmin(request.WorkspaceId, user.Id, cancellationToken);
         if (!isAdminOverWorkspace) return WorkspaceErrors.AdminRightsRequired(request.WorkspaceId);
         
         await repository.Delete(workspace, cancellationToken);

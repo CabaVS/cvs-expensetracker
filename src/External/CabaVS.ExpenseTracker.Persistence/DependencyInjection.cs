@@ -23,6 +23,7 @@ public static class DependencyInjection
         services.AddTransient<IUserReadRepository, UserReadRepository>();
         services.AddTransient<IWorkspaceReadRepository, WorkspaceReadRepository>();
         services.AddTransient<ICurrencyReadRepository, CurrencyReadRepository>();
+        services.AddTransient<IBalanceReadRepository, BalanceReadRepository>();
 
         return services;
     }

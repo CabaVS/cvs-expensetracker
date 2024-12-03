@@ -13,6 +13,4 @@ public interface IWorkspaceRepository
     Task RegisterUser(Guid workspaceId, Guid userId, bool isAdmin, CancellationToken cancellationToken = default);
     Task UnregisterUser(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default);
     Task MakeAnAdmin(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default);
-    
-    Task<bool> IsAdmin(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default);
 }
