@@ -13,4 +13,10 @@ internal sealed class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
     
     private readonly Lazy<IWorkspaceRepository> _lazyWorkspaceRepository = new(() => new WorkspaceRepository(dbContext));
     public IWorkspaceRepository BuildWorkspaceRepository() => _lazyWorkspaceRepository.Value;
+    
+    private readonly Lazy<ICurrencyRepository> _lazyCurrencyRepository = new(() => new CurrencyRepository(dbContext));
+    public ICurrencyRepository BuildCurrencyRepository() => _lazyCurrencyRepository.Value;
+    
+    private readonly Lazy<IBalanceRepository> _lazyBalanceRepository = new(() => new BalanceRepository(dbContext));
+    public IBalanceRepository BuildBalanceRepository() => _lazyBalanceRepository.Value;
 }

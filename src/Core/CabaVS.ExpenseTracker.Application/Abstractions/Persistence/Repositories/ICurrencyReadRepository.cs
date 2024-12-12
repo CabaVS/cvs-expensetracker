@@ -5,4 +5,5 @@ namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositorie
 public interface ICurrencyReadRepository
 {
     Task<CurrencyModel[]> GetAll(CancellationToken cancellationToken = default);
+    Task<CurrencyModel?> GetById(Guid id, CancellationToken cancellationToken = default);
 }

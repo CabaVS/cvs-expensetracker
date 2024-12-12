@@ -7,5 +7,7 @@ public interface IUnitOfWork
     Task SaveChanges(CancellationToken cancellationToken = default);
     
     IUserRepository BuildUserRepository();
+    ICurrencyRepository BuildCurrencyRepository();
     IWorkspaceRepository BuildWorkspaceRepository();
+    IBalanceRepository BuildBalanceRepository();
 }

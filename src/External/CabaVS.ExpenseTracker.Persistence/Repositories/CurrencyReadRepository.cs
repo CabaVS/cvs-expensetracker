@@ -13,4 +13,13 @@ internal sealed class CurrencyReadRepository(ApplicationDbContext dbContext) : I
             .ToArrayAsync(cancellationToken);
         return allCurrencies;
     }
+
+    public async Task<CurrencyModel?> GetById(Guid id, CancellationToken cancellationToken = default)
+    {
+        var currency = await dbContext.Currencies
+            .Where(c => c.Id == id)
+            .Select(c => new CurrencyModel(c.Id, c.Name, c.Code, c.Symbol))
+            .FirstOrDefaultAsync(cancellationToken);
+        return currency;
+    }
 }
