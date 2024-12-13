@@ -6,8 +6,8 @@ namespace CabaVS.ExpenseTracker.Domain.Entities;
 
 public sealed class Balance : Entity
 {
-    public BalanceName Name { get; private set; }
-    public decimal Amount { get; private set; }
+    public BalanceName Name { get; set; }
+    public decimal Amount { get; set; }
     
     public Currency Currency { get; }
 
