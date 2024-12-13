@@ -34,4 +34,15 @@ internal sealed class BalanceRepository(ApplicationDbContext dbContext) : IBalan
         
         return Task.CompletedTask;
     }
+
+    public async Task Delete(Guid workspaceId, Domain.Entities.Balance balance, CancellationToken cancellationToken)
+    {
+        var balanceToDelete = await dbContext.Balances
+            .Where(b => b.Id == balance.Id)
+            .Where(b => b.WorkspaceId == workspaceId)
+            .FirstOrDefaultAsync(cancellationToken);
+        
+        _ = dbContext.Balances.Remove(
+            balanceToDelete ?? throw new InvalidOperationException("Balance for deletion is not found."));
+    }
 }

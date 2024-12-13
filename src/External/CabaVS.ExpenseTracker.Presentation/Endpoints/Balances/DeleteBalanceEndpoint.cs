@@ -10,17 +10,17 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CabaVS.ExpenseTracker.Presentation.Endpoints.Balances;
 
-internal sealed class UpdateBalanceEndpoint(ISender sender)
+internal sealed class DeleteBalanceEndpoint(ISender sender)
     : Endpoint<
-        UpdateBalanceEndpoint.RequestModel,
+        DeleteBalanceEndpoint.RequestModel,
         Results<Ok, BadRequest<Error>>>
 {
     public override void Configure()
     {
-        Put("api/workspaces/{workspaceId:guid}/balances/{balanceId:guid}");
+        Delete("api/workspaces/{workspaceId:guid}/balances/{balanceId:guid}");
         Options(x =>
         {
-            x.WithName(nameof(UpdateBalanceEndpoint));
+            x.WithName(nameof(DeleteBalanceEndpoint));
             x.WithTags(EndpointTags.Balances);
         });
     }
@@ -29,34 +29,27 @@ internal sealed class UpdateBalanceEndpoint(ISender sender)
         RequestModel req,
         CancellationToken ct)
     {
-        var command = new UpdateBalanceCommand(req.WorkspaceId, req.BalanceId, req.Name, req.Amount);
+        var command = new DeleteBalanceCommand(req.WorkspaceId, req.BalanceId);
 
         var result = await sender.Send(command, ct);
         
         return result.ToDefaultApiResponse();
     }
     
-    internal sealed record RequestModel(Guid WorkspaceId, Guid BalanceId, string Name, decimal Amount);
+    internal sealed record RequestModel(Guid WorkspaceId, Guid BalanceId);
 }
 
-internal sealed class UpdateBalanceEndpointSummary : Summary<UpdateBalanceEndpoint>
+internal sealed class DeleteBalanceEndpointSummary : Summary<DeleteBalanceEndpoint>
 {
-    public UpdateBalanceEndpointSummary()
+    public DeleteBalanceEndpointSummary()
     {
-        Summary = "Update a Balance.";
-        Description = "Updates an existing Balance.";
+        Summary = "Delete a Balance.";
+        Description = "Deletes an existing Balance.";
         
         Params[nameof(GetBalanceByIdEndpoint.GetBalanceByIdEndpointRequest.WorkspaceId)] = 
             "Workspace ID to verify access.";
         Params[nameof(GetBalanceByIdEndpoint.GetBalanceByIdEndpointRequest.BalanceId)] = 
             "Balance ID to verify access.";
-
-        ExampleRequest =
-            new UpdateBalanceEndpoint.RequestModel(
-                Guid.Empty,
-                Guid.Empty,
-                "My USD card UPDATED",
-                9999.99m);
         
         Response(
             (int)HttpStatusCode.OK,

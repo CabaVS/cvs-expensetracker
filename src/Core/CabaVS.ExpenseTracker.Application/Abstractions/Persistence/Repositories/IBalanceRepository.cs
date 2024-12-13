@@ -8,4 +8,5 @@ public interface IBalanceRepository
     
     public Task<Guid> Create(Guid workspaceId, Balance balance, CancellationToken cancellationToken);
     public Task Update(Guid workspaceId, Balance balance, CancellationToken cancellationToken);
+    public Task Delete(Guid workspaceId, Balance balance, CancellationToken cancellationToken);
 }
