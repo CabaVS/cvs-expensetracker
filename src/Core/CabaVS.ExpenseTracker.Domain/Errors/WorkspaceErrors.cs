@@ -12,7 +12,9 @@ public static class WorkspaceErrors
     public static Error NameTooLong(string actualValue) =>
         StringErrors.TooLong(nameof(Workspace), nameof(Workspace.Name), WorkspaceName.MaxLength, actualValue);
     
-    public static Error NotFoundById(Guid id) => CommonErrors.NotFoundById(nameof(Workspace), id);
+    public static Error NotFoundById(Guid id) => 
+        CommonErrors.NotFoundById(nameof(Workspace), id);
+    
     public static Error AdminRightsRequired(Guid id) =>
         new($"{nameof(Workspace)}.AdminRightsRequired", $"Admin rights required for workspace '{id}'.");
 }
