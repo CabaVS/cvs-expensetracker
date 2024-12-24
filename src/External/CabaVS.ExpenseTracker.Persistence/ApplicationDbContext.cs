@@ -14,6 +14,10 @@ internal sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext
 
     public DbSet<Balance> Balances { get; set; }
 
+    public DbSet<TransferTransaction> TransferTransactions { get; set; }
+
+    public DbSet<RecommendedTag> RecommendedTags { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyMarker.Assembly);
@@ -22,6 +26,7 @@ internal sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.AddInterceptors(new AuditableEntityInterceptor());
+        optionsBuilder.AddInterceptors(new RecommendedTagsCreationInterceptor());
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
