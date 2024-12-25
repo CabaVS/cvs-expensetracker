@@ -10,4 +10,5 @@ public interface IUnitOfWork
     ICurrencyRepository BuildCurrencyRepository();
     IWorkspaceRepository BuildWorkspaceRepository();
     IBalanceRepository BuildBalanceRepository();
+    ITransferTransactionRepository BuildTransferTransactionRepository();
 }

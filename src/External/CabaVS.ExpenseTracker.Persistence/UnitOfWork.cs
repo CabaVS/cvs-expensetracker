@@ -19,4 +19,7 @@ internal sealed class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
     
     private readonly Lazy<IBalanceRepository> _lazyBalanceRepository = new(() => new BalanceRepository(dbContext));
     public IBalanceRepository BuildBalanceRepository() => _lazyBalanceRepository.Value;
+    
+    private readonly Lazy<ITransferTransactionRepository> _lazyTransferTransactionRepository = new(() => new TransferTransactionRepository(dbContext));
+    public ITransferTransactionRepository BuildTransferTransactionRepository() => _lazyTransferTransactionRepository.Value;
 }

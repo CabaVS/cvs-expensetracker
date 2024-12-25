@@ -26,6 +26,22 @@ internal sealed class TransferTransaction : IAuditableEntity
     
     public Balance Destination { get; set; } = null!;
     public Guid DestinationId { get; set; }
+
+    public static TransferTransaction ConvertFromDomain(Domain.Entities.TransferTransaction transferTransaction)
+    {
+        return new TransferTransaction
+        {
+            Id = transferTransaction.Id,
+            Date = transferTransaction.Date,
+            Tags = transferTransaction.Tags,
+            Amount = transferTransaction.Amount,
+            AmountInSourceCurrency = transferTransaction.AmountInSourceCurrency,
+            AmountInDestinationCurrency = transferTransaction.AmountInDestinationCurrency,
+            CurrencyId = transferTransaction.Currency.Id,
+            SourceId = transferTransaction.Source.Id,
+            DestinationId = transferTransaction.Destination.Id
+        };
+    }
 }
 
 internal sealed class TransferTransactionEntityConfiguration : IEntityTypeConfiguration<TransferTransaction>
