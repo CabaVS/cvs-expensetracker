@@ -66,12 +66,14 @@ internal sealed class GetTransferTransactionByIdEndpointSummary : Summary<GetTra
                 123.45m,
                 new TransferTransactionModel.BalanceModel(
                     new Guid("7BB89C39-9799-4E39-A3AC-067C5BF34DEA"),
+                    "My Card #1",
                     new TransferTransactionModel.CurrencyModel(
                         new Guid("4BEECA0B-4AFD-4D40-8D15-BFB8C4D3360F"),
                         "USD")),
                 678.90m,
                 new TransferTransactionModel.BalanceModel(
                     new Guid("DB251B4C-B00C-473F-B75F-433AA6DD2977"),
+                    "My Card #2",
                     new TransferTransactionModel.CurrencyModel(
                         new Guid("0D3F3CCE-C8A3-42F6-B51D-ADCB48AA36E0"),
                         "PLN"))));

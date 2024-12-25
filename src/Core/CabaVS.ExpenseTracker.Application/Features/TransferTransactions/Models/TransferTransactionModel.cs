@@ -14,5 +14,5 @@ public sealed record TransferTransactionModel(
     TransferTransactionModel.BalanceModel Destination)
 {
     public sealed record CurrencyModel(Guid Id, string Code);
-    public sealed record BalanceModel(Guid Id, CurrencyModel Currency);
+    public sealed record BalanceModel(Guid Id, string Name, CurrencyModel Currency);
 }

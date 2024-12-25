@@ -33,12 +33,14 @@ internal sealed class TransferTransactionReadRepository(ApplicationDbContext dbC
             transferTransaction.AmountInSourceCurrency,
             new TransferTransactionModel.BalanceModel(
                 transferTransaction.Source.Id,
+                transferTransaction.Source.Name,
                 new TransferTransactionModel.CurrencyModel(
                     transferTransaction.Source.Currency.Id,
                     transferTransaction.Source.Currency.Code)),
             transferTransaction.AmountInDestinationCurrency,
             new TransferTransactionModel.BalanceModel(
                 transferTransaction.Destination.Id,
+                transferTransaction.Destination.Name,
                 new TransferTransactionModel.CurrencyModel(
                     transferTransaction.Destination.Currency.Id,
                     transferTransaction.Destination.Currency.Code)));
