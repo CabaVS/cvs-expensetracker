@@ -27,12 +27,6 @@ public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebAppF
         DbContext = _scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     }
     
-    protected static StringContent ToJsonContent<T>(T obj)
-    {
-        var json = JsonSerializer.Serialize(obj, JsonSerializerOptions);
-        return new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
-    }
-    
     public void Dispose()
     {
         ConvertTo<ApplicationDbContext>(DbContext).Dispose();

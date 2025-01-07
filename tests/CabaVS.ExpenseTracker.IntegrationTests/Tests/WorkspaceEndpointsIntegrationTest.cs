@@ -93,10 +93,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var numberOfWorkspacesInDatabaseBeforeRequest = await dbContext.Workspaces.CountAsync();
         
         // Act
-        var endpointResponse = await Client.PostAsync(
-            url,
-            ToJsonContent(
-                new CreateWorkspaceEndpoint.RequestModel(workspaceName)));
+        var endpointResponse = await Client.PostAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
@@ -119,10 +116,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var numberOfWorkspacesInDatabaseBeforeRequest = await dbContext.Workspaces.CountAsync();
         
         // Act
-        var endpointResponse = await Client.PostAsync(
-            url,
-            ToJsonContent(
-                new CreateWorkspaceEndpoint.RequestModel(workspaceName)));
+        var endpointResponse = await Client.PostAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
@@ -145,10 +139,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var numberOfWorkspacesInDatabaseBeforeRequest = await dbContext.Workspaces.CountAsync();
         
         // Act
-        var endpointResponse = await Client.PostAsync(
-            url,
-            ToJsonContent(
-                new CreateWorkspaceEndpoint.RequestModel(workspaceName)));
+        var endpointResponse = await Client.PostAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.Created, "Expected Created status code to be returned.");
@@ -185,10 +176,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
         
         // Act
-        var endpointResponse = await Client.PutAsync(
-            url,
-            ToJsonContent(
-                new UpdateWorkspaceEndpoint.RequestModel(default, workspaceName)));
+        var endpointResponse = await Client.PutAsJsonAsync(url, new UpdateWorkspaceEndpoint.RequestModel(default, workspaceName));
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
@@ -212,10 +200,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
         
         // Act
-        var endpointResponse = await Client.PutAsync(
-            url,
-            ToJsonContent(
-                new UpdateWorkspaceEndpoint.RequestModel(default, workspaceName)));
+        var endpointResponse = await Client.PutAsJsonAsync(url, new UpdateWorkspaceEndpoint.RequestModel(default, workspaceName));
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
@@ -239,10 +224,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
         
         // Act
-        var endpointResponse = await Client.PutAsync(
-            url,
-            ToJsonContent(
-                new CreateWorkspaceEndpoint.RequestModel(workspaceName)));
+        var endpointResponse = await Client.PutAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.OK, "Expected OK status code to be returned.");
