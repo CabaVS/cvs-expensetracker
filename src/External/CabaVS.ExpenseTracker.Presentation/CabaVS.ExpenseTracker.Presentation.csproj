@@ -9,9 +9,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="FastEndpoints" Version="5.30.0" />
-      <PackageReference Include="FastEndpoints.Swagger" Version="5.30.0" />
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+      <PackageReference Include="FastEndpoints" />
+      <PackageReference Include="FastEndpoints.Swagger" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     </ItemGroup>
 
     <ItemGroup>
