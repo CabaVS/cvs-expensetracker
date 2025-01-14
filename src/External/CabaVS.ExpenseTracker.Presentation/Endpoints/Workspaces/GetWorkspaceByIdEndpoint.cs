@@ -32,7 +32,7 @@ internal sealed class GetWorkspaceByIdEndpoint(ISender sender)
     {
         var query = new GetWorkspaceByIdQuery(req.WorkspaceId);
 
-        var result = await sender.Send(query, ct);
+        Result<WorkspaceModel> result = await sender.Send(query, ct);
 
         return result.ToDefaultApiResponse();
     }

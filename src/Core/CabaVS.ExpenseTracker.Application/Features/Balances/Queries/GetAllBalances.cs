@@ -13,7 +13,7 @@ internal sealed class GetAllBalancesHandler(IBalanceReadRepository balanceReadRe
 {
     public async Task<Result<BalanceModel[]>> Handle(GetAllBalancesQuery request, CancellationToken cancellationToken)
     {
-        var allModels = await balanceReadRepository.GetBalances(request.WorkspaceId, cancellationToken);
+        BalanceModel[] allModels = await balanceReadRepository.GetBalances(request.WorkspaceId, cancellationToken);
         return allModels;
     }
 }

@@ -7,8 +7,6 @@ internal sealed class CurrentUserAccessorInjected : ICurrentUserAccessor
 {
     public static Guid AuthenticatedUserId { get; } = new("FE8D6062-625B-43A3-8165-4B091EAC0327");
     
-    public Task<AuthenticatedUserModel?> GetCurrentUser(CancellationToken cancellationToken = default)
-    {
-        return Task.FromResult(new AuthenticatedUserModel(AuthenticatedUserId, true))!;
-    }
+    public Task<AuthenticatedUserModel?> GetCurrentUser(CancellationToken cancellationToken = default) => 
+        Task.FromResult(new AuthenticatedUserModel(AuthenticatedUserId, true))!;
 }

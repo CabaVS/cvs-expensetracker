@@ -13,19 +13,14 @@ internal sealed class Workspace : IAuditableEntity
     public DateTime CreatedOn { get; set; }
     public DateTime? ModifiedOn { get; set; }
 
-    public Domain.Entities.Workspace ConvertToDomain()
-    {
-        return Domain.Entities.Workspace.Create(Id, Name).Value;
-    }
+    public Domain.Entities.Workspace ConvertToDomain() => Domain.Entities.Workspace.Create(Id, Name).Value;
 
-    public static Workspace ConvertFromDomain(Domain.Entities.Workspace workspace)
-    {
-        return new Workspace
+    public static Workspace ConvertFromDomain(Domain.Entities.Workspace workspace) =>
+        new()
         {
             Id = workspace.Id,
             Name = workspace.Name.Value
         };
-    }
 }
 
 internal sealed class WorkspaceConfiguration : IEntityTypeConfiguration<Workspace>

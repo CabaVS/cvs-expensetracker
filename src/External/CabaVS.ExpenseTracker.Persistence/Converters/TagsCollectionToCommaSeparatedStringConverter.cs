@@ -14,5 +14,5 @@ internal sealed class TagsCollectionToCommaSeparatedStringConverter()
 internal sealed class TagsCollectionToCommaSeparatedStringComparer()
     : ValueComparer<string[]>(
         (arr1, arr2) => arr1!.SequenceEqual(arr2!),
-        arr => arr.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+        arr => arr.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode(StringComparison.InvariantCulture))),
         arr => arr.ToArray());

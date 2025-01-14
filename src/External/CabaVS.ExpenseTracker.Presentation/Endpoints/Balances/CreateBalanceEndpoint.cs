@@ -31,7 +31,7 @@ internal sealed class CreateBalanceEndpoint(ISender sender)
     {
         var command = new CreateBalanceCommand(req.WorkspaceId, req.CurrencyId, req.Name, req.Amount);
 
-        var result = await sender.Send(command, ct);
+        Result<Guid> result = await sender.Send(command, ct);
         
         return result.ToDefaultApiResponse(
             nameof(GetBalanceByIdEndpoint),

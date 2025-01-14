@@ -10,18 +10,13 @@ public sealed class BalanceName : ValueObject
     
     public string Value { get; }
 
-    private BalanceName(string value)
-    {
-        Value = value;
-    }
+    private BalanceName(string value) => Value = value;
 
-    public static Result<BalanceName> Create(string value)
-    {
-        return Result<string>.Success(value)
+    public static Result<BalanceName> Create(string value) =>
+        Result<string>.Success(value)
             .EnsureStringNotNullOrWhitespace(BalanceErrors.NameIsNullOrWhitespace())
             .EnsureStringNotTooLong(MaxLength, BalanceErrors.NameTooLong(value))
             .Map(x => new BalanceName(x));
-    }
 
     protected override IEnumerable<object> GetAtomicValues()
     {

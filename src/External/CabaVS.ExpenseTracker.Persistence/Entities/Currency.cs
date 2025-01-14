@@ -16,23 +16,19 @@ internal sealed class Currency : IAuditableEntity
     public string Code { get; set; } = default!;
     public string Symbol { get; set; } = default!;
     
-    public Domain.Entities.Currency ConvertToDomain()
-    {
-        return Domain.Entities.Currency
+    public Domain.Entities.Currency ConvertToDomain() =>
+        Domain.Entities.Currency
             .Create(Id, Name, Code, Symbol)
             .Value;
-    }
 
-    public static Currency ConvertFromDomain(Domain.Entities.Currency currency)
-    {
-        return new Currency
+    public static Currency ConvertFromDomain(Domain.Entities.Currency currency) =>
+        new()
         {
             Id = currency.Id,
             Name = currency.Name.Value,
             Code = currency.Code.Value,
             Symbol = currency.Symbol.Value
         };
-    }
 }
 
 internal sealed class CurrencyConfiguration : IEntityTypeConfiguration<Currency>

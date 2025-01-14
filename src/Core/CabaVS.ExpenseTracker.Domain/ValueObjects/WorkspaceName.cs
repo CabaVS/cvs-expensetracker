@@ -10,18 +10,13 @@ public sealed class WorkspaceName : ValueObject
     
     public string Value { get; }
 
-    private WorkspaceName(string value)
-    {
-        Value = value;
-    }
+    private WorkspaceName(string value) => Value = value;
 
-    public static Result<WorkspaceName> Create(string value)
-    {
-        return Result<string>.Success(value)
+    public static Result<WorkspaceName> Create(string value) =>
+        Result<string>.Success(value)
             .EnsureStringNotNullOrWhitespace(WorkspaceErrors.NameIsNullOrWhitespace())
             .EnsureStringNotTooLong(MaxLength, WorkspaceErrors.NameTooLong(value))
             .Map(x => new WorkspaceName(x));
-    }
 
     protected override IEnumerable<object> GetAtomicValues()
     {

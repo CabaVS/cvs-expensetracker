@@ -1,7 +1,9 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
+using CabaVS.ExpenseTracker.Application.Abstractions.Presentation.Models;
 using CabaVS.ExpenseTracker.Application.Common.Requests;
+using CabaVS.ExpenseTracker.Domain.Entities;
 using CabaVS.ExpenseTracker.Domain.Errors;
 using CabaVS.ExpenseTracker.Domain.Shared;
 using MediatR;
@@ -17,15 +19,21 @@ internal sealed class DeleteWorkspaceCommandHandler(
 {
     public async Task<Result> Handle(DeleteWorkspaceCommand request, CancellationToken cancellationToken)
     {
-        var user = (await currentUserAccessor.GetCurrentUser(cancellationToken))!;
-        var repository = unitOfWork.BuildWorkspaceRepository();
+        AuthenticatedUserModel user = (await currentUserAccessor.GetCurrentUser(cancellationToken))!;
+        IWorkspaceRepository repository = unitOfWork.BuildWorkspaceRepository();
         
-        var workspace = await repository.GetById(request.WorkspaceId, user.Id, cancellationToken);
-        if (workspace is null) return WorkspaceErrors.NotFoundById(request.WorkspaceId);
+        Workspace? workspace = await repository.GetById(request.WorkspaceId, user.Id, cancellationToken);
+        if (workspace is null)
+        {
+            return WorkspaceErrors.NotFoundById(request.WorkspaceId);
+        }
 
         var isAdminOverWorkspace = await workspaceReadRepository.IsAdmin(request.WorkspaceId, user.Id, cancellationToken);
-        if (!isAdminOverWorkspace) return WorkspaceErrors.AdminRightsRequired(request.WorkspaceId);
-        
+        if (!isAdminOverWorkspace)
+        {
+            return WorkspaceErrors.AdminRightsRequired(request.WorkspaceId);
+        }
+
         await repository.Delete(workspace, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
         

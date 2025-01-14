@@ -1,6 +1,3 @@
-using System.Net.Mime;
-using System.Text;
-using System.Text.Json;
 using CabaVS.ExpenseTracker.Persistence;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,8 +6,6 @@ namespace CabaVS.ExpenseTracker.IntegrationTests;
 [TestCaseOrderer("CabaVS.ExpenseTracker.IntegrationTests.TestCaseOrderer", "CabaVS.ExpenseTracker.IntegrationTests")]
 public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebAppFactory>, IDisposable
 {
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-    
     private readonly IServiceScope _scope;
     
     protected readonly HttpClient Client;
@@ -21,6 +16,8 @@ public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebAppF
     
     protected IntegrationTestBase(IntegrationTestWebAppFactory factory)
     {
+        ArgumentNullException.ThrowIfNull(factory);
+        
         _scope = factory.Services.CreateScope();
         
         Client = factory.CreateClient();
@@ -29,11 +26,17 @@ public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebAppF
     
     public void Dispose()
     {
-        ConvertTo<ApplicationDbContext>(DbContext).Dispose();
-        Client.Dispose();
-        
-        _scope.Dispose();
-        
+        Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            ConvertTo<ApplicationDbContext>(DbContext).Dispose();
+            Client.Dispose();
+            _scope.Dispose();
+        }
     }
 }

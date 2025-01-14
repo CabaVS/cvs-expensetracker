@@ -7,7 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CabaVS.ExpenseTracker.Persistence;
 
+#pragma warning disable CA1724 // Type names should not match namespaces
 public static class DependencyInjection
+#pragma warning restore CA1724 // Type names should not match namespaces
 {
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {

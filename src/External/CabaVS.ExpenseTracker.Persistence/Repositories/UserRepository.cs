@@ -1,5 +1,6 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Persistence.Entities;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CabaVS.ExpenseTracker.Persistence.Repositories;
 
@@ -9,7 +10,7 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : IUserRepo
     {
         var userToCreate = User.ConvertFromDomain(user);
         
-        var entityEntry = await dbContext.Users.AddAsync(userToCreate, cancellationToken);
+        EntityEntry<User> entityEntry = await dbContext.Users.AddAsync(userToCreate, cancellationToken);
         
         return entityEntry.Entity.Id;
     }

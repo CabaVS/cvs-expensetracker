@@ -10,18 +10,13 @@ public sealed class CurrencySymbol : ValueObject
     
     public string Value { get; }
 
-    private CurrencySymbol(string value)
-    {
-        Value = value;
-    }
+    private CurrencySymbol(string value) => Value = value;
 
-    public static Result<CurrencySymbol> Create(string value)
-    {
-        return Result<string>.Success(value)
+    public static Result<CurrencySymbol> Create(string value) =>
+        Result<string>.Success(value)
             .EnsureStringNotNullOrWhitespace(CurrencyErrors.SymbolIsNullOrWhitespace())
             .EnsureStringNotTooLong(MaxLength, CurrencyErrors.SymbolTooLong(value))
             .Map(x => new CurrencySymbol(x));
-    }
 
     protected override IEnumerable<object> GetAtomicValues()
     {

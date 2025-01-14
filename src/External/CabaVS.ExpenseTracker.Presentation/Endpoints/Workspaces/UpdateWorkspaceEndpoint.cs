@@ -31,7 +31,7 @@ internal sealed class UpdateWorkspaceEndpoint(ISender sender)
     {
         var command = new UpdateWorkspaceCommand(req.WorkspaceId, req.Name);
 
-        var result = await sender.Send(command, ct);
+        Result result = await sender.Send(command, ct);
         
         return result.ToDefaultApiResponse();
     }

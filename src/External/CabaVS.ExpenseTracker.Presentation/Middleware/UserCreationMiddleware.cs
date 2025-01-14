@@ -1,6 +1,7 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
+using CabaVS.ExpenseTracker.Application.Abstractions.Presentation.Models;
 using CabaVS.ExpenseTracker.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -21,7 +22,7 @@ internal sealed class UserCreationMiddleware(
             return;
         }
         
-        var currentUser = await currentUserAccessor.GetCurrentUser();
+        AuthenticatedUserModel? currentUser = await currentUserAccessor.GetCurrentUser();
         if (currentUser is null)
         {
             logger.LogWarning("User is authenticated, but returned Current User is null.");

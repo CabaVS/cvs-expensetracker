@@ -1,5 +1,6 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
+using CabaVS.ExpenseTracker.Application.Abstractions.Presentation.Models;
 using CabaVS.ExpenseTracker.Application.Common.Requests;
 using CabaVS.ExpenseTracker.Application.Features.Workspaces.Models;
 using CabaVS.ExpenseTracker.Domain.Errors;
@@ -16,14 +17,9 @@ internal sealed class GetWorkspaceByIdQueryHandler(
 {
     public async Task<Result<WorkspaceModel>> Handle(GetWorkspaceByIdQuery request, CancellationToken cancellationToken)
     {
-        var currentUser = (await currentUserAccessor.GetCurrentUser(cancellationToken))!;
+        AuthenticatedUserModel currentUser = (await currentUserAccessor.GetCurrentUser(cancellationToken))!;
         
-        var workspaceModel = await workspaceReadRepository.GetWorkspaceById(request.Id, currentUser.Id, cancellationToken);
-        if (workspaceModel is null)
-        {
-            return WorkspaceErrors.NotFoundById(request.Id);
-        }
-
-        return workspaceModel;
+        WorkspaceModel? workspaceModel = await workspaceReadRepository.GetWorkspaceById(request.Id, currentUser.Id, cancellationToken);
+        return workspaceModel is null ? WorkspaceErrors.NotFoundById(request.Id) : workspaceModel;
     }
 }

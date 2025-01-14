@@ -8,7 +8,7 @@ internal sealed class CurrencyReadRepository(ApplicationDbContext dbContext) : I
 {
     public async Task<CurrencyModel[]> GetAll(CancellationToken cancellationToken = default)
     {
-        var allCurrencies = await dbContext.Currencies
+        CurrencyModel[] allCurrencies = await dbContext.Currencies
             .Select(c => new CurrencyModel(c.Id, c.Name, c.Code, c.Symbol))
             .ToArrayAsync(cancellationToken);
         return allCurrencies;
@@ -16,7 +16,7 @@ internal sealed class CurrencyReadRepository(ApplicationDbContext dbContext) : I
 
     public async Task<CurrencyModel?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
-        var currency = await dbContext.Currencies
+        CurrencyModel? currency = await dbContext.Currencies
             .Where(c => c.Id == id)
             .Select(c => new CurrencyModel(c.Id, c.Name, c.Code, c.Symbol))
             .FirstOrDefaultAsync(cancellationToken);

@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text;
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
 using CabaVS.ExpenseTracker.Presentation.Middleware;
@@ -15,7 +14,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CabaVS.ExpenseTracker.Presentation;
 
+#pragma warning disable CA1724 // Type names should not match namespaces
 public static class DependencyInjection
+#pragma warning restore CA1724 // Type names should not match namespaces
 {
     public static IServiceCollection AddPresentation(
         this IServiceCollection services,
@@ -29,22 +30,20 @@ public static class DependencyInjection
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
-            {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(
-                            configuration["Authentication:JwtBearer:SigningKey"] ??
-                            Random.Shared.NextDouble().ToString(CultureInfo.InvariantCulture))),
+                            Encoding.UTF8.GetBytes(
+                                configuration["Authentication:JwtBearer:SigningKey"] ??
+                                throw new InvalidOperationException("JWT Bearer signing key is not configured."))),
                     ValidIssuer = configuration["Authentication:JwtBearer:Issuer"],
                     ValidAudience = configuration["Authentication:JwtBearer:Audience"],
-                    
+                
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
                     ValidateIssuer = true,
                     ValidateAudience = true
-                };
-            });
+                });
         services.AddAuthorization();
 
         services.AddScoped<UserCreationMiddleware>();
@@ -52,7 +51,10 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
         
         // Further configuration is only for Development environment
-        if (!environment.IsDevelopment()) return services;
+        if (!environment.IsDevelopment())
+        {
+            return services;
+        }
 
         services.SwaggerDocument(o =>
         {
@@ -79,7 +81,12 @@ public static class DependencyInjection
         app.UseMiddleware<UserCreationMiddleware>();
 
         // Further configuration is only for Development environment
-        if (!app.Environment.IsDevelopment()) return app;
+#pragma warning disable CA1062
+        if (!app.Environment.IsDevelopment())
+#pragma warning restore CA1062
+        {
+            return app;
+        }
 
         app.UseSwaggerGen();
 

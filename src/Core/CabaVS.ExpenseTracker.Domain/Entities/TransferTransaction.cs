@@ -51,15 +51,28 @@ public sealed class TransferTransaction : Entity
         Balance destination,
         bool recalculateSourceAndDestination)
     {
-        if (amount < 0)
-            return TransactionErrors.AmountShouldBePositive<TransferTransaction>(amount, nameof(amount));
-        if (amountInSourceCurrency < 0)
-            return TransactionErrors.AmountShouldBePositive<TransferTransaction>(amountInSourceCurrency, nameof(amountInSourceCurrency));
-        if (amountInDestinationCurrency < 0)
-            return TransactionErrors.AmountShouldBePositive<TransferTransaction>(amountInDestinationCurrency, nameof(amountInDestinationCurrency));
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(destination);
         
+        if (amount < 0)
+        {
+            return TransactionErrors.AmountShouldBePositive<TransferTransaction>(amount, nameof(amount));
+        }
+
+        if (amountInSourceCurrency < 0)
+        {
+            return TransactionErrors.AmountShouldBePositive<TransferTransaction>(amountInSourceCurrency, nameof(amountInSourceCurrency));
+        }
+
+        if (amountInDestinationCurrency < 0)
+        {
+            return TransactionErrors.AmountShouldBePositive<TransferTransaction>(amountInDestinationCurrency, nameof(amountInDestinationCurrency));
+        }
+
         if (source == destination)
+        {
             return TransactionErrors.SourceAndDestinationAreSame<TransferTransaction>();
+        }
 
         if (recalculateSourceAndDestination)
         {

@@ -40,7 +40,7 @@ internal sealed class CreateTransferTransactionEndpoint(ISender sender)
             req.Date,
             req.Tags);
 
-        var result = await sender.Send(command, ct);
+        Result<Guid> result = await sender.Send(command, ct);
         
         return result.ToDefaultApiResponse(
             nameof(GetTransferTransactionByIdEndpoint),

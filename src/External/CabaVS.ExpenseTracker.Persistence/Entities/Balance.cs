@@ -21,9 +21,8 @@ internal sealed class Balance : IAuditableEntity
     public Guid WorkspaceId { get; set; }
     public Workspace Workspace { get; set; } = default!;
 
-    public Domain.Entities.Balance ConvertToDomain()
-    {
-        return Domain.Entities.Balance
+    public Domain.Entities.Balance ConvertToDomain() =>
+        Domain.Entities.Balance
             .Create(
                 Id, 
                 Name, 
@@ -32,11 +31,9 @@ internal sealed class Balance : IAuditableEntity
                     .Create(Currency.Id, Currency.Name, Currency.Code, Currency.Symbol)
                     .Value)
             .Value;
-    }
 
-    public static Balance ConvertFromDomain(Domain.Entities.Balance balance, Guid workspaceId)
-    {
-        return new Balance
+    public static Balance ConvertFromDomain(Domain.Entities.Balance balance, Guid workspaceId) =>
+        new()
         {
             Id = balance.Id,
             Name = balance.Name.Value,
@@ -44,7 +41,6 @@ internal sealed class Balance : IAuditableEntity
             CurrencyId = balance.Currency.Id,
             WorkspaceId = workspaceId
         };
-    }
 }
 
 internal sealed class BalanceConfiguration : IEntityTypeConfiguration<Balance>

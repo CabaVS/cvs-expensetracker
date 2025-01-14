@@ -10,18 +10,13 @@ public sealed class CurrencyName : ValueObject
     
     public string Value { get; }
 
-    private CurrencyName(string value)
-    {
-        Value = value;
-    }
+    private CurrencyName(string value) => Value = value;
 
-    public static Result<CurrencyName> Create(string value)
-    {
-        return Result<string>.Success(value)
+    public static Result<CurrencyName> Create(string value) =>
+        Result<string>.Success(value)
             .EnsureStringNotNullOrWhitespace(CurrencyErrors.NameIsNullOrWhitespace())
             .EnsureStringNotTooLong(MaxLength, CurrencyErrors.NameTooLong(value))
             .Map(x => new CurrencyName(x));
-    }
 
     protected override IEnumerable<object> GetAtomicValues()
     {

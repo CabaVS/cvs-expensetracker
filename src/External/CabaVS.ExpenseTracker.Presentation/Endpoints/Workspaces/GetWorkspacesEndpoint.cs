@@ -30,7 +30,7 @@ internal sealed class GetWorkspacesEndpoint(ISender sender)
     {
         var query = new GetWorkspacesQuery();
 
-        var result = await sender.Send(query, ct);
+        Result<WorkspaceModel[]> result = await sender.Send(query, ct);
 
         return result.ToDefaultApiResponse();
     }

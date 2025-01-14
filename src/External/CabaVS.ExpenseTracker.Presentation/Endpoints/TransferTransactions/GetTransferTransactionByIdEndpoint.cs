@@ -32,7 +32,7 @@ internal sealed class GetTransferTransactionByIdEndpoint(ISender sender)
     {
         var query = new GetByIdTransferTransactionQuery(req.WorkspaceId, req.TransferTransactionId);
 
-        var result = await sender.Send(query, ct);
+        Result<TransferTransactionModel> result = await sender.Send(query, ct);
 
         return result.ToDefaultApiResponse();
     }

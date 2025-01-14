@@ -1,4 +1,5 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
+using CabaVS.ExpenseTracker.Application.Abstractions.Presentation.Models;
 using CabaVS.ExpenseTracker.Application.Common.Errors;
 using CabaVS.ExpenseTracker.Application.Common.Requests;
 using CabaVS.ExpenseTracker.Domain.Shared;
@@ -13,7 +14,7 @@ internal sealed class AuthenticatedUserRequestBehavior<TRequest, TResponse>(
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var currentUser = await currentUserAccessor.GetCurrentUser(cancellationToken);
+        AuthenticatedUserModel? currentUser = await currentUserAccessor.GetCurrentUser(cancellationToken);
         return currentUser is not null
             ? await next()
             : FailedResultFactory.Create<TResponse>(

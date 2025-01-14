@@ -33,7 +33,7 @@ internal sealed class GetBalanceByIdEndpoint(ISender sender)
     {
         var query = new GetBalanceByIdQuery(req.BalanceId, req.WorkspaceId);
 
-        var result = await sender.Send(query, ct);
+        Result<BalanceModel> result = await sender.Send(query, ct);
 
         return result.ToDefaultApiResponse();
     }

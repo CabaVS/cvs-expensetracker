@@ -5,8 +5,6 @@ namespace CabaVS.ExpenseTracker.Persistence.Repositories;
 
 internal sealed class UserReadRepository(ApplicationDbContext dbContext) : IUserReadRepository
 {
-    public async Task<bool> IsExistById(Guid userId, CancellationToken cancellationToken = default)
-    {
-        return await dbContext.Users.AnyAsync(u => u.Id == userId, cancellationToken);
-    }
+    public async Task<bool> IsExistById(Guid userId, CancellationToken cancellationToken = default) => 
+        await dbContext.Users.AnyAsync(u => u.Id == userId, cancellationToken);
 }

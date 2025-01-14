@@ -19,15 +19,19 @@ public sealed class Currency : Entity
 
     public static Result<Currency> Create(Guid id, string name, string code, string symbol)
     {
-        var nameResult = CurrencyName.Create(name);
-        if (nameResult.IsFailure) return nameResult.Error;
-        
-        var codeResult = CurrencyCode.Create(code);
-        if (codeResult.IsFailure) return codeResult.Error;
-        
-        var symbolResult = CurrencySymbol.Create(symbol);
-        if (symbolResult.IsFailure) return symbolResult.Error;
+        Result<CurrencyName> nameResult = CurrencyName.Create(name);
+        if (nameResult.IsFailure)
+        {
+            return nameResult.Error;
+        }
 
-        return new Currency(id, nameResult.Value, codeResult.Value, symbolResult.Value);
+        Result<CurrencyCode> codeResult = CurrencyCode.Create(code);
+        if (codeResult.IsFailure)
+        {
+            return codeResult.Error;
+        }
+
+        Result<CurrencySymbol> symbolResult = CurrencySymbol.Create(symbol);
+        return symbolResult.IsFailure ? symbolResult.Error : new Currency(id, nameResult.Value, codeResult.Value, symbolResult.Value);
     }
 }

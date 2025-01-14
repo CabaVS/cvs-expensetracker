@@ -31,7 +31,7 @@ internal sealed class DeleteWorkspaceEndpoint(ISender sender)
     {
         var command = new DeleteWorkspaceCommand(req.WorkspaceId);
 
-        var result = await sender.Send(command, ct);
+        Result result = await sender.Send(command, ct);
         
         return result.ToDefaultApiResponse();
     }

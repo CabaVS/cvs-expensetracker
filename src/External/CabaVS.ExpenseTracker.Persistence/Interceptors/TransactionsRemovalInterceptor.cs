@@ -14,9 +14,11 @@ internal sealed class TransactionsRemovalInterceptor : ISaveChangesInterceptor
         CancellationToken cancellationToken = new())
     {
         if (eventData.Context is not ApplicationDbContext context)
+        {
             throw new InvalidOperationException("Expected to have DbContext to work with.");
+        }
 
-        var removedBalances = context.ChangeTracker
+        Guid[] removedBalances = context.ChangeTracker
             .Entries<Balance>()
             .Where(x => x.State == EntityState.Deleted)
             .Select(x => x.Entity.Id)
@@ -24,20 +26,20 @@ internal sealed class TransactionsRemovalInterceptor : ISaveChangesInterceptor
             .ToArray();
         if (removedBalances.Length > 0)
         {
-            for (var i = 0; ; i++)
+            TransferTransaction[] transferTransactionsToRemove;
+            var batchNumber = 0;
+            
+            do
             {
-                var transferTransactionsToRemove = await context.TransferTransactions
+                transferTransactionsToRemove = await context.TransferTransactions
                     .Where(x => removedBalances.Contains(x.SourceId) ||
-                                                removedBalances.Contains(x.DestinationId))
-                    .Skip(i * BatchSize)
+                                removedBalances.Contains(x.DestinationId))
+                    .Skip(batchNumber++ * BatchSize)
                     .Take(BatchSize)
                     .OrderBy(x => x.Id)
                     .ToArrayAsync(cancellationToken);
                 context.TransferTransactions.RemoveRange(transferTransactionsToRemove);
-                
-                if (transferTransactionsToRemove.Length < BatchSize)
-                    break;
-            }
+            } while (transferTransactionsToRemove.Length == BatchSize);
         }
         
         return result;

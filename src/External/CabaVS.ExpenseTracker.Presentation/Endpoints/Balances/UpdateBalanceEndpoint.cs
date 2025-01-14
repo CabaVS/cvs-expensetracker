@@ -31,7 +31,7 @@ internal sealed class UpdateBalanceEndpoint(ISender sender)
     {
         var command = new UpdateBalanceCommand(req.WorkspaceId, req.BalanceId, req.Name, req.Amount);
 
-        var result = await sender.Send(command, ct);
+        Result result = await sender.Send(command, ct);
         
         return result.ToDefaultApiResponse();
     }

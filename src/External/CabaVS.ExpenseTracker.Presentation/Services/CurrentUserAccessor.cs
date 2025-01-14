@@ -11,7 +11,7 @@ internal sealed class CurrentUserAccessor(IHttpContextAccessor httpContextAccess
     
     public Task<AuthenticatedUserModel?> GetCurrentUser(CancellationToken cancellationToken = default)
     {
-        var context = httpContextAccessor.HttpContext;
+        HttpContext? context = httpContextAccessor.HttpContext;
         if (context is null || context.User.Identity?.IsAuthenticated != true)
         {
             return Task.FromResult<AuthenticatedUserModel?>(null);
@@ -22,10 +22,10 @@ internal sealed class CurrentUserAccessor(IHttpContextAccessor httpContextAccess
             return Task.FromResult<AuthenticatedUserModel?>(foundUser);
         }
         
-        var claims = context.User.Claims.ToArray();
+        Claim[] claims = context.User.Claims.ToArray();
         
         var userId = claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
-        if (!Guid.TryParse(userId, out var userIdParsed))
+        if (!Guid.TryParse(userId, out Guid userIdParsed))
         {
             return Task.FromResult<AuthenticatedUserModel?>(null);
         }

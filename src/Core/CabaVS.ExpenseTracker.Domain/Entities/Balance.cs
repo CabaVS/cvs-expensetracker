@@ -20,9 +20,7 @@ public sealed class Balance : Entity
 
     public static Result<Balance> Create(Guid id, string name, decimal amount, Currency currency)
     {
-        var nameResult = BalanceName.Create(name);
-        if (nameResult.IsFailure) return nameResult.Error;
-
-        return new Balance(id, nameResult.Value, amount, currency);
+        Result<BalanceName> nameResult = BalanceName.Create(name);
+        return nameResult.IsFailure ? nameResult.Error : new Balance(id, nameResult.Value, amount, currency);
     }
 }

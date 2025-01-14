@@ -1,5 +1,6 @@
 using CabaVS.ExpenseTracker.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace CabaVS.ExpenseTracker.Persistence.Interceptors;
@@ -12,7 +13,9 @@ internal sealed class RecommendedTagsCreationInterceptor : ISaveChangesIntercept
         CancellationToken cancellationToken = new())
     {
         if (eventData.Context is not ApplicationDbContext context)
+        {
             throw new InvalidOperationException("Expected to have DbContext to work with.");
+        }
 
         await HandleTransferTransactions();
         
@@ -20,22 +23,26 @@ internal sealed class RecommendedTagsCreationInterceptor : ISaveChangesIntercept
 
         async Task HandleTransferTransactions()
         {
-            var addedTransferTransactions = context.ChangeTracker
+            EntityEntry<TransferTransaction>[] addedTransferTransactions = context.ChangeTracker
                 .Entries<TransferTransaction>()
                 .Where(x => x.State == EntityState.Added)
                 .DistinctBy(x => x.Entity.Id)
                 .ToArray();
             if (addedTransferTransactions.Length == 0)
+            {
                 return;
-            
+            }
+
             var uniqueTags = addedTransferTransactions
                 .SelectMany(x => x.Entity.Tags)
                 .Distinct()
                 .ToArray();
             if (uniqueTags.Length == 0)
+            {
                 return;
+            }
 
-            var workspaceId = addedTransferTransactions
+            Guid workspaceId = addedTransferTransactions
                 .Select(x => x.Entity.Source.WorkspaceId)
                 .Concat(
                     addedTransferTransactions
@@ -50,8 +57,10 @@ internal sealed class RecommendedTagsCreationInterceptor : ISaveChangesIntercept
             
             var tagsToAdd = uniqueTags.Except(existingTags).ToArray();
             if (tagsToAdd.Length == 0)
+            {
                 return;
-            
+            }
+
             context.RecommendedTags.AddRange(
                 tagsToAdd.Select(
                     x => new RecommendedTag

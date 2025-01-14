@@ -1,5 +1,6 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
+using CabaVS.ExpenseTracker.Application.Abstractions.Presentation.Models;
 using CabaVS.ExpenseTracker.Application.Common.Requests;
 using CabaVS.ExpenseTracker.Domain.Errors;
 using CabaVS.ExpenseTracker.Domain.Shared;
@@ -15,8 +16,8 @@ internal sealed class WorkspaceBoundRequestBehavior<TRequest, TResponse>(
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var currentUser = await currentUserAccessor.GetCurrentUser(cancellationToken) 
-                          ?? throw new InvalidOperationException("Current user is null.");
+        AuthenticatedUserModel currentUser = await currentUserAccessor.GetCurrentUser(cancellationToken) 
+                                             ?? throw new InvalidOperationException("Current user is null.");
         
         var isMemberOfWorkspace = await workspaceReadRepository.IsMemberOfWorkspace(request.WorkspaceId, currentUser.Id, cancellationToken);
         return isMemberOfWorkspace

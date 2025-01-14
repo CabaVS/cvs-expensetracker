@@ -1,5 +1,6 @@
 using CabaVS.ExpenseTracker.Persistence.Entities.Abstractions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace CabaVS.ExpenseTracker.Persistence.Interceptors;
@@ -16,21 +17,21 @@ internal sealed class AuditableEntityInterceptor : ISaveChangesInterceptor
             throw new InvalidOperationException("Expected to have DbContext to work with.");
         }
 
-        var createdEntities = context.ChangeTracker
+        IEnumerable<EntityEntry<IAuditableEntity>> createdEntities = context.ChangeTracker
             .Entries<IAuditableEntity>()
             .Where(x => x.State == EntityState.Added)
             .Where(x => x.Entity.CreatedOn == default)
             .DistinctBy(x => x.Entity.Id);
-        foreach (var entity in createdEntities)
+        foreach (EntityEntry<IAuditableEntity> entity in createdEntities)
         {
             entity.Entity.CreatedOn = DateTime.UtcNow;
         }
         
-        var updatedEntities = context.ChangeTracker
+        IEnumerable<EntityEntry<IAuditableEntity>> updatedEntities = context.ChangeTracker
             .Entries<IAuditableEntity>()
             .Where(x => x.State == EntityState.Modified)
             .DistinctBy(x => x.Entity.Id);
-        foreach (var entity in updatedEntities)
+        foreach (EntityEntry<IAuditableEntity> entity in updatedEntities)
         {
             entity.Entity.ModifiedOn = DateTime.UtcNow;
         }

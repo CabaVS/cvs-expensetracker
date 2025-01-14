@@ -1,6 +1,7 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CabaVS.ExpenseTracker.Persistence.Repositories;
 
@@ -8,7 +9,7 @@ internal sealed class BalanceRepository(ApplicationDbContext dbContext) : IBalan
 {
     public async Task<Domain.Entities.Balance?> GetById(Guid workspaceId, Guid balanceId, CancellationToken cancellationToken)
     {
-        var balance = await dbContext.Balances
+        Balance? balance = await dbContext.Balances
             .AsNoTracking()
             .Include(b => b.Currency)
             .Where(b => b.Id == balanceId)
@@ -21,7 +22,7 @@ internal sealed class BalanceRepository(ApplicationDbContext dbContext) : IBalan
     {
         var balanceToCreate = Balance.ConvertFromDomain(balance, workspaceId);
         
-        var addedEntityEntry = await dbContext.Balances.AddAsync(balanceToCreate, cancellationToken);
+        EntityEntry<Balance> addedEntityEntry = await dbContext.Balances.AddAsync(balanceToCreate, cancellationToken);
         
         return addedEntityEntry.Entity.Id;
     }
@@ -37,7 +38,7 @@ internal sealed class BalanceRepository(ApplicationDbContext dbContext) : IBalan
 
     public async Task Delete(Guid workspaceId, Domain.Entities.Balance balance, CancellationToken cancellationToken)
     {
-        var balanceToDelete = await dbContext.Balances
+        Balance? balanceToDelete = await dbContext.Balances
             .Where(b => b.Id == balance.Id)
             .Where(b => b.WorkspaceId == workspaceId)
             .FirstOrDefaultAsync(cancellationToken);

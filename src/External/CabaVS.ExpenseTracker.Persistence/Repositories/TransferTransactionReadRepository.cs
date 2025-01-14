@@ -12,7 +12,7 @@ internal sealed class TransferTransactionReadRepository(ApplicationDbContext dbC
         Guid workspaceId, Guid transferTransactionId,
         CancellationToken cancellationToken = default)
     {
-        var model = await dbContext.TransferTransactions
+        TransferTransactionModel? model = await dbContext.TransferTransactions
             .Where(x => x.Id == transferTransactionId)
             .Where(x => x.Source.WorkspaceId == workspaceId)
             .Where(x => x.Destination.WorkspaceId == workspaceId)

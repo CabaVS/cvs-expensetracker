@@ -1,5 +1,6 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Persistence.Entities;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CabaVS.ExpenseTracker.Persistence.Repositories;
 
@@ -9,7 +10,7 @@ internal sealed class TransferTransactionRepository(ApplicationDbContext dbConte
     {
         var entityToCreate = TransferTransaction.ConvertFromDomain(transferTransaction);
         
-        var added = await dbContext.TransferTransactions.AddAsync(entityToCreate, cancellationToken);
+        EntityEntry<TransferTransaction> added = await dbContext.TransferTransactions.AddAsync(entityToCreate, cancellationToken);
         
         return added.Entity.Id;
     }

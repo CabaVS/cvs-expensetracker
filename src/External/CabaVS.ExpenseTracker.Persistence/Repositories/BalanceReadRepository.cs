@@ -9,7 +9,7 @@ internal sealed class BalanceReadRepository(ApplicationDbContext dbContext) : IB
 {
     public async Task<BalanceModel[]> GetBalances(Guid workspaceId, CancellationToken cancellationToken = default)
     {
-        var balances = await dbContext.Balances
+        BalanceModel[] balances = await dbContext.Balances
             .Where(b => b.WorkspaceId == workspaceId)
             .Select(b => new BalanceModel(
                 b.Id, b.Name, b.Amount, 
@@ -21,7 +21,7 @@ internal sealed class BalanceReadRepository(ApplicationDbContext dbContext) : IB
 
     public async Task<BalanceModel?> GetBalanceById(Guid balanceId, Guid workspaceId, CancellationToken cancellationToken = default)
     {
-        var balance = await dbContext.Balances
+        BalanceModel? balance = await dbContext.Balances
             .Where(b => b.Id == balanceId)
             .Where(b => b.WorkspaceId == workspaceId)
             .Select(b => new BalanceModel(

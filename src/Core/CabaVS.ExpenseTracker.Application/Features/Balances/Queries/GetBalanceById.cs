@@ -14,12 +14,7 @@ internal sealed class GetBalanceByIdQueryHandler(
 {
     public async Task<Result<BalanceModel>> Handle(GetBalanceByIdQuery request, CancellationToken cancellationToken)
     {
-        var balanceModel = await balanceReadRepository.GetBalanceById(request.BalanceId, request.WorkspaceId, cancellationToken);
-        if (balanceModel is null)
-        {
-            return BalanceErrors.NotFoundById(request.BalanceId);
-        }
-
-        return balanceModel;
+        BalanceModel? balanceModel = await balanceReadRepository.GetBalanceById(request.BalanceId, request.WorkspaceId, cancellationToken);
+        return balanceModel is null ? BalanceErrors.NotFoundById(request.BalanceId) : balanceModel;
     }
 }

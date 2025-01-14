@@ -13,7 +13,7 @@ internal sealed class GetCurrenciesQueryHandler(
 {
     public async Task<Result<CurrencyModel[]>> Handle(GetCurrenciesQuery request, CancellationToken cancellationToken)
     {
-        var allCurrencies = await currencyReadRepository.GetAll(cancellationToken);
+        CurrencyModel[] allCurrencies = await currencyReadRepository.GetAll(cancellationToken);
         return allCurrencies;
     }
 }

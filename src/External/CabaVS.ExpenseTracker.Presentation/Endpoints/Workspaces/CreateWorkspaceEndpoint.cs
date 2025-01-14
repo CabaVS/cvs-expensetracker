@@ -31,7 +31,7 @@ internal sealed class CreateWorkspaceEndpoint(ISender sender)
     {
         var command = new CreateWorkspaceCommand(req.Name);
 
-        var result = await sender.Send(command, ct);
+        Result<Guid> result = await sender.Send(command, ct);
         
         return result.ToDefaultApiResponse(
             nameof(GetWorkspaceByIdEndpoint),

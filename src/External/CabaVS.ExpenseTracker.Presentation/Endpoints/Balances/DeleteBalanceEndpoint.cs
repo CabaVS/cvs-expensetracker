@@ -31,7 +31,7 @@ internal sealed class DeleteBalanceEndpoint(ISender sender)
     {
         var command = new DeleteBalanceCommand(req.WorkspaceId, req.BalanceId);
 
-        var result = await sender.Send(command, ct);
+        Result result = await sender.Send(command, ct);
         
         return result.ToDefaultApiResponse();
     }

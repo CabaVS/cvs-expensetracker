@@ -31,10 +31,7 @@ public class Result
 
 public sealed class Result<T> : Result
 {
-    private Result(bool isSuccess, Error error, T? value) : base(isSuccess, error)
-    {
-        _value = value;
-    }
+    private Result(bool isSuccess, Error error, T? value) : base(isSuccess, error) => _value = value;
 
     private readonly T? _value;
     

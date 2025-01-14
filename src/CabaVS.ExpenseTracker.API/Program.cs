@@ -2,9 +2,9 @@ using CabaVS.ExpenseTracker.Application;
 using CabaVS.ExpenseTracker.Persistence;
 using CabaVS.ExpenseTracker.Presentation;
 
-var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
-var environment = builder.Environment;
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+IConfiguration configuration = builder.Configuration;
+IWebHostEnvironment environment = builder.Environment;
 
 builder.Services
     .AddApplication()
@@ -14,11 +14,15 @@ builder.Services
 builder.WebHost
     .UseKestrel(options => options.AddServerHeader = false);
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 app.UsePresentationWithFastEndpoints();
 
-app.Run();
+await app.RunAsync();
 
 // Required by xUnit public tests
+#pragma warning disable CA1515
+#pragma warning disable S1118
 public partial class Program;
+#pragma warning restore S1118
+#pragma warning restore CA1515

@@ -7,6 +7,7 @@ using CabaVS.ExpenseTracker.Domain.Shared;
 using CabaVS.ExpenseTracker.Domain.ValueObjects;
 using CabaVS.ExpenseTracker.IntegrationTests.Injected;
 using CabaVS.ExpenseTracker.Persistence;
+using CabaVS.ExpenseTracker.Persistence.Entities;
 using CabaVS.ExpenseTracker.Presentation.Endpoints.Workspaces;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -22,20 +23,20 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
     public async Task GetAll_ShouldReturn_EmptyCollection_WhenUserIsNotPartOfAnyWorkspace()
     {
         // Arrange
-        const string url = "api/workspaces";
+        var url = new Uri("api/workspaces", UriKind.Relative);
         
-        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
         
         var numberOfWorkspacesInDatabase = await dbContext.Workspaces.CountAsync();
         numberOfWorkspacesInDatabase.Should().BeGreaterThan(0, "Number of workspaces should be greater than 0.");
         
         // Act
-        var endpointResponse = await Client.GetAsync(url);
+        HttpResponseMessage endpointResponse = await Client.GetAsync(url);
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.OK, "Expected OK status code to be returned");
 
-        var response = await endpointResponse.Content.ReadFromJsonAsync<WorkspaceModel[]>();
+        WorkspaceModel[]? response = await endpointResponse.Content.ReadFromJsonAsync<WorkspaceModel[]>();
         response.Should().BeEquivalentTo(Array.Empty<WorkspaceModel>(), $"Expected an empty collection of {nameof(WorkspaceModel)}.");
     }
     
@@ -44,20 +45,20 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
     {
         // Arrange
         var workspaceId = Guid.NewGuid();
-        var url = $"api/workspaces/{workspaceId}";
+        var url = new Uri($"api/workspaces/{workspaceId}", UriKind.Relative);
         
-        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
         
         var workspaceByGeneratedIdExist = await dbContext.Workspaces.AnyAsync(w => w.Id == workspaceId);
         workspaceByGeneratedIdExist.Should().BeFalse();
         
         // Act
-        var endpointResponse = await Client.GetAsync(url);
+        HttpResponseMessage endpointResponse = await Client.GetAsync(url);
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
 
-        var response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
+        Error? response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
         response.Should().Be(WorkspaceErrors.NotFoundById(workspaceId), $"Expected {nameof(WorkspaceErrors.NotFoundById)} error to be returned.");
     }
     
@@ -65,20 +66,20 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
     public async Task GetById_ShouldReturnError_NotFoundById_WhenUserDoesNotHaveAccessToWorkspace()
     {
         // Arrange
-        var workspaceId = await ConvertTo<ApplicationDbContext>(DbContext)
+        Guid workspaceId = await ConvertTo<ApplicationDbContext>(DbContext)
             .UserWorkspaces
             .Where(uw => uw.UserId != CurrentUserAccessorInjected.AuthenticatedUserId)
             .Select(uw => uw.WorkspaceId)
             .FirstAsync();
-        var url = $"api/workspaces/{workspaceId}";
+        var url = new Uri($"api/workspaces/{workspaceId}", UriKind.Relative);
         
         // Act
-        var endpointResponse = await Client.GetAsync(url);
+        HttpResponseMessage endpointResponse = await Client.GetAsync(url);
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
 
-        var response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
+        Error? response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
         response.Should().Be(WorkspaceErrors.NotFoundById(workspaceId), $"Expected {nameof(WorkspaceErrors.NotFoundById)} error to be returned.");
     }
     
@@ -89,16 +90,16 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         const string workspaceName = "";
         const string url = "api/workspaces";
         
-        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
         var numberOfWorkspacesInDatabaseBeforeRequest = await dbContext.Workspaces.CountAsync();
         
         // Act
-        var endpointResponse = await Client.PostAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
+        HttpResponseMessage endpointResponse = await Client.PostAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
 
-        var response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
+        Error? response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
         response.Should().Be(WorkspaceErrors.NameIsNullOrWhitespace(), $"Expected {nameof(WorkspaceErrors.NameIsNullOrWhitespace)} error to be returned.");
         
         var numberOfWorkspacesInDatabaseAfterRequest = await dbContext.Workspaces.CountAsync();
@@ -112,16 +113,16 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var workspaceName = new Faker().Random.String2(WorkspaceName.MaxLength + 1);
         const string url = "api/workspaces";
         
-        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
         var numberOfWorkspacesInDatabaseBeforeRequest = await dbContext.Workspaces.CountAsync();
         
         // Act
-        var endpointResponse = await Client.PostAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
+        HttpResponseMessage endpointResponse = await Client.PostAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
 
-        var response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
+        Error? response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
         response.Should().Be(WorkspaceErrors.NameTooLong(workspaceName), $"Expected {nameof(WorkspaceErrors.NameTooLong)} error to be returned.");
         
         var numberOfWorkspacesInDatabaseAfterRequest = await dbContext.Workspaces.CountAsync();
@@ -135,11 +136,11 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var workspaceName = new Faker().Random.String2(1, WorkspaceName.MaxLength);
         const string url = "api/workspaces";
         
-        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
         var numberOfWorkspacesInDatabaseBeforeRequest = await dbContext.Workspaces.CountAsync();
         
         // Act
-        var endpointResponse = await Client.PostAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
+        HttpResponseMessage endpointResponse = await Client.PostAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.Created, "Expected Created status code to be returned.");
@@ -157,7 +158,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
             locationHeader!
                 .Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Last());
-        var workspaceIdFromDatabase = await dbContext.Workspaces
+        Guid workspaceIdFromDatabase = await dbContext.Workspaces
             .Where(w => w.Id == workspaceIdFromLocationHeader)
             .Select(w => w.Id)
             .FirstOrDefaultAsync();
@@ -173,18 +174,18 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         const string workspaceName = "";
         var url = $"api/workspaces/{ExpectedWorkspaces.Single().Id}";
         
-        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
         
         // Act
-        var endpointResponse = await Client.PutAsJsonAsync(url, new UpdateWorkspaceEndpoint.RequestModel(default, workspaceName));
+        HttpResponseMessage endpointResponse = await Client.PutAsJsonAsync(url, new UpdateWorkspaceEndpoint.RequestModel(Guid.Empty, workspaceName));
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
 
-        var response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
+        Error? response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
         response.Should().Be(WorkspaceErrors.NameIsNullOrWhitespace(), $"Expected {nameof(WorkspaceErrors.NameIsNullOrWhitespace)} error to be returned.");
         
-        var workspace = await dbContext.Workspaces
+        Workspace workspace = await dbContext.Workspaces
             .AsNoTracking()
             .SingleAsync(w => w.Id == ExpectedWorkspaces.Single().Id);
         workspace.Name.Should().Be(ExpectedWorkspaces.Single().Name).And.NotBe(workspaceName);
@@ -197,18 +198,18 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var workspaceName = new Faker().Random.String2(WorkspaceName.MaxLength + 1);
         var url = $"api/workspaces/{ExpectedWorkspaces.Single().Id}";
         
-        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
         
         // Act
-        var endpointResponse = await Client.PutAsJsonAsync(url, new UpdateWorkspaceEndpoint.RequestModel(default, workspaceName));
+        HttpResponseMessage endpointResponse = await Client.PutAsJsonAsync(url, new UpdateWorkspaceEndpoint.RequestModel(Guid.Empty, workspaceName));
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
 
-        var response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
+        Error? response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
         response.Should().Be(WorkspaceErrors.NameTooLong(workspaceName), $"Expected {nameof(WorkspaceErrors.NameTooLong)} error to be returned.");
         
-        var workspace = await dbContext.Workspaces
+        Workspace workspace = await dbContext.Workspaces
             .AsNoTracking()
             .SingleAsync(w => w.Id == ExpectedWorkspaces.Single().Id);
         workspace.Name.Should().Be(ExpectedWorkspaces.Single().Name).And.NotBe(workspaceName);
@@ -221,10 +222,10 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var workspaceName = new Faker().Random.String2(1, WorkspaceName.MaxLength);
         var url = $"api/workspaces/{ExpectedWorkspaces.Single().Id}";
         
-        var dbContext = ConvertTo<ApplicationDbContext>(DbContext);
+        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
         
         // Act
-        var endpointResponse = await Client.PutAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
+        HttpResponseMessage endpointResponse = await Client.PutAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
         
         // Assert
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.OK, "Expected OK status code to be returned.");
@@ -232,7 +233,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var responseLength = endpointResponse.Content.Headers.ContentLength;
         responseLength.Should().Be(0, "Expected an empty content to be returned.");
         
-        var workspace = await dbContext.Workspaces
+        Workspace workspace = await dbContext.Workspaces
             .AsNoTracking()
             .SingleAsync(w => w.Id == ExpectedWorkspaces.Single().Id);
         workspace.Name.Should().Be(workspaceName);

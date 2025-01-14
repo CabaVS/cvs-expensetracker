@@ -33,7 +33,7 @@ internal sealed class GetAllBalancesEndpoint(ISender sender)
     {
         var query = new GetAllBalancesQuery(req.WorkspaceId);
 
-        var result = await sender.Send(query, ct);
+        Result<BalanceModel[]> result = await sender.Send(query, ct);
 
         return result.ToDefaultApiResponse();
     }

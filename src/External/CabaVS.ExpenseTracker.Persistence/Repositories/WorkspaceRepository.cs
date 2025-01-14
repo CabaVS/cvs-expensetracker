@@ -1,6 +1,7 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CabaVS.ExpenseTracker.Persistence.Repositories;
 
@@ -8,14 +9,14 @@ internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWor
 {
     public async Task<Domain.Entities.Workspace?> GetById(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default)
     {
-        var workspace = await dbContext.UserWorkspaces
+        Workspace? workspace = await dbContext.UserWorkspaces
             .AsNoTracking()
             .Where(uw => uw.WorkspaceId == workspaceId)
             .Where(uw => uw.UserId == userId)
             .Select(uw => uw.Workspace)
             .SingleOrDefaultAsync(cancellationToken);
 
-        var converted = workspace?.ConvertToDomain();
+        Domain.Entities.Workspace? converted = workspace?.ConvertToDomain();
         return converted;
     }
 
@@ -23,7 +24,7 @@ internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWor
     {
         var converted = Workspace.ConvertFromDomain(workspace);
         
-        var added = await dbContext.Workspaces.AddAsync(converted, cancellationToken);
+        EntityEntry<Workspace> added = await dbContext.Workspaces.AddAsync(converted, cancellationToken);
         return added.Entity.Id;
     }
 
@@ -57,7 +58,7 @@ internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWor
 
     public async Task UnregisterUser(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default)
     {
-        var userWorkspace = await dbContext.UserWorkspaces
+        UserWorkspace userWorkspace = await dbContext.UserWorkspaces
             .Where(uw => uw.WorkspaceId == workspaceId)
             .Where(uw => uw.UserId == userId)
             .SingleAsync(cancellationToken);
@@ -67,7 +68,7 @@ internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWor
 
     public async Task MakeAnAdmin(Guid workspaceId, Guid userId, CancellationToken cancellationToken = default)
     {
-        var userWorkspace = await dbContext.UserWorkspaces
+        UserWorkspace userWorkspace = await dbContext.UserWorkspaces
             .Where(uw => uw.WorkspaceId == workspaceId)
             .Where(uw => uw.UserId == userId)
             .SingleAsync(cancellationToken);

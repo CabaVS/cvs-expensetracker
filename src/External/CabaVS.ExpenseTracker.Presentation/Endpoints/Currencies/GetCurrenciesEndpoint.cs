@@ -30,7 +30,7 @@ internal sealed class GetCurrenciesEndpoint(ISender sender)
     {
         var query = new GetCurrenciesQuery();
 
-        var result = await sender.Send(query, ct);
+        Result<CurrencyModel[]> result = await sender.Send(query, ct);
 
         return result.ToDefaultApiResponse();
     }

@@ -4,7 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CabaVS.ExpenseTracker.Application;
 
+#pragma warning disable CA1724 // Type names should not match namespaces
 public static class DependencyInjection
+#pragma warning restore CA1724 // Type names should not match namespaces
 {
     public static IServiceCollection AddApplication(this IServiceCollection serviceCollection)
     {

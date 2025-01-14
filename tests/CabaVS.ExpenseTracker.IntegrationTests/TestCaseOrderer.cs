@@ -9,7 +9,9 @@ public sealed class TestCaseOrderer : ITestCaseOrderer
     {
         var sortedMethods = new SortedDictionary<int, List<TTestCase>>();
 
-        foreach (var testCase in testCases)
+#pragma warning disable CA1062
+        foreach (TTestCase testCase in testCases)
+#pragma warning restore CA1062
         {
             var order = testCase
                 .TestMethod
@@ -21,11 +23,14 @@ public sealed class TestCaseOrderer : ITestCaseOrderer
             GetOrCreate(sortedMethods, order).Add(testCase);
         }
 
-        foreach (var (_, methods) in sortedMethods)
+        foreach ((_, List<TTestCase> methods) in sortedMethods)
         {
             methods.Sort((x, y) => StringComparer.OrdinalIgnoreCase.Compare(x.TestMethod.Method.Name, y.TestMethod.Method.Name));
-            foreach (var testCase in methods)
+            
+            foreach (TTestCase testCase in methods)
+            {
                 yield return testCase;
+            }
         }
     }
     
@@ -33,7 +38,10 @@ public sealed class TestCaseOrderer : ITestCaseOrderer
         where TKey : notnull
         where TValue : new()
     {
-        if (dictionary.TryGetValue(key, out var result)) return result;
+        if (dictionary.TryGetValue(key, out TValue? result))
+        {
+            return result;
+        }
 
         result = new TValue();
         dictionary[key] = result;

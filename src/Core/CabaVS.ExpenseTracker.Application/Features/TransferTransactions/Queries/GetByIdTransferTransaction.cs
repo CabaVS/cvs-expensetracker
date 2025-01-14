@@ -19,14 +19,11 @@ internal sealed class GetByIdTransferTransactionQueryHandler(
         GetByIdTransferTransactionQuery request,
         CancellationToken cancellationToken)
     {
-        var transferTransaction = await transferTransactionReadRepository.GetByIdAsync(
+        TransferTransactionModel? transferTransaction = await transferTransactionReadRepository.GetByIdAsync(
             request.WorkspaceId,
             request.TransferTransactionId, cancellationToken);
-        if (transferTransaction is null)
-        {
-            return TransactionErrors.NotFoundById<TransferTransaction>(request.TransferTransactionId);
-        }
-
-        return transferTransaction;
+        return transferTransaction is null
+            ? TransactionErrors.NotFoundById<TransferTransaction>(request.TransferTransactionId)
+            : transferTransaction;
     }
 }
