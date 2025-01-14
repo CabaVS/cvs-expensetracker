@@ -2,6 +2,7 @@ using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
 using CabaVS.ExpenseTracker.IntegrationTests.Injected;
 using CabaVS.ExpenseTracker.IntegrationTests.Seeders;
 using CabaVS.ExpenseTracker.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Testcontainers.MsSql;
 
 namespace CabaVS.ExpenseTracker.IntegrationTests;
@@ -45,9 +47,14 @@ public sealed class IntegrationTestWebAppFactory : WebApplicationFactory<Program
                 ServiceLifetime.Transient,
                 ServiceLifetime.Transient);
 
+            services.RemoveAll<IConfigureOptions<JwtBearerOptions>>();
+            services.RemoveAll<IPostConfigureOptions<JwtBearerOptions>>();
+            services.RemoveAll<IConfigureNamedOptions<JwtBearerOptions>>();
+
+            services.AddAuthentication("FakeScheme");
+            services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+            
             services.RemoveAll<ICurrentUserAccessor>();
             services.AddScoped<ICurrentUserAccessor>(_ => new CurrentUserAccessorInjected());
-            
-            services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
         });
 }
