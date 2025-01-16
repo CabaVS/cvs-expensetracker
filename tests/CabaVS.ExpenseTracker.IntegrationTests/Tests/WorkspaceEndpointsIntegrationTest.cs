@@ -6,7 +6,6 @@ using CabaVS.ExpenseTracker.Domain.Errors;
 using CabaVS.ExpenseTracker.Domain.Shared;
 using CabaVS.ExpenseTracker.Domain.ValueObjects;
 using CabaVS.ExpenseTracker.IntegrationTests.Injected;
-using CabaVS.ExpenseTracker.Persistence;
 using CabaVS.ExpenseTracker.Persistence.Entities;
 using CabaVS.ExpenseTracker.Presentation.Endpoints.Workspaces;
 using FluentAssertions;
@@ -25,9 +24,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         // Arrange
         var url = new Uri("api/workspaces", UriKind.Relative);
         
-        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
-        
-        var numberOfWorkspacesInDatabase = await dbContext.Workspaces.CountAsync();
+        var numberOfWorkspacesInDatabase = await DbContext.Workspaces.CountAsync();
         numberOfWorkspacesInDatabase.Should().BeGreaterThan(0, "Number of workspaces should be greater than 0.");
         
         // Act
@@ -47,9 +44,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var workspaceId = Guid.NewGuid();
         var url = new Uri($"api/workspaces/{workspaceId}", UriKind.Relative);
         
-        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
-        
-        var workspaceByGeneratedIdExist = await dbContext.Workspaces.AnyAsync(w => w.Id == workspaceId);
+        var workspaceByGeneratedIdExist = await DbContext.Workspaces.AnyAsync(w => w.Id == workspaceId);
         workspaceByGeneratedIdExist.Should().BeFalse();
         
         // Act
@@ -66,8 +61,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
     public async Task GetById_ShouldReturnError_NotFoundById_WhenUserDoesNotHaveAccessToWorkspace()
     {
         // Arrange
-        Guid workspaceId = await ConvertTo<ApplicationDbContext>(DbContext)
-            .UserWorkspaces
+        Guid workspaceId = await DbContext.UserWorkspaces
             .Where(uw => uw.UserId != CurrentUserAccessorInjected.AuthenticatedUserId)
             .Select(uw => uw.WorkspaceId)
             .FirstAsync();
@@ -90,8 +84,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         const string workspaceName = "";
         const string url = "api/workspaces";
         
-        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
-        var numberOfWorkspacesInDatabaseBeforeRequest = await dbContext.Workspaces.CountAsync();
+        var numberOfWorkspacesInDatabaseBeforeRequest = await DbContext.Workspaces.CountAsync();
         
         // Act
         HttpResponseMessage endpointResponse = await Client.PostAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
@@ -102,7 +95,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         Error? response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
         response.Should().Be(WorkspaceErrors.NameIsNullOrWhitespace(), $"Expected {nameof(WorkspaceErrors.NameIsNullOrWhitespace)} error to be returned.");
         
-        var numberOfWorkspacesInDatabaseAfterRequest = await dbContext.Workspaces.CountAsync();
+        var numberOfWorkspacesInDatabaseAfterRequest = await DbContext.Workspaces.CountAsync();
         numberOfWorkspacesInDatabaseBeforeRequest.Should().Be(numberOfWorkspacesInDatabaseAfterRequest, "Number of workspaces should not change.");
     }
     
@@ -113,8 +106,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var workspaceName = new Faker().Random.String2(WorkspaceName.MaxLength + 1);
         const string url = "api/workspaces";
         
-        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
-        var numberOfWorkspacesInDatabaseBeforeRequest = await dbContext.Workspaces.CountAsync();
+        var numberOfWorkspacesInDatabaseBeforeRequest = await DbContext.Workspaces.CountAsync();
         
         // Act
         HttpResponseMessage endpointResponse = await Client.PostAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
@@ -125,7 +117,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         Error? response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
         response.Should().Be(WorkspaceErrors.NameTooLong(workspaceName), $"Expected {nameof(WorkspaceErrors.NameTooLong)} error to be returned.");
         
-        var numberOfWorkspacesInDatabaseAfterRequest = await dbContext.Workspaces.CountAsync();
+        var numberOfWorkspacesInDatabaseAfterRequest = await DbContext.Workspaces.CountAsync();
         numberOfWorkspacesInDatabaseBeforeRequest.Should().Be(numberOfWorkspacesInDatabaseAfterRequest, "Number of workspaces should not change.");
     }
     
@@ -136,8 +128,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var workspaceName = new Faker().Random.String2(1, WorkspaceName.MaxLength);
         const string url = "api/workspaces";
         
-        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
-        var numberOfWorkspacesInDatabaseBeforeRequest = await dbContext.Workspaces.CountAsync();
+        var numberOfWorkspacesInDatabaseBeforeRequest = await DbContext.Workspaces.CountAsync();
         
         // Act
         HttpResponseMessage endpointResponse = await Client.PostAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
@@ -148,7 +139,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var responseLength = endpointResponse.Content.Headers.ContentLength;
         responseLength.Should().Be(0, "Expected an empty content to be returned.");
         
-        var numberOfWorkspacesInDatabaseAfterRequest = await dbContext.Workspaces.CountAsync();
+        var numberOfWorkspacesInDatabaseAfterRequest = await DbContext.Workspaces.CountAsync();
         numberOfWorkspacesInDatabaseBeforeRequest.Should().Be(numberOfWorkspacesInDatabaseAfterRequest - 1, "Number of workspaces should change by 1.");
         
         var locationHeader = endpointResponse.Headers.Location?.ToString();
@@ -158,7 +149,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
             locationHeader!
                 .Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Last());
-        Guid workspaceIdFromDatabase = await dbContext.Workspaces
+        Guid workspaceIdFromDatabase = await DbContext.Workspaces
             .Where(w => w.Id == workspaceIdFromLocationHeader)
             .Select(w => w.Id)
             .FirstOrDefaultAsync();
@@ -174,8 +165,6 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         const string workspaceName = "";
         var url = $"api/workspaces/{ExpectedWorkspaces.Single().Id}";
         
-        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
-        
         // Act
         HttpResponseMessage endpointResponse = await Client.PutAsJsonAsync(url, new UpdateWorkspaceEndpoint.RequestModel(Guid.Empty, workspaceName));
         
@@ -185,7 +174,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         Error? response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
         response.Should().Be(WorkspaceErrors.NameIsNullOrWhitespace(), $"Expected {nameof(WorkspaceErrors.NameIsNullOrWhitespace)} error to be returned.");
         
-        Workspace workspace = await dbContext.Workspaces
+        Workspace workspace = await DbContext.Workspaces
             .AsNoTracking()
             .SingleAsync(w => w.Id == ExpectedWorkspaces.Single().Id);
         workspace.Name.Should().Be(ExpectedWorkspaces.Single().Name).And.NotBe(workspaceName);
@@ -198,8 +187,6 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var workspaceName = new Faker().Random.String2(WorkspaceName.MaxLength + 1);
         var url = $"api/workspaces/{ExpectedWorkspaces.Single().Id}";
         
-        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
-        
         // Act
         HttpResponseMessage endpointResponse = await Client.PutAsJsonAsync(url, new UpdateWorkspaceEndpoint.RequestModel(Guid.Empty, workspaceName));
         
@@ -209,7 +196,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         Error? response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
         response.Should().Be(WorkspaceErrors.NameTooLong(workspaceName), $"Expected {nameof(WorkspaceErrors.NameTooLong)} error to be returned.");
         
-        Workspace workspace = await dbContext.Workspaces
+        Workspace workspace = await DbContext.Workspaces
             .AsNoTracking()
             .SingleAsync(w => w.Id == ExpectedWorkspaces.Single().Id);
         workspace.Name.Should().Be(ExpectedWorkspaces.Single().Name).And.NotBe(workspaceName);
@@ -222,8 +209,6 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var workspaceName = new Faker().Random.String2(1, WorkspaceName.MaxLength);
         var url = $"api/workspaces/{ExpectedWorkspaces.Single().Id}";
         
-        ApplicationDbContext dbContext = ConvertTo<ApplicationDbContext>(DbContext);
-        
         // Act
         HttpResponseMessage endpointResponse = await Client.PutAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
         
@@ -233,7 +218,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         var responseLength = endpointResponse.Content.Headers.ContentLength;
         responseLength.Should().Be(0, "Expected an empty content to be returned.");
         
-        Workspace workspace = await dbContext.Workspaces
+        Workspace workspace = await DbContext.Workspaces
             .AsNoTracking()
             .SingleAsync(w => w.Id == ExpectedWorkspaces.Single().Id);
         workspace.Name.Should().Be(workspaceName);

@@ -8,11 +8,8 @@ public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebAppF
 {
     private readonly IServiceScope _scope;
     
-    protected readonly HttpClient Client;
-    
-    // Limitations of using internal classes inside xUnit public tests
-    protected static T ConvertTo<T>(object obj) => (T)obj;
-    protected readonly object DbContext;
+    internal HttpClient Client { get; }
+    internal ApplicationDbContext DbContext { get; }
     
     protected IntegrationTestBase(IntegrationTestWebAppFactory factory)
     {
@@ -34,8 +31,9 @@ public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebAppF
     {
         if (disposing)
         {
-            ConvertTo<ApplicationDbContext>(DbContext).Dispose();
+            DbContext.Dispose();
             Client.Dispose();
+            
             _scope.Dispose();
         }
     }
