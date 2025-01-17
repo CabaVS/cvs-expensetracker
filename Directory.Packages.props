@@ -6,16 +6,16 @@
     <!-- Application layer -->
     <PackageVersion Include="MediatR" Version="12.4.1" />
     <!-- Persistance layer -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.12" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.12" />
     <!-- Presentation layer -->
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
     <PackageVersion Include="FastEndpoints" Version="5.30.0" />
     <PackageVersion Include="FastEndpoints.Swagger" Version="5.30.0" />
     <!-- Analyzers -->
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.5.0.109200" />
     <!-- Tests-->
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.12" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="Bogus" Version="35.6.1" />
     <PackageVersion Include="FluentAssertions" Version="[7.0.0]" />
