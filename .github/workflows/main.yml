@@ -1,4 +1,4 @@
-name: Build & Test
+name: Main Pipeline
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
       - main
 
 env:
-  DOTNET_VERSION: "8.0.12"
+  PATH_TO_GLOBAL_JSON: "./global.json"
   PATH_TO_MAIN_PROJECT: "./src/CabaVS.ExpenseTracker.API/CabaVS.ExpenseTracker.API.csproj"
   PATH_INTEGRATION_TESTS: "./tests/CabaVS.ExpenseTracker.IntegrationTests/CabaVS.ExpenseTracker.IntegrationTests.csproj"
 
@@ -21,7 +21,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          global-json-file: ${{ env.PATH_TO_GLOBAL_JSON }}
 
       - name: Restore solution
         run: dotnet restore ${{ env.PATH_TO_MAIN_PROJECT }}
@@ -45,7 +45,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}  
+          global-json-file: ${{ env.PATH_TO_GLOBAL_JSON }}  
       
       - name: Run Integration Tests
         run: dotnet test ${{ env.PATH_INTEGRATION_TESTS }} --configuration Release
