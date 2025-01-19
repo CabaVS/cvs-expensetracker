@@ -8,7 +8,7 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : IUserRepo
 {
     public async Task<Guid> Create(Domain.Entities.User user, CancellationToken cancellationToken = default)
     {
-        var userToCreate = User.ConvertFromDomain(user);
+        var userToCreate = User.ConvertFromDomainEntity(user);
         
         EntityEntry<User> entityEntry = await dbContext.Users.AddAsync(userToCreate, cancellationToken);
         

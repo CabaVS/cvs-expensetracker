@@ -6,8 +6,8 @@ namespace CabaVS.ExpenseTracker.Domain.Entities;
 
 public sealed class TransferTransaction : Entity
 {
-    public DateOnly Date { get; set; }
-    public string[] Tags { get; set; }
+    public DateOnly Date { get; private set; }
+    public string[] Tags { get; private set; }
     
     public decimal Amount { get; }
     public Currency Currency { get; }
@@ -20,6 +20,8 @@ public sealed class TransferTransaction : Entity
     
     private TransferTransaction(
         Guid id,
+        DateTime createdOn,
+        DateTime? modifiedOn,
         DateOnly date,
         string[] tags,
         decimal amount,
@@ -27,7 +29,7 @@ public sealed class TransferTransaction : Entity
         decimal amountInSourceCurrency,
         Balance source,
         decimal amountInDestinationCurrency,
-        Balance destination) : base(id)
+        Balance destination) : base(id, createdOn, modifiedOn)
     {
         Date = date;
         Tags = tags;
@@ -38,9 +40,34 @@ public sealed class TransferTransaction : Entity
         AmountInDestinationCurrency = amountInDestinationCurrency;
         Destination = destination;
     }
+
+    public static Result<TransferTransaction> Create(
+        DateOnly date,
+        string[] tags,
+        decimal amount,
+        Currency currency,
+        decimal amountInSourceCurrency,
+        Balance source,
+        decimal amountInDestinationCurrency,
+        Balance destination) =>
+        Create(
+            Guid.NewGuid(),
+            DateTime.UtcNow,
+            null,
+            date,
+            tags,
+            amount,
+            currency,
+            amountInSourceCurrency,
+            source,
+            amountInDestinationCurrency,
+            destination,
+            true);
     
     public static Result<TransferTransaction> Create(
         Guid id,
+        DateTime createdOn,
+        DateTime? modifiedOn,
         DateOnly date,
         string[] tags,
         decimal amount,
@@ -73,15 +100,11 @@ public sealed class TransferTransaction : Entity
         {
             return TransactionErrors.SourceAndDestinationAreSame<TransferTransaction>();
         }
-
-        if (recalculateSourceAndDestination)
-        {
-            source.Amount -= amountInSourceCurrency;
-            destination.Amount += amountInDestinationCurrency;
-        }
         
-        return new TransferTransaction(
+        var transferTransaction = new TransferTransaction(
             id,
+            createdOn,
+            modifiedOn,
             date,
             tags,
             amount,
@@ -90,5 +113,12 @@ public sealed class TransferTransaction : Entity
             source,
             amountInDestinationCurrency,
             destination);
+        if (recalculateSourceAndDestination)
+        {
+            source.ApplyTransferTransaction(transferTransaction, true);
+            destination.ApplyTransferTransaction(transferTransaction, false);
+        }
+        
+        return transferTransaction;
     }
 }

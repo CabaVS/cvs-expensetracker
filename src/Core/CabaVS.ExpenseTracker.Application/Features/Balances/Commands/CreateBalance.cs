@@ -22,7 +22,6 @@ internal sealed class CreateBalanceCommandHandler(IUnitOfWork unitOfWork)
         }
 
         Result<Balance> balanceCreationResult = Balance.Create(
-            Guid.NewGuid(),
             request.Name,
             request.Amount,
             currency);

@@ -42,7 +42,6 @@ internal sealed class CreateTransferTransactionCommandHandler(
         }
 
         Result<TransferTransaction> creationResult = TransferTransaction.Create(
-            Guid.NewGuid(),
             request.Date,
             request.Tags,
             request.Amount,
@@ -50,8 +49,7 @@ internal sealed class CreateTransferTransactionCommandHandler(
             request.AmountInSourceCurrency ?? request.Amount,
             source,
             request.AmountInDestinationCurrency ?? request.Amount,
-            destination,
-            true);
+            destination);
         if (creationResult.IsFailure)
         {
             return creationResult.Error;

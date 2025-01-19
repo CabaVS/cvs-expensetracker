@@ -16,7 +16,7 @@ internal sealed class ExpenseCategoryRepository(ApplicationDbContext dbContext) 
             .Where(ec => ec.WorkspaceId == workspaceId)
             .Where(ec => ec.Id == expenseCategoryId)
             .FirstOrDefaultAsync(cancellationToken);
-        return expenseCategory?.ToDomainEntity();
+        return expenseCategory?.ConvertToDomainEntity();
     }
 
     public async Task<Guid> CreateAsync(
@@ -24,30 +24,32 @@ internal sealed class ExpenseCategoryRepository(ApplicationDbContext dbContext) 
         Domain.Entities.ExpenseCategory expenseCategory,
         CancellationToken cancellationToken)
     {
-        var expenseCategoryToCreate = ExpenseCategory.FromDomainEntity(expenseCategory, workspaceId);
+        var expenseCategoryToCreate = ExpenseCategory.ConvertFromDomainEntity(expenseCategory, workspaceId);
         
         EntityEntry<ExpenseCategory> entityEntry = await dbContext.ExpenseCategories.AddAsync(expenseCategoryToCreate, cancellationToken);
         
         return entityEntry.Entity.Id;
     }
 
-    public async Task UpdateAsync(
+    public Task UpdateAsync(
+        Guid workspaceId,
         Domain.Entities.ExpenseCategory expenseCategory,
         CancellationToken cancellationToken)
     {
-        ExpenseCategory existingExpenseCategory = await dbContext.ExpenseCategories
-                                                      .Where(ec => ec.Id == expenseCategory.Id)
-                                                      .FirstOrDefaultAsync(cancellationToken) 
-                                                  ?? throw new InvalidOperationException("Expense Category not found.");
+        var expenseCategoryToUpdate = ExpenseCategory.ConvertFromDomainEntity(expenseCategory, workspaceId);
+        
+        dbContext.ExpenseCategories.Update(expenseCategoryToUpdate);
 
-        existingExpenseCategory.MergeWithDomainEntity(expenseCategory);
+        return Task.CompletedTask;
     }
 
     public async Task DeleteAsync(
+        Guid workspaceId,
         Domain.Entities.ExpenseCategory expenseCategory,
         CancellationToken cancellationToken)
     {
         ExpenseCategory existingExpenseCategory = await dbContext.ExpenseCategories
+                                                      .Where(ec => ec.WorkspaceId == workspaceId)
                                                       .Where(ec => ec.Id == expenseCategory.Id)
                                                       .FirstOrDefaultAsync(cancellationToken) 
                                                   ?? throw new InvalidOperationException("Expense Category not found.");

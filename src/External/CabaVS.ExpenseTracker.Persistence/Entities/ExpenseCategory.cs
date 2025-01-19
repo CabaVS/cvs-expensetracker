@@ -1,13 +1,12 @@
 using System.Linq.Expressions;
 using CabaVS.ExpenseTracker.Application.Features.ExpenseCategories.Models;
 using CabaVS.ExpenseTracker.Domain.ValueObjects;
-using CabaVS.ExpenseTracker.Persistence.Entities.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CabaVS.ExpenseTracker.Persistence.Entities;
 
-internal sealed class ExpenseCategory : IAuditableEntity
+internal sealed class ExpenseCategory
 {
     public Guid Id { get; set; }
     public DateTime CreatedOn { get; set; }
@@ -21,18 +20,22 @@ internal sealed class ExpenseCategory : IAuditableEntity
     public Guid WorkspaceId { get; set; }
     public Workspace Workspace { get; set; } = null!;
 
-    public void MergeWithDomainEntity(Domain.Entities.ExpenseCategory domainEntity) =>
-        Name = domainEntity.Name.Value;
-
-    public Domain.Entities.ExpenseCategory ToDomainEntity() =>
+    public Domain.Entities.ExpenseCategory ConvertToDomainEntity() =>
         Domain.Entities.ExpenseCategory
-            .Create(Id, Name, Currency.ConvertToDomain())
+            .Create(
+                Id, 
+                CreatedOn,
+                ModifiedOn,
+                Name, 
+                Currency.ConvertToDomainEntity())
             .Value;
 
-    public static ExpenseCategory FromDomainEntity(Domain.Entities.ExpenseCategory domainEntity, Guid workspaceId) =>
+    public static ExpenseCategory ConvertFromDomainEntity(Domain.Entities.ExpenseCategory domainEntity, Guid workspaceId) =>
         new()
         {
             Id = domainEntity.Id,
+            CreatedOn = domainEntity.CreatedOn,
+            ModifiedOn = domainEntity.ModifiedOn,
             Name = domainEntity.Name.Value,
             CurrencyId = domainEntity.Currency.Id,
             WorkspaceId = workspaceId

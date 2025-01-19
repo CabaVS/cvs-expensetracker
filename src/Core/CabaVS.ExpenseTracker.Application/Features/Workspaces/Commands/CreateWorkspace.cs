@@ -16,7 +16,7 @@ internal sealed class CreateWorkspaceCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateWorkspaceCommand request, CancellationToken cancellationToken)
     {
-        Result<Workspace> workspaceCreationResult = Workspace.Create(Guid.NewGuid(), request.Name);
+        Result<Workspace> workspaceCreationResult = Workspace.Create(request.Name);
         if (workspaceCreationResult.IsFailure)
         {
             return workspaceCreationResult.Error;

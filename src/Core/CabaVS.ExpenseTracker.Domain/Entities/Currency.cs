@@ -10,14 +10,20 @@ public sealed class Currency : Entity
     public CurrencyCode Code { get; }
     public CurrencySymbol Symbol { get; }
     
-    private Currency(Guid id, CurrencyName name, CurrencyCode code, CurrencySymbol symbol) : base(id)
+    private Currency(
+        Guid id, DateTime createdOn, DateTime? modifiedOn, 
+        CurrencyName name, CurrencyCode code, CurrencySymbol symbol) 
+        : base(id, createdOn, modifiedOn)
     {
         Name = name;
         Code = code;
         Symbol = symbol;
     }
+    
+    public static Result<Currency> Create(string name, string code, string symbol) => 
+        Create(Guid.NewGuid(), DateTime.UtcNow, null, name, code, symbol);
 
-    public static Result<Currency> Create(Guid id, string name, string code, string symbol)
+    public static Result<Currency> Create(Guid id, DateTime createdOn, DateTime? modifiedOn, string name, string code, string symbol)
     {
         Result<CurrencyName> nameResult = CurrencyName.Create(name);
         if (nameResult.IsFailure)
@@ -32,6 +38,8 @@ public sealed class Currency : Entity
         }
 
         Result<CurrencySymbol> symbolResult = CurrencySymbol.Create(symbol);
-        return symbolResult.IsFailure ? symbolResult.Error : new Currency(id, nameResult.Value, codeResult.Value, symbolResult.Value);
+        return symbolResult.IsSuccess 
+            ? new Currency(id, createdOn, modifiedOn, nameResult.Value, codeResult.Value, symbolResult.Value)
+            : symbolResult.Error;
     }
 }

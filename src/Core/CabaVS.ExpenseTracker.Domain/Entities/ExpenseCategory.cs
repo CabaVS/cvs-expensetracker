@@ -6,19 +6,29 @@ namespace CabaVS.ExpenseTracker.Domain.Entities;
 
 public sealed class ExpenseCategory : Entity
 {
-    public CategoryName Name { get; set; }
+    public CategoryName Name { get; private set; }
 
     public Currency Currency { get; }
     
-    private ExpenseCategory(Guid id, CategoryName name, Currency currency) : base(id)
+    private ExpenseCategory(
+        Guid id, DateTime createdOn, DateTime? modifiedOn, 
+        CategoryName name, Currency currency) 
+        : base(id, createdOn, modifiedOn)
     {
         Name = name;
         Currency = currency;
     }
+    
+    public static Result<ExpenseCategory> Create(string name, Currency currency) =>
+        Create(Guid.NewGuid(), DateTime.UtcNow, null, name, currency);
 
-    public static Result<ExpenseCategory> Create(Guid id, string name, Currency currency)
+    public static Result<ExpenseCategory> Create(
+        Guid id, DateTime createdOn, DateTime? modifiedOn, 
+        string name, Currency currency)
     {
         Result<CategoryName> nameResult = CategoryName.Create(name);
-        return nameResult.IsFailure ? nameResult.Error : new ExpenseCategory(id, nameResult.Value, currency);
+        return nameResult.IsSuccess 
+            ? new ExpenseCategory(id, createdOn, modifiedOn, nameResult.Value, currency)
+            : nameResult.Error;
     }
 }

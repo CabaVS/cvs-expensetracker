@@ -233,7 +233,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         workspace.Name.Should().Be(workspaceName);
         
         workspace.CreatedOn.Should().Be(originalWorkspace.CreatedOn);
-        workspace.ModifiedOn.Should().Be(originalWorkspace.ModifiedOn);
+        workspace.ModifiedOn.Should().NotBeNull().And.NotBe(originalWorkspace.ModifiedOn);
         
         ExpectedWorkspaces[0] = ExpectedWorkspaces.Single() with { Name = workspaceName };
     }
