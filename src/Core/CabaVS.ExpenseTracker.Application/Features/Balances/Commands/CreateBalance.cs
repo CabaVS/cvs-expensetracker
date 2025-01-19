@@ -15,7 +15,7 @@ internal sealed class CreateBalanceCommandHandler(IUnitOfWork unitOfWork)
 {
     public async Task<Result<Guid>> Handle(CreateBalanceCommand request, CancellationToken cancellationToken)
     {
-        Currency? currency = await unitOfWork.BuildCurrencyRepository().GetById(request.CurrencyId, cancellationToken);
+        Currency? currency = await unitOfWork.CurrencyRepository.GetById(request.CurrencyId, cancellationToken);
         if (currency is null)
         {
             return CurrencyErrors.NotFoundById(request.CurrencyId);
@@ -31,7 +31,7 @@ internal sealed class CreateBalanceCommandHandler(IUnitOfWork unitOfWork)
             return balanceCreationResult.Error;
         }
         
-        Guid balanceId = await unitOfWork.BuildBalanceRepository()
+        Guid balanceId = await unitOfWork.BalanceRepository
             .Create(request.WorkspaceId, balanceCreationResult.Value, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
         

@@ -35,7 +35,7 @@ internal sealed class UserCreationMiddleware(
         {
             logger.LogInformation("Creating User with ID '{UserId}'...", currentUser.Id);
             
-            await unitOfWork.BuildUserRepository().Create(new User(currentUser.Id));
+            await unitOfWork.UserRepository.Create(new User(currentUser.Id));
             await unitOfWork.SaveChanges();
         }
         

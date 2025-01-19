@@ -16,6 +16,7 @@ namespace CabaVS.ExpenseTracker.IntegrationTests.Tests;
 public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFactory factory)
     : IntegrationTestBase(factory)
 {
+    private static readonly Faker Faker = new();
     private static readonly List<WorkspaceModel> ExpectedWorkspaces = [];
     
     [Fact, TestOrder(Order = 1)]
@@ -103,7 +104,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
     public async Task CreateWorkspace_ShouldReturnError_NameTooLong_WhenWorkspaceNameIsTooLong()
     {
         // Arrange
-        var workspaceName = new Faker().Random.String2(WorkspaceName.MaxLength + 1);
+        var workspaceName = Faker.Random.String2(WorkspaceName.MaxLength + 1);
         const string url = "api/workspaces";
         
         var numberOfWorkspacesInDatabaseBeforeRequest = await DbContext.Workspaces.CountAsync();
@@ -125,7 +126,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
     public async Task CreateWorkspace_ShouldReturn_LocationInHeader_WhenRequestIsValid()
     {
         // Arrange
-        var workspaceName = new Faker().Random.String2(1, WorkspaceName.MaxLength);
+        var workspaceName = Faker.Random.String2(1, WorkspaceName.MaxLength);
         const string url = "api/workspaces";
         
         var numberOfWorkspacesInDatabaseBeforeRequest = await DbContext.Workspaces.CountAsync();
@@ -149,11 +150,14 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
             locationHeader!
                 .Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Last());
-        Guid workspaceIdFromDatabase = await DbContext.Workspaces
+        Workspace workspace = await DbContext.Workspaces
             .Where(w => w.Id == workspaceIdFromLocationHeader)
-            .Select(w => w.Id)
-            .FirstOrDefaultAsync();
-        workspaceIdFromDatabase.Should().Be(workspaceIdFromLocationHeader, "Expected workspace with ID from Location header to exist in Database.");
+            .SingleAsync();
+        
+        workspace.Id.Should().Be(workspaceIdFromLocationHeader, "Expected workspace with ID from Location header to exist in Database.");
+        workspace.Name.Should().Be(workspaceName);
+        workspace.CreatedOn.Should().NotBe(default);
+        workspace.ModifiedOn.Should().BeNull();
         
         ExpectedWorkspaces.Add(new WorkspaceModel(workspaceIdFromLocationHeader, workspaceName, true));
     }
@@ -184,7 +188,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
     public async Task UpdateWorkspace_ShouldReturnError_NameTooLong_WhenWorkspaceNameIsTooLong()
     {
         // Arrange
-        var workspaceName = new Faker().Random.String2(WorkspaceName.MaxLength + 1);
+        var workspaceName = Faker.Random.String2(WorkspaceName.MaxLength + 1);
         var url = $"api/workspaces/{ExpectedWorkspaces.Single().Id}";
         
         // Act
@@ -206,8 +210,13 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
     public async Task UpdateWorkspace_ShouldReturn_OK_WhenRequestIsValid()
     {
         // Arrange
-        var workspaceName = new Faker().Random.String2(1, WorkspaceName.MaxLength);
-        var url = $"api/workspaces/{ExpectedWorkspaces.Single().Id}";
+        Guid workspaceId = ExpectedWorkspaces.Single().Id;
+        var workspaceName = Faker.Random.String2(1, WorkspaceName.MaxLength);
+        var url = $"api/workspaces/{workspaceId}";
+        
+        Workspace originalWorkspace = await DbContext.Workspaces
+            .AsNoTracking()
+            .SingleAsync(w => w.Id == workspaceId);
         
         // Act
         HttpResponseMessage endpointResponse = await Client.PutAsJsonAsync(url, new CreateWorkspaceEndpoint.RequestModel(workspaceName));
@@ -222,6 +231,9 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
             .AsNoTracking()
             .SingleAsync(w => w.Id == ExpectedWorkspaces.Single().Id);
         workspace.Name.Should().Be(workspaceName);
+        
+        workspace.CreatedOn.Should().Be(originalWorkspace.CreatedOn);
+        workspace.ModifiedOn.Should().Be(originalWorkspace.ModifiedOn);
         
         ExpectedWorkspaces[0] = ExpectedWorkspaces.Single() with { Name = workspaceName };
     }

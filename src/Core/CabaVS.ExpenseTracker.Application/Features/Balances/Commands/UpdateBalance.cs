@@ -1,5 +1,4 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
-using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Common.Requests;
 using CabaVS.ExpenseTracker.Domain.Entities;
 using CabaVS.ExpenseTracker.Domain.Errors;
@@ -16,9 +15,7 @@ internal sealed class UpdateBalanceCommandHandler(IUnitOfWork unitOfWork)
 {
     public async Task<Result> Handle(UpdateBalanceCommand request, CancellationToken cancellationToken)
     {
-        IBalanceRepository balanceRepository = unitOfWork.BuildBalanceRepository();
-        
-        Balance? balance = await balanceRepository.GetById(request.WorkspaceId, request.BalanceId, cancellationToken);
+        Balance? balance = await unitOfWork.BalanceRepository.GetById(request.WorkspaceId, request.BalanceId, cancellationToken);
         if (balance is null)
         {
             return BalanceErrors.NotFoundById(request.BalanceId);
@@ -33,7 +30,7 @@ internal sealed class UpdateBalanceCommandHandler(IUnitOfWork unitOfWork)
         balance.Name = balanceNameResult.Value;
         balance.Amount = request.Amount;
         
-        await balanceRepository.Update(request.WorkspaceId, balance, cancellationToken);
+        await unitOfWork.BalanceRepository.Update(request.WorkspaceId, balance, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
         
         return Result.Success();

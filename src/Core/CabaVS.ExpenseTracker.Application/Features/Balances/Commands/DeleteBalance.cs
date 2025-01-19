@@ -1,5 +1,4 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
-using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Common.Requests;
 using CabaVS.ExpenseTracker.Domain.Entities;
 using CabaVS.ExpenseTracker.Domain.Errors;
@@ -15,15 +14,13 @@ internal sealed class DeleteBalanceCommandHandler(IUnitOfWork unitOfWork)
 {
     public async Task<Result> Handle(DeleteBalanceCommand request, CancellationToken cancellationToken)
     {
-        IBalanceRepository balanceRepository = unitOfWork.BuildBalanceRepository();
-        
-        Balance? balance = await balanceRepository.GetById(request.WorkspaceId, request.BalanceId, cancellationToken);
+        Balance? balance = await unitOfWork.BalanceRepository.GetById(request.WorkspaceId, request.BalanceId, cancellationToken);
         if (balance is null)
         {
             return BalanceErrors.NotFoundById(request.BalanceId);
         }
         
-        await balanceRepository.Delete(request.WorkspaceId, balance, cancellationToken);
+        await unitOfWork.BalanceRepository.Delete(request.WorkspaceId, balance, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
         
         return Result.Success();

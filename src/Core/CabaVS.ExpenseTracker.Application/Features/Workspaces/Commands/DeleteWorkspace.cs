@@ -20,9 +20,8 @@ internal sealed class DeleteWorkspaceCommandHandler(
     public async Task<Result> Handle(DeleteWorkspaceCommand request, CancellationToken cancellationToken)
     {
         AuthenticatedUserModel user = (await currentUserAccessor.GetCurrentUser(cancellationToken))!;
-        IWorkspaceRepository repository = unitOfWork.BuildWorkspaceRepository();
         
-        Workspace? workspace = await repository.GetById(request.WorkspaceId, user.Id, cancellationToken);
+        Workspace? workspace = await unitOfWork.WorkspaceRepository.GetById(request.WorkspaceId, user.Id, cancellationToken);
         if (workspace is null)
         {
             return WorkspaceErrors.NotFoundById(request.WorkspaceId);
@@ -34,7 +33,7 @@ internal sealed class DeleteWorkspaceCommandHandler(
             return WorkspaceErrors.AdminRightsRequired(request.WorkspaceId);
         }
 
-        await repository.Delete(workspace, cancellationToken);
+        await unitOfWork.WorkspaceRepository.Delete(workspace, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
         
         return Result.Success();

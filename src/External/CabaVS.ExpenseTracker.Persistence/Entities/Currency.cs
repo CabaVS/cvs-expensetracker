@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+using CabaVS.ExpenseTracker.Application.Features.Currencies.Models;
 using CabaVS.ExpenseTracker.Domain.ValueObjects;
 using CabaVS.ExpenseTracker.Persistence.Entities.Abstractions;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +31,9 @@ internal sealed class Currency : IAuditableEntity
             Code = currency.Code.Value,
             Symbol = currency.Symbol.Value
         };
+    
+    public static CurrencyModel ConvertToModel(Currency currency) =>
+        new(currency.Id, currency.Name, currency.Code, currency.Symbol);
 }
 
 internal sealed class CurrencyConfiguration : IEntityTypeConfiguration<Currency>

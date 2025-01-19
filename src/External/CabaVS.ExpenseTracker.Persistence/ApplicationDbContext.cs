@@ -14,6 +14,8 @@ internal sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext
 
     public DbSet<Balance> Balances { get; set; }
 
+    public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
+
     public DbSet<TransferTransaction> TransferTransactions { get; set; }
 
     public DbSet<RecommendedTag> RecommendedTags { get; set; }

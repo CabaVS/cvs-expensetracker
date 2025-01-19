@@ -1,5 +1,4 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
-using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Common.Requests;
 using CabaVS.ExpenseTracker.Domain.Entities;
 using CabaVS.ExpenseTracker.Domain.Errors;
@@ -24,23 +23,19 @@ internal sealed class CreateTransferTransactionCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateTransferTransactionCommand request, CancellationToken cancellationToken)
     {
-        ICurrencyRepository currencyRepository = unitOfWork.BuildCurrencyRepository();
-        IBalanceRepository balanceRepository = unitOfWork.BuildBalanceRepository();
-        ITransferTransactionRepository transferTransactionRepository = unitOfWork.BuildTransferTransactionRepository();
-        
-        Currency? currency = await currencyRepository.GetById(request.CurrencyId, cancellationToken);
+        Currency? currency = await unitOfWork.CurrencyRepository.GetById(request.CurrencyId, cancellationToken);
         if (currency is null)
         {
             return CurrencyErrors.NotFoundById(request.CurrencyId);
         }
 
-        Balance? source = await balanceRepository.GetById(request.WorkspaceId, request.SourceId, cancellationToken);
+        Balance? source = await unitOfWork.BalanceRepository.GetById(request.WorkspaceId, request.SourceId, cancellationToken);
         if (source is null)
         {
             return BalanceErrors.NotFoundById(request.SourceId);
         }
 
-        Balance? destination = await balanceRepository.GetById(request.WorkspaceId, request.DestinationId, cancellationToken);
+        Balance? destination = await unitOfWork.BalanceRepository.GetById(request.WorkspaceId, request.DestinationId, cancellationToken);
         if (destination is null)
         {
             return BalanceErrors.NotFoundById(request.DestinationId);
@@ -62,9 +57,9 @@ internal sealed class CreateTransferTransactionCommandHandler(
             return creationResult.Error;
         }
 
-        Guid createdId = await transferTransactionRepository.Create(creationResult.Value, cancellationToken);
-        await balanceRepository.Update(request.WorkspaceId, source, cancellationToken);
-        await balanceRepository.Update(request.WorkspaceId, destination, cancellationToken);
+        Guid createdId = await unitOfWork.TransferTransactionRepository.Create(creationResult.Value, cancellationToken);
+        await unitOfWork.BalanceRepository.Update(request.WorkspaceId, source, cancellationToken);
+        await unitOfWork.BalanceRepository.Update(request.WorkspaceId, destination, cancellationToken);
         
         await unitOfWork.SaveChanges(cancellationToken);
         
