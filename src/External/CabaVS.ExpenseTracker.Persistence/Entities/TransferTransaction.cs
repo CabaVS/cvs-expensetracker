@@ -33,7 +33,7 @@ internal sealed class TransferTransaction
             CreatedOn = transferTransaction.CreatedOn,
             ModifiedOn = transferTransaction.ModifiedOn,
             Date = transferTransaction.Date,
-            Tags = transferTransaction.Tags,
+            Tags = transferTransaction.Tags.Select(t => t.Value).ToArray(),
             Amount = transferTransaction.Amount,
             AmountInSourceCurrency = transferTransaction.AmountInSourceCurrency,
             AmountInDestinationCurrency = transferTransaction.AmountInDestinationCurrency,

@@ -1,13 +1,14 @@
 using CabaVS.ExpenseTracker.Domain.Errors;
 using CabaVS.ExpenseTracker.Domain.Primitives;
 using CabaVS.ExpenseTracker.Domain.Shared;
+using CabaVS.ExpenseTracker.Domain.ValueObjects;
 
 namespace CabaVS.ExpenseTracker.Domain.Entities;
 
 public sealed class TransferTransaction : Entity
 {
     public DateOnly Date { get; private set; }
-    public string[] Tags { get; private set; }
+    public TransactionTag[] Tags { get; private set; }
     
     public decimal Amount { get; }
     public Currency Currency { get; }
@@ -23,7 +24,7 @@ public sealed class TransferTransaction : Entity
         DateTime createdOn,
         DateTime? modifiedOn,
         DateOnly date,
-        string[] tags,
+        TransactionTag[] tags,
         decimal amount,
         Currency currency,
         decimal amountInSourceCurrency,
@@ -80,6 +81,7 @@ public sealed class TransferTransaction : Entity
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(destination);
+        ArgumentNullException.ThrowIfNull(tags);
         
         if (amount < 0)
         {
@@ -100,13 +102,27 @@ public sealed class TransferTransaction : Entity
         {
             return TransactionErrors.SourceAndDestinationAreSame<TransferTransaction>();
         }
+
+        TransactionTag[] transactionTags = [];
+        if (tags.Length > 0)
+        {
+            Result<TransactionTag>[] tagsResults = tags.Select(TransactionTag.Create).ToArray();
+            
+            Result<TransactionTag>? firstFailedResult = tagsResults.FirstOrDefault(r => r.IsFailure);
+            if (firstFailedResult is not null)
+            {
+                return firstFailedResult.Error;
+            }
+            
+            transactionTags = tagsResults.Select(r => r.Value).ToArray();
+        }
         
         var transferTransaction = new TransferTransaction(
             id,
             createdOn,
             modifiedOn,
             date,
-            tags,
+            transactionTags,
             amount,
             currency,
             amountInSourceCurrency,
