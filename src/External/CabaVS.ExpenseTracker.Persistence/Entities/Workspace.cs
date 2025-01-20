@@ -1,25 +1,33 @@
 using CabaVS.ExpenseTracker.Domain.ValueObjects;
-using CabaVS.ExpenseTracker.Persistence.Entities.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CabaVS.ExpenseTracker.Persistence.Entities;
 
-internal sealed class Workspace : IAuditableEntity
+internal sealed class Workspace
 {
     public Guid Id { get; set; }
-    public string Name { get; set; } = default!;
-    
     public DateTime CreatedOn { get; set; }
     public DateTime? ModifiedOn { get; set; }
+    
+    public string Name { get; set; } = default!;
 
-    public Domain.Entities.Workspace ConvertToDomain() => Domain.Entities.Workspace.Create(Id, Name).Value;
+    public Domain.Entities.Workspace ConvertToDomainEntity() => 
+        Domain.Entities.Workspace
+            .Create(
+                Id,
+                CreatedOn,
+                ModifiedOn,
+                Name)
+            .Value;
 
-    public static Workspace ConvertFromDomain(Domain.Entities.Workspace workspace) =>
+    public static Workspace ConvertFromDomainEntity(Domain.Entities.Workspace domainEntity) =>
         new()
         {
-            Id = workspace.Id,
-            Name = workspace.Name.Value
+            Id = domainEntity.Id,
+            CreatedOn = domainEntity.CreatedOn,
+            ModifiedOn = domainEntity.ModifiedOn,
+            Name = domainEntity.Name.Value
         };
 }
 

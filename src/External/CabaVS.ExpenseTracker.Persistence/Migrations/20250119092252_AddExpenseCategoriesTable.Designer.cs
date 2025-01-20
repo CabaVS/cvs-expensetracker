@@ -4,6 +4,7 @@ using CabaVS.ExpenseTracker.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CabaVS.ExpenseTracker.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250119092252_AddExpenseCategoriesTable")]
+    partial class AddExpenseCategoriesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,6 +123,22 @@ namespace CabaVS.ExpenseTracker.Persistence.Migrations
                     b.HasIndex("WorkspaceId");
 
                     b.ToTable("ExpenseCategories");
+                });
+
+            modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.RecommendedTag", b =>
+                {
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("WorkspaceId", "Type", "Name");
+
+                    b.ToTable("RecommendedTags");
                 });
 
             modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.TransferTransaction", b =>
@@ -268,6 +287,17 @@ namespace CabaVS.ExpenseTracker.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Currency");
+
+                    b.Navigation("Workspace");
+                });
+
+            modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.RecommendedTag", b =>
+                {
+                    b.HasOne("CabaVS.ExpenseTracker.Persistence.Entities.Workspace", "Workspace")
+                        .WithMany()
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Workspace");
                 });

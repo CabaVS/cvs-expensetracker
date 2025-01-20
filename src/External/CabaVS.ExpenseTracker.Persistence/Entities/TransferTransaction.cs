@@ -1,11 +1,10 @@
 using CabaVS.ExpenseTracker.Persistence.Converters;
-using CabaVS.ExpenseTracker.Persistence.Entities.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CabaVS.ExpenseTracker.Persistence.Entities;
 
-internal sealed class TransferTransaction : IAuditableEntity
+internal sealed class TransferTransaction
 {
     public Guid Id { get; set; }
     public DateTime CreatedOn { get; set; }
@@ -27,12 +26,14 @@ internal sealed class TransferTransaction : IAuditableEntity
     public Balance Destination { get; set; } = null!;
     public Guid DestinationId { get; set; }
 
-    public static TransferTransaction ConvertFromDomain(Domain.Entities.TransferTransaction transferTransaction) =>
+    public static TransferTransaction ConvertFromDomainEntity(Domain.Entities.TransferTransaction transferTransaction) =>
         new()
         {
             Id = transferTransaction.Id,
+            CreatedOn = transferTransaction.CreatedOn,
+            ModifiedOn = transferTransaction.ModifiedOn,
             Date = transferTransaction.Date,
-            Tags = transferTransaction.Tags,
+            Tags = transferTransaction.Tags.Select(t => t.Value).ToArray(),
             Amount = transferTransaction.Amount,
             AmountInSourceCurrency = transferTransaction.AmountInSourceCurrency,
             AmountInDestinationCurrency = transferTransaction.AmountInDestinationCurrency,

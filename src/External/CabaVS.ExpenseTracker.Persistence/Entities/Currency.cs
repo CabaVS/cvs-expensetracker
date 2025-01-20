@@ -1,14 +1,13 @@
+using CabaVS.ExpenseTracker.Application.Features.Currencies.Models;
 using CabaVS.ExpenseTracker.Domain.ValueObjects;
-using CabaVS.ExpenseTracker.Persistence.Entities.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CabaVS.ExpenseTracker.Persistence.Entities;
 
-internal sealed class Currency : IAuditableEntity
+internal sealed class Currency
 {
     public Guid Id { get; set; }
-    
     public DateTime CreatedOn { get; set; }
     public DateTime? ModifiedOn { get; set; }
 
@@ -16,19 +15,24 @@ internal sealed class Currency : IAuditableEntity
     public string Code { get; set; } = default!;
     public string Symbol { get; set; } = default!;
     
-    public Domain.Entities.Currency ConvertToDomain() =>
+    public Domain.Entities.Currency ConvertToDomainEntity() =>
         Domain.Entities.Currency
-            .Create(Id, Name, Code, Symbol)
+            .Create(Id, CreatedOn, ModifiedOn, Name, Code, Symbol)
             .Value;
 
-    public static Currency ConvertFromDomain(Domain.Entities.Currency currency) =>
+    public static Currency ConvertFromDomainEntity(Domain.Entities.Currency domainEntity) =>
         new()
         {
-            Id = currency.Id,
-            Name = currency.Name.Value,
-            Code = currency.Code.Value,
-            Symbol = currency.Symbol.Value
+            Id = domainEntity.Id,
+            CreatedOn = domainEntity.CreatedOn,
+            ModifiedOn = domainEntity.ModifiedOn,
+            Name = domainEntity.Name.Value,
+            Code = domainEntity.Code.Value,
+            Symbol = domainEntity.Symbol.Value
         };
+    
+    public static CurrencyModel ConvertToModel(Currency currency) =>
+        new(currency.Id, currency.Name, currency.Code, currency.Symbol);
 }
 
 internal sealed class CurrencyConfiguration : IEntityTypeConfiguration<Currency>

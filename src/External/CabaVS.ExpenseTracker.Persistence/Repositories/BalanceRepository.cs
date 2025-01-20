@@ -15,12 +15,12 @@ internal sealed class BalanceRepository(ApplicationDbContext dbContext) : IBalan
             .Where(b => b.Id == balanceId)
             .Where(b => b.WorkspaceId == workspaceId)
             .FirstOrDefaultAsync(cancellationToken);
-        return balance?.ConvertToDomain();
+        return balance?.ConvertToDomainEntity();
     }
 
     public async Task<Guid> Create(Guid workspaceId, Domain.Entities.Balance balance, CancellationToken cancellationToken)
     {
-        var balanceToCreate = Balance.ConvertFromDomain(balance, workspaceId);
+        var balanceToCreate = Balance.ConvertFromDomainEntity(balance, workspaceId);
         
         EntityEntry<Balance> addedEntityEntry = await dbContext.Balances.AddAsync(balanceToCreate, cancellationToken);
         
@@ -29,7 +29,7 @@ internal sealed class BalanceRepository(ApplicationDbContext dbContext) : IBalan
 
     public Task Update(Guid workspaceId, Domain.Entities.Balance balance, CancellationToken cancellationToken)
     {
-        var balanceToUpdate = Balance.ConvertFromDomain(balance, workspaceId);
+        var balanceToUpdate = Balance.ConvertFromDomainEntity(balance, workspaceId);
         
         _ = dbContext.Balances.Update(balanceToUpdate);
         

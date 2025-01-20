@@ -20,9 +20,8 @@ internal sealed class UpdateWorkspaceCommandHandler(
     public async Task<Result> Handle(UpdateWorkspaceCommand request, CancellationToken cancellationToken)
     {
         AuthenticatedUserModel user = (await currentUserAccessor.GetCurrentUser(cancellationToken))!;
-        IWorkspaceRepository repository = unitOfWork.BuildWorkspaceRepository();
         
-        Workspace? workspace = await repository.GetById(request.WorkspaceId, user.Id, cancellationToken);
+        Workspace? workspace = await unitOfWork.WorkspaceRepository.GetById(request.WorkspaceId, user.Id, cancellationToken);
         if (workspace is null)
         {
             return WorkspaceErrors.NotFoundById(request.WorkspaceId);
@@ -36,7 +35,7 @@ internal sealed class UpdateWorkspaceCommandHandler(
             return updateNameResult.Error;
         }
 
-        await repository.Update(workspace, cancellationToken);
+        await unitOfWork.WorkspaceRepository.Update(workspace, cancellationToken);
         await unitOfWork.SaveChanges(cancellationToken);
 
         return Result.Success();

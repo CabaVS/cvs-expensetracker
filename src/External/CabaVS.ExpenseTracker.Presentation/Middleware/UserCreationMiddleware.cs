@@ -34,8 +34,10 @@ internal sealed class UserCreationMiddleware(
         if (!await userReadRepository.IsExistById(currentUser.Id))
         {
             logger.LogInformation("Creating User with ID '{UserId}'...", currentUser.Id);
+
+            var userToCreate = new User(currentUser.Id, DateTime.UtcNow, null);
             
-            await unitOfWork.BuildUserRepository().Create(new User(currentUser.Id));
+            await unitOfWork.UserRepository.Create(userToCreate);
             await unitOfWork.SaveChanges();
         }
         

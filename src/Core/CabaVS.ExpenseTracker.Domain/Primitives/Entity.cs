@@ -6,10 +6,12 @@ namespace CabaVS.ExpenseTracker.Domain.Primitives;
     "Major Code Smell",
     "S4035:Classes implementing \"IEquatable<T>\" should be sealed",
     Justification = "Target type taken into account.")]
-public abstract class Entity(Guid id) : IEquatable<Entity>
+public abstract class Entity(Guid id, DateTime createdOn, DateTime? modifiedOn) : IEquatable<Entity>
 {
     public Guid Id { get; } = id;
-    
+    public DateTime CreatedOn { get; } = createdOn;
+    public DateTime? ModifiedOn { get; protected set; } = modifiedOn;
+
     public static bool operator ==(Entity? first, Entity? second) =>
         first is not null &&
         first.Equals(second);

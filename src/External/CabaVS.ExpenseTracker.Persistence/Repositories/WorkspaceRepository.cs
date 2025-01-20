@@ -16,13 +16,13 @@ internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWor
             .Select(uw => uw.Workspace)
             .SingleOrDefaultAsync(cancellationToken);
 
-        Domain.Entities.Workspace? converted = workspace?.ConvertToDomain();
+        Domain.Entities.Workspace? converted = workspace?.ConvertToDomainEntity();
         return converted;
     }
 
     public async Task<Guid> Create(Domain.Entities.Workspace workspace, CancellationToken cancellationToken = default)
     {
-        var converted = Workspace.ConvertFromDomain(workspace);
+        var converted = Workspace.ConvertFromDomainEntity(workspace);
         
         EntityEntry<Workspace> added = await dbContext.Workspaces.AddAsync(converted, cancellationToken);
         return added.Entity.Id;
@@ -30,7 +30,7 @@ internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWor
 
     public Task Update(Domain.Entities.Workspace workspace, CancellationToken cancellationToken = default)
     {
-        var converted = Workspace.ConvertFromDomain(workspace);
+        var converted = Workspace.ConvertFromDomainEntity(workspace);
         
         _ = dbContext.Workspaces.Update(converted);
         return Task.CompletedTask;
@@ -38,7 +38,7 @@ internal sealed class WorkspaceRepository(ApplicationDbContext dbContext) : IWor
 
     public Task Delete(Domain.Entities.Workspace workspace, CancellationToken cancellationToken = default)
     {
-        var converted = Workspace.ConvertFromDomain(workspace);
+        var converted = Workspace.ConvertFromDomainEntity(workspace);
         
         _ = dbContext.Workspaces.Remove(converted);
         return Task.CompletedTask;

@@ -1,14 +1,12 @@
 using CabaVS.ExpenseTracker.Domain.ValueObjects;
-using CabaVS.ExpenseTracker.Persistence.Entities.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CabaVS.ExpenseTracker.Persistence.Entities;
 
-internal sealed class Balance : IAuditableEntity
+internal sealed class Balance
 {
     public Guid Id { get; set; }
-    
     public DateTime CreatedOn { get; set; }
     public DateTime? ModifiedOn { get; set; }
     
@@ -21,24 +19,26 @@ internal sealed class Balance : IAuditableEntity
     public Guid WorkspaceId { get; set; }
     public Workspace Workspace { get; set; } = default!;
 
-    public Domain.Entities.Balance ConvertToDomain() =>
+    public Domain.Entities.Balance ConvertToDomainEntity() =>
         Domain.Entities.Balance
             .Create(
-                Id, 
-                Name, 
-                Amount, 
-                Domain.Entities.Currency
-                    .Create(Currency.Id, Currency.Name, Currency.Code, Currency.Symbol)
-                    .Value)
+                Id,
+                CreatedOn,
+                ModifiedOn,
+                Name,
+                Amount,
+                Currency.ConvertToDomainEntity())
             .Value;
 
-    public static Balance ConvertFromDomain(Domain.Entities.Balance balance, Guid workspaceId) =>
+    public static Balance ConvertFromDomainEntity(Domain.Entities.Balance domainEntity, Guid workspaceId) =>
         new()
         {
-            Id = balance.Id,
-            Name = balance.Name.Value,
-            Amount = balance.Amount,
-            CurrencyId = balance.Currency.Id,
+            Id = domainEntity.Id,
+            CreatedOn = domainEntity.CreatedOn,
+            ModifiedOn = domainEntity.ModifiedOn,
+            Name = domainEntity.Name.Value,
+            Amount = domainEntity.Amount,
+            CurrencyId = domainEntity.Currency.Id,
             WorkspaceId = workspaceId
         };
 }

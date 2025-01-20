@@ -8,7 +8,7 @@ internal sealed class TransferTransactionRepository(ApplicationDbContext dbConte
 {
     public async Task<Guid> Create(Domain.Entities.TransferTransaction transferTransaction, CancellationToken cancellationToken = default)
     {
-        var entityToCreate = TransferTransaction.ConvertFromDomain(transferTransaction);
+        var entityToCreate = TransferTransaction.ConvertFromDomainEntity(transferTransaction);
         
         EntityEntry<TransferTransaction> added = await dbContext.TransferTransactions.AddAsync(entityToCreate, cancellationToken);
         

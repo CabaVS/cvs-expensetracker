@@ -14,18 +14,15 @@ internal sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext
 
     public DbSet<Balance> Balances { get; set; }
 
-    public DbSet<TransferTransaction> TransferTransactions { get; set; }
+    public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
 
-    public DbSet<RecommendedTag> RecommendedTags { get; set; }
+    public DbSet<TransferTransaction> TransferTransactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyMarker.Assembly);
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.AddInterceptors(new AuditableEntityInterceptor());
-        optionsBuilder.AddInterceptors(new RecommendedTagsCreationInterceptor());
-    }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => 
+        optionsBuilder.AddInterceptors(new TransactionsRemovalInterceptor());
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) =>
         configurationBuilder.Properties<decimal>().HavePrecision(18, 2);

@@ -6,9 +6,10 @@ public interface IUnitOfWork
 {
     Task SaveChanges(CancellationToken cancellationToken = default);
     
-    IUserRepository BuildUserRepository();
-    ICurrencyRepository BuildCurrencyRepository();
-    IWorkspaceRepository BuildWorkspaceRepository();
-    IBalanceRepository BuildBalanceRepository();
-    ITransferTransactionRepository BuildTransferTransactionRepository();
+    IUserRepository UserRepository { get; }
+    ICurrencyRepository CurrencyRepository { get; }
+    IWorkspaceRepository WorkspaceRepository { get; }
+    IBalanceRepository BalanceRepository { get; }
+    IExpenseCategoryRepository ExpenseCategoryRepository { get; }
+    ITransferTransactionRepository TransferTransactionRepository { get; }
 }
