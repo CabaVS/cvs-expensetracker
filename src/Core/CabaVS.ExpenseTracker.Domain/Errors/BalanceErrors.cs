@@ -7,10 +7,8 @@ namespace CabaVS.ExpenseTracker.Domain.Errors;
 
 public static class BalanceErrors
 {
-    public static Error NameIsNullOrWhitespace() =>
-        StringErrors.IsNullOrWhiteSpace(nameof(Balance), nameof(Balance.Name));
-    public static Error NameTooLong(string actualValue) =>
-        StringErrors.TooLong(nameof(Balance), nameof(Balance.Name), BalanceName.MaxLength, actualValue);
+    public static Error NotFoundById(Guid balanceId) => CommonErrors.NotFoundById(nameof(Balance), balanceId);
     
-    public static Error NotFoundById(Guid id) => CommonErrors.NotFoundById(nameof(Balance), id);
+    public static Error NameIsNullOrWhitespace() => StringErrors.IsNullOrWhiteSpace(nameof(Balance), nameof(Balance.Name));
+    public static Error NameIsTooLong(string actual) => StringErrors.IsTooLong(nameof(Balance), nameof(Balance.Name), BalanceName.MaxLength, actual);
 }

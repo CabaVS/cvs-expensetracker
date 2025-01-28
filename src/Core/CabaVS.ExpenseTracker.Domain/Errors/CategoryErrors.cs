@@ -7,10 +7,8 @@ namespace CabaVS.ExpenseTracker.Domain.Errors;
 
 public static class CategoryErrors
 {
-    public static Error NameIsNullOrWhitespace() =>
-        StringErrors.IsNullOrWhiteSpace("Category", "Name");
-    public static Error NameTooLong(string actualValue) =>
-        StringErrors.TooLong("Category", "Name", CategoryName.MaxLength, actualValue);
+    public static Error NotFoundById(Guid categoryId) => CommonErrors.NotFoundById(nameof(Category), categoryId);
     
-    public static Error ExpenseCategoryNotFoundById(Guid id) => CommonErrors.NotFoundById(nameof(ExpenseCategory), id);
+    public static Error NameIsNullOrWhitespace() => StringErrors.IsNullOrWhiteSpace(nameof(Category), nameof(Category.Name));
+    public static Error NameIsTooLong(string actual) => StringErrors.IsTooLong(nameof(Category), nameof(Category.Name), CategoryName.MaxLength, actual);
 }

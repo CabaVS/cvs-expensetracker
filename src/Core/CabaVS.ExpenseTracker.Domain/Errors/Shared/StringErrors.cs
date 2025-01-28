@@ -8,7 +8,7 @@ public static class StringErrors
         new($"{entityName}.{propertyName}IsNullOrWhiteSpace",
             $"{entityName} {propertyName} should not be NULL or whitespace.");
     
-    public static Error TooLong(string entityName, string propertyName, int maxLength, string actualValue)
+    public static Error IsTooLong(string entityName, string propertyName, int maxLength, string actualValue)
     {
         ArgumentNullException.ThrowIfNull(actualValue);
         
@@ -16,7 +16,7 @@ public static class StringErrors
             $"{entityName} {propertyName} should be {maxLength} characters or shorter. Actual length was {actualValue.Length} characters.");
     }
 
-    public static Error TooShort(string entityName, string propertyName, int minLength, string actualValue)
+    public static Error IsTooShort(string entityName, string propertyName, int minLength, string actualValue)
     {
         ArgumentNullException.ThrowIfNull(actualValue);
         

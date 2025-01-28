@@ -38,13 +38,13 @@ namespace CabaVS.ExpenseTracker.Persistence.Migrations
                     b.Property<Guid>("CurrencyId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("ModifiedOn")
+                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<Guid>("WorkspaceId")
                         .HasColumnType("uniqueidentifier");
@@ -56,6 +56,41 @@ namespace CabaVS.ExpenseTracker.Persistence.Migrations
                     b.HasIndex("WorkspaceId");
 
                     b.ToTable("Balances");
+                });
+
+            modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CurrencyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CurrencyId");
+
+                    b.HasIndex("WorkspaceId");
+
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.Currency", b =>
@@ -72,7 +107,7 @@ namespace CabaVS.ExpenseTracker.Persistence.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("ModifiedOn")
+                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -90,47 +125,11 @@ namespace CabaVS.ExpenseTracker.Persistence.Migrations
                     b.ToTable("Currencies");
                 });
 
-            modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.ExpenseCategory", b =>
+            modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.Transaction", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CurrencyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<Guid>("WorkspaceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CurrencyId");
-
-                    b.HasIndex("WorkspaceId");
-
-                    b.ToTable("ExpenseCategories");
-                });
-
-            modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.TransferTransaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("AmountInDestinationCurrency")
                         .HasPrecision(18, 2)
@@ -143,34 +142,47 @@ namespace CabaVS.ExpenseTracker.Persistence.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CurrencyId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("DestinationId")
+                    b.Property<Guid?>("DestinationBalanceId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("ModifiedOn")
+                    b.Property<Guid?>("DestinationCategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("SourceId")
+                    b.Property<Guid?>("SourceBalanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SourceCategoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Tags")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CurrencyId");
+                    b.HasIndex("DestinationBalanceId");
 
-                    b.HasIndex("DestinationId");
+                    b.HasIndex("DestinationCategoryId");
 
-                    b.HasIndex("SourceId");
+                    b.HasIndex("SourceBalanceId");
 
-                    b.ToTable("TransferTransactions");
+                    b.HasIndex("SourceCategoryId");
+
+                    b.HasIndex("WorkspaceId");
+
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.User", b =>
@@ -182,7 +194,7 @@ namespace CabaVS.ExpenseTracker.Persistence.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("ModifiedOn")
+                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -221,7 +233,7 @@ namespace CabaVS.ExpenseTracker.Persistence.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("ModifiedOn")
+                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -253,7 +265,7 @@ namespace CabaVS.ExpenseTracker.Persistence.Migrations
                     b.Navigation("Workspace");
                 });
 
-            modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.ExpenseCategory", b =>
+            modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.Category", b =>
                 {
                     b.HasOne("CabaVS.ExpenseTracker.Persistence.Entities.Currency", "Currency")
                         .WithMany()
@@ -272,31 +284,43 @@ namespace CabaVS.ExpenseTracker.Persistence.Migrations
                     b.Navigation("Workspace");
                 });
 
-            modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.TransferTransaction", b =>
+            modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.Transaction", b =>
                 {
-                    b.HasOne("CabaVS.ExpenseTracker.Persistence.Entities.Currency", "Currency")
+                    b.HasOne("CabaVS.ExpenseTracker.Persistence.Entities.Balance", "DestinationBalance")
                         .WithMany()
-                        .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("DestinationBalanceId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("CabaVS.ExpenseTracker.Persistence.Entities.Category", "DestinationCategory")
+                        .WithMany()
+                        .HasForeignKey("DestinationCategoryId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("CabaVS.ExpenseTracker.Persistence.Entities.Balance", "SourceBalance")
+                        .WithMany()
+                        .HasForeignKey("SourceBalanceId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("CabaVS.ExpenseTracker.Persistence.Entities.Category", "SourceCategory")
+                        .WithMany()
+                        .HasForeignKey("SourceCategoryId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("CabaVS.ExpenseTracker.Persistence.Entities.Workspace", "Workspace")
+                        .WithMany()
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CabaVS.ExpenseTracker.Persistence.Entities.Balance", "Destination")
-                        .WithMany()
-                        .HasForeignKey("DestinationId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                    b.Navigation("DestinationBalance");
 
-                    b.HasOne("CabaVS.ExpenseTracker.Persistence.Entities.Balance", "Source")
-                        .WithMany()
-                        .HasForeignKey("SourceId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                    b.Navigation("DestinationCategory");
 
-                    b.Navigation("Currency");
+                    b.Navigation("SourceBalance");
 
-                    b.Navigation("Destination");
+                    b.Navigation("SourceCategory");
 
-                    b.Navigation("Source");
+                    b.Navigation("Workspace");
                 });
 
             modelBuilder.Entity("CabaVS.ExpenseTracker.Persistence.Entities.UserWorkspace", b =>

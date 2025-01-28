@@ -2,7 +2,7 @@ param (
     [ValidateSet("ADD", "RUN")]
     [string]$OperationType,
     [string]$MigrationName,
-    [string]$Version = "8.0.10"
+    [string]$Version = "8.0.12"
 )
 
 $isEfToolInstalled = Get-Command dotnet-ef -ErrorAction SilentlyContinue

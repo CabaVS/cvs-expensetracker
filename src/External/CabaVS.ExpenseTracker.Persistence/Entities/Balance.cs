@@ -1,14 +1,15 @@
 using CabaVS.ExpenseTracker.Domain.ValueObjects;
+using CabaVS.ExpenseTracker.Persistence.Entities.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CabaVS.ExpenseTracker.Persistence.Entities;
 
-internal sealed class Balance
+internal sealed class Balance : IRepresentAuditableEntity<Domain.Entities.Balance, Balance>
 {
     public Guid Id { get; set; }
     public DateTime CreatedOn { get; set; }
-    public DateTime? ModifiedOn { get; set; }
+    public DateTime ModifiedOn { get; set; }
     
     public string Name { get; set; } = default!;
     public decimal Amount { get; set; }
@@ -18,8 +19,8 @@ internal sealed class Balance
 
     public Guid WorkspaceId { get; set; }
     public Workspace Workspace { get; set; } = default!;
-
-    public Domain.Entities.Balance ConvertToDomainEntity() =>
+    
+    public Domain.Entities.Balance ToDomainEntity() =>
         Domain.Entities.Balance
             .Create(
                 Id,
@@ -27,20 +28,22 @@ internal sealed class Balance
                 ModifiedOn,
                 Name,
                 Amount,
-                Currency.ConvertToDomainEntity())
+                Currency.ToDomainEntity(),
+                Workspace.ToDomainEntity())
             .Value;
 
-    public static Balance ConvertFromDomainEntity(Domain.Entities.Balance domainEntity, Guid workspaceId) =>
-        new()
-        {
-            Id = domainEntity.Id,
-            CreatedOn = domainEntity.CreatedOn,
-            ModifiedOn = domainEntity.ModifiedOn,
-            Name = domainEntity.Name.Value,
-            Amount = domainEntity.Amount,
-            CurrencyId = domainEntity.Currency.Id,
-            WorkspaceId = workspaceId
-        };
+    public Balance FromDomainEntity(Domain.Entities.Balance domainEntity)
+    {
+        Id = domainEntity.Id;
+        CreatedOn = domainEntity.CreatedOn;
+        ModifiedOn = domainEntity.ModifiedOn;
+        Name = domainEntity.Name.Value;
+        Amount = domainEntity.Amount;
+        CurrencyId = domainEntity.Currency.Id;
+        WorkspaceId = domainEntity.Workspace.Id;
+
+        return this;
+    }
 }
 
 internal sealed class BalanceConfiguration : IEntityTypeConfiguration<Balance>

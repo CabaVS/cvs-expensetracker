@@ -1,7 +1,7 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
-using CabaVS.ExpenseTracker.Application.Abstractions.Presentation.Models;
 using CabaVS.ExpenseTracker.Application.Common.Requests;
+using CabaVS.ExpenseTracker.Application.Models;
 using CabaVS.ExpenseTracker.Domain.Entities;
 using CabaVS.ExpenseTracker.Domain.Shared;
 using MediatR;
@@ -16,18 +16,18 @@ internal sealed class CreateWorkspaceCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateWorkspaceCommand request, CancellationToken cancellationToken)
     {
+        AuthenticatedUserModel currentUser = (await currentUserAccessor.GetCurrentUserAsync(cancellationToken))!;
+        
         Result<Workspace> workspaceCreationResult = Workspace.Create(request.Name);
         if (workspaceCreationResult.IsFailure)
         {
             return workspaceCreationResult.Error;
         }
-
-        AuthenticatedUserModel user = (await currentUserAccessor.GetCurrentUser(cancellationToken))!;
         
-        Guid workspaceId = await unitOfWork.WorkspaceRepository.Create(workspaceCreationResult.Value, cancellationToken);
-        await unitOfWork.WorkspaceRepository.RegisterUser(workspaceCreationResult.Value.Id, user.Id, true, cancellationToken);
+        Guid workspaceId = await unitOfWork.WorkspaceRepository.CreateAsync(workspaceCreationResult.Value, cancellationToken);
+        await unitOfWork.WorkspaceRepository.AddUserAsync(workspaceId, currentUser.Id, true, cancellationToken);
         
-        await unitOfWork.SaveChanges(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return workspaceId;
     }

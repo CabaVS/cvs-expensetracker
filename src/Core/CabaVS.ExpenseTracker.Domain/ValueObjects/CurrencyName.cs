@@ -15,7 +15,7 @@ public sealed class CurrencyName : ValueObject
     public static Result<CurrencyName> Create(string value) =>
         Result<string>.Success(value)
             .EnsureStringNotNullOrWhitespace(CurrencyErrors.NameIsNullOrWhitespace())
-            .EnsureStringNotTooLong(MaxLength, CurrencyErrors.NameTooLong(value))
+            .EnsureStringNotTooLong(MaxLength, CurrencyErrors.NameIsTooLong(value))
             .Map(x => new CurrencyName(x));
 
     protected override IEnumerable<object> GetAtomicValues()

@@ -7,7 +7,7 @@
     <PackageVersion Include="MediatR" Version="12.4.1" />
     <!-- Persistance layer -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.12" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.12">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>

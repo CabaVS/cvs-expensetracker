@@ -7,14 +7,11 @@ namespace CabaVS.ExpenseTracker.Domain.Errors;
 
 public static class WorkspaceErrors
 {
-    public static Error NameIsNullOrWhitespace() =>
-        StringErrors.IsNullOrWhiteSpace(nameof(Workspace), nameof(Workspace.Name));
-    public static Error NameTooLong(string actualValue) =>
-        StringErrors.TooLong(nameof(Workspace), nameof(Workspace.Name), WorkspaceName.MaxLength, actualValue);
+    public static Error NotFoundById(Guid workspaceId) => CommonErrors.NotFoundById(nameof(Workspace), workspaceId);
     
-    public static Error NotFoundById(Guid id) => 
-        CommonErrors.NotFoundById(nameof(Workspace), id);
+    public static Error NameIsNullOrWhitespace() => StringErrors.IsNullOrWhiteSpace(nameof(Workspace), nameof(Workspace.Name));
+    public static Error NameIsTooLong(string actual) => StringErrors.IsTooLong(nameof(Workspace), nameof(Workspace.Name), WorkspaceName.MaxLength, actual);
     
-    public static Error AdminRightsRequired(Guid id) =>
-        new($"{nameof(Workspace)}.AdminRightsRequired", $"Admin rights required for workspace '{id}'.");
+    public static Error UserIsNotAnAdminOverWorkspace() =>
+        new("Workspace.UserLacksPermissions", "User does not have an admin rights over the workspace."); 
 }

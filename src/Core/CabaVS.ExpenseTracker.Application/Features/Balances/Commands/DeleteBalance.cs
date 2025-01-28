@@ -14,14 +14,14 @@ internal sealed class DeleteBalanceCommandHandler(IUnitOfWork unitOfWork)
 {
     public async Task<Result> Handle(DeleteBalanceCommand request, CancellationToken cancellationToken)
     {
-        Balance? balance = await unitOfWork.BalanceRepository.GetById(request.WorkspaceId, request.BalanceId, cancellationToken);
-        if (balance is null)
+        Balance? balance = await unitOfWork.BalanceRepository.GetByIdAsync(request.BalanceId, cancellationToken);
+        if (balance is null || balance.Workspace.Id != request.WorkspaceId)
         {
             return BalanceErrors.NotFoundById(request.BalanceId);
         }
         
-        await unitOfWork.BalanceRepository.Delete(request.WorkspaceId, balance, cancellationToken);
-        await unitOfWork.SaveChanges(cancellationToken);
+        await unitOfWork.BalanceRepository.DeleteAsync(balance, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }

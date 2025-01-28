@@ -6,8 +6,6 @@ namespace CabaVS.ExpenseTracker.Persistence.Interceptors;
 
 internal sealed class TransactionsRemovalInterceptor : ISaveChangesInterceptor
 {
-    private const int BatchSize = 1000;
-    
     public async ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData,
         InterceptionResult<int> result,
@@ -18,28 +16,61 @@ internal sealed class TransactionsRemovalInterceptor : ISaveChangesInterceptor
             throw new InvalidOperationException("Expected to have DbContext to work with.");
         }
 
-        Guid[] removedBalances = context.ChangeTracker
-            .Entries<Balance>()
+        Guid[] removedWorkspaces = context.ChangeTracker
+            .Entries<Workspace>()
             .Where(x => x.State == EntityState.Deleted)
             .Select(x => x.Entity.Id)
             .Distinct()
             .ToArray();
+        Guid[] removedBalances = context.ChangeTracker
+            .Entries<Balance>()
+            .Where(x => x.State == EntityState.Deleted)
+            .Where(x => !removedWorkspaces.Contains(x.Entity.WorkspaceId))
+            .Select(x => x.Entity.Id)
+            .Distinct()
+            .ToArray();
+        Guid[] removedCategories = context.ChangeTracker
+            .Entries<Category>()
+            .Where(x => x.State == EntityState.Deleted)
+            .Where(x => !removedWorkspaces.Contains(x.Entity.WorkspaceId))
+            .Select(x => x.Entity.Id)
+            .Distinct()
+            .ToArray();
+
+        if (removedWorkspaces.Length + removedBalances.Length + removedCategories.Length == 0)
+        {
+            return result;
+        }
+
+        if (removedWorkspaces.Length > 0)
+        {
+            Transaction[] transactionsToRemove = await context.Transactions
+                .Where(t => removedWorkspaces.Contains(t.WorkspaceId))
+                .ToArrayAsync(cancellationToken);
+            
+            context.Transactions.RemoveRange(transactionsToRemove);
+        }
+        
         if (removedBalances.Length > 0)
         {
-            TransferTransaction[] transferTransactionsToRemove;
-            var batchNumber = 0;
+            Transaction[] transactionsToRemove = await context.Transactions
+                .Where(t => 
+                    t.SourceBalanceId.HasValue && removedBalances.Contains(t.SourceBalanceId.Value) || 
+                    t.DestinationBalanceId.HasValue && removedBalances.Contains(t.DestinationBalanceId.Value))
+                .ToArrayAsync(cancellationToken);
             
-            do
-            {
-                transferTransactionsToRemove = await context.TransferTransactions
-                    .Where(x => removedBalances.Contains(x.SourceId) ||
-                                removedBalances.Contains(x.DestinationId))
-                    .Skip(batchNumber++ * BatchSize)
-                    .Take(BatchSize)
-                    .OrderBy(x => x.Id)
-                    .ToArrayAsync(cancellationToken);
-                context.TransferTransactions.RemoveRange(transferTransactionsToRemove);
-            } while (transferTransactionsToRemove.Length == BatchSize);
+            context.Transactions.RemoveRange(transactionsToRemove);
+        }
+        
+        if (removedCategories.Length > 0)
+        {
+            Transaction[] transactionsToRemove = await context.Transactions
+                .Where(t => 
+                    t.SourceCategoryId.HasValue && removedBalances.Contains(t.SourceCategoryId.Value) || 
+                    t.DestinationCategoryId.HasValue && removedBalances.Contains(t.DestinationCategoryId.Value))
+                .ToArrayAsync(cancellationToken);
+            
+            context.Transactions.RemoveRange(transactionsToRemove);
         }
         
         return result;
