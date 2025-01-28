@@ -12,12 +12,22 @@ internal static class DefaultDatabaseSeeder
     {
         using IDbContextTransaction transaction = dbContext.Database.BeginTransaction();
         
+        SeedCurrencies(numberOfCurrencies: 4);
+        
         SeedUsers(numberOfUsers: 4);
         SeedWorkspaces(numberOfWorkspacesPerUser: 2, excludeUsers: [CurrentUserAccessorInjected.AuthenticatedUserId]);
         
         transaction.Commit();
         return;
 
+        void SeedCurrencies(int numberOfCurrencies)
+        {
+            List<Currency> generatedCurrencies = new CurrencyFaker().Generate(numberOfCurrencies);
+            
+            dbContext.Currencies.AddRange(generatedCurrencies);
+            dbContext.SaveChanges();
+        }
+        
         void SeedUsers(int numberOfUsers)
         {
             List<User> generatedUsers = new UserFaker().Generate(numberOfUsers);
