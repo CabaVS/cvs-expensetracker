@@ -3,6 +3,7 @@ using CabaVS.ExpenseTracker.Application.Common.Requests;
 using CabaVS.ExpenseTracker.Domain.Entities;
 using CabaVS.ExpenseTracker.Domain.Errors;
 using CabaVS.ExpenseTracker.Domain.Shared;
+using CabaVS.ExpenseTracker.Domain.ValueObjects;
 using MediatR;
 
 namespace CabaVS.ExpenseTracker.Application.Features.Balances.Commands;
@@ -14,26 +15,23 @@ internal sealed class UpdateBalanceCommandHandler(IUnitOfWork unitOfWork)
 {
     public async Task<Result> Handle(UpdateBalanceCommand request, CancellationToken cancellationToken)
     {
-        Balance? balance = await unitOfWork.BalanceRepository.GetById(request.WorkspaceId, request.BalanceId, cancellationToken);
-        if (balance is null)
+        Balance? balance = await unitOfWork.BalanceRepository.GetByIdAsync(request.BalanceId, cancellationToken);
+        if (balance is null || balance.Workspace.Id != request.WorkspaceId)
         {
             return BalanceErrors.NotFoundById(request.BalanceId);
         }
-        
-        Result updateNameResult = balance.UpdateName(request.Name);
-        if (updateNameResult.IsFailure)
+
+        Result<BalanceName> nameCreationResult = BalanceName.Create(request.Name);
+        if (nameCreationResult.IsFailure)
         {
-            return updateNameResult.Error;
+            return nameCreationResult.Error;
         }
         
-        Result updateAmountResult = balance.UpdateAmount(request.Amount);
-        if (updateAmountResult.IsFailure)
-        {
-            return updateAmountResult.Error;
-        }
+        balance.Name = nameCreationResult.Value;
+        balance.Amount = request.Amount;
         
-        await unitOfWork.BalanceRepository.Update(request.WorkspaceId, balance, cancellationToken);
-        await unitOfWork.SaveChanges(cancellationToken);
+        await unitOfWork.BalanceRepository.UpdateAsync(balance, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }

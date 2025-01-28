@@ -116,7 +116,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
 
         Error? response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
-        response.Should().Be(WorkspaceErrors.NameTooLong(workspaceName), $"Expected {nameof(WorkspaceErrors.NameTooLong)} error to be returned.");
+        response.Should().Be(WorkspaceErrors.NameIsTooLong(workspaceName), $"Expected {nameof(WorkspaceErrors.NameIsTooLong)} error to be returned.");
         
         var numberOfWorkspacesInDatabaseAfterRequest = await DbContext.Workspaces.CountAsync();
         numberOfWorkspacesInDatabaseBeforeRequest.Should().Be(numberOfWorkspacesInDatabaseAfterRequest, "Number of workspaces should not change.");
@@ -157,7 +157,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         workspace.Id.Should().Be(workspaceIdFromLocationHeader, "Expected workspace with ID from Location header to exist in Database.");
         workspace.Name.Should().Be(workspaceName);
         workspace.CreatedOn.Should().NotBe(default);
-        workspace.ModifiedOn.Should().BeNull();
+        workspace.ModifiedOn.Should().NotBe(default);
         
         ExpectedWorkspaces.Add(new WorkspaceModel(workspaceIdFromLocationHeader, workspaceName, true));
     }
@@ -198,7 +198,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         endpointResponse.Should().HaveStatusCode(HttpStatusCode.BadRequest, "Expected BadRequest status code to be returned.");
 
         Error? response = await endpointResponse.Content.ReadFromJsonAsync<Error>();
-        response.Should().Be(WorkspaceErrors.NameTooLong(workspaceName), $"Expected {nameof(WorkspaceErrors.NameTooLong)} error to be returned.");
+        response.Should().Be(WorkspaceErrors.NameIsTooLong(workspaceName), $"Expected {nameof(WorkspaceErrors.NameIsTooLong)} error to be returned.");
         
         Workspace workspace = await DbContext.Workspaces
             .AsNoTracking()
@@ -233,7 +233,7 @@ public sealed class WorkspaceEndpointsIntegrationTest(IntegrationTestWebAppFacto
         workspace.Name.Should().Be(workspaceName);
         
         workspace.CreatedOn.Should().Be(originalWorkspace.CreatedOn);
-        workspace.ModifiedOn.Should().NotBeNull().And.NotBe(originalWorkspace.ModifiedOn);
+        workspace.ModifiedOn.Should().NotBe(originalWorkspace.ModifiedOn);
         
         ExpectedWorkspaces[0] = ExpectedWorkspaces.Single() with { Name = workspaceName };
     }

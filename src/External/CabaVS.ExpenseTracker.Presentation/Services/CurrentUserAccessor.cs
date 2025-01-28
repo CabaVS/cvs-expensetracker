@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using CabaVS.ExpenseTracker.Application.Abstractions.Presentation;
-using CabaVS.ExpenseTracker.Application.Abstractions.Presentation.Models;
+using CabaVS.ExpenseTracker.Application.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace CabaVS.ExpenseTracker.Presentation.Services;
@@ -9,7 +9,7 @@ internal sealed class CurrentUserAccessor(IHttpContextAccessor httpContextAccess
 {
     private const string CurrentUserKey = "CurrentUser";
     
-    public Task<AuthenticatedUserModel?> GetCurrentUser(CancellationToken cancellationToken = default)
+    public Task<AuthenticatedUserModel?> GetCurrentUserAsync(CancellationToken cancellationToken = default)
     {
         HttpContext? context = httpContextAccessor.HttpContext;
         if (context is null || context.User.Identity?.IsAuthenticated != true)
@@ -32,7 +32,7 @@ internal sealed class CurrentUserAccessor(IHttpContextAccessor httpContextAccess
         
         var isAdmin = claims.Any(claim => claim.Type == "CVS:IsAdmin");
 
-        foundUser = new AuthenticatedUserModel(userIdParsed, isAdmin);
+        foundUser = new AuthenticatedUserModel(userIdParsed, "Test User", isAdmin);
         context.Items[CurrentUserKey] = foundUser;
         
         return Task.FromResult(foundUser)!;

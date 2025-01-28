@@ -22,12 +22,12 @@ public static class DependencyInjection
 
         services.AddTransient<IUnitOfWork, UnitOfWork>();
 
-        services.AddTransient<IUserReadRepository, UserReadRepository>();
-        services.AddTransient<IWorkspaceReadRepository, WorkspaceReadRepository>();
-        services.AddTransient<ICurrencyReadRepository, CurrencyReadRepository>();
-        services.AddTransient<IBalanceReadRepository, BalanceReadRepository>();
-        services.AddTransient<IExpenseCategoryReadRepository, ExpenseCategoryReadRepository>();
-        services.AddTransient<ITransferTransactionReadRepository, TransferTransactionReadRepository>();
+        services.AddTransient<IBalanceQueryRepository, BalanceQueryRepository>();
+        services.AddTransient<ICategoryQueryRepository, CategoryQueryRepository>();
+        services.AddTransient<ICurrencyQueryRepository, CurrencyQueryRepository>();
+        services.AddTransient<ITransactionQueryRepository, TransactionQueryRepository>();
+        services.AddTransient<IUserQueryRepository, UserQueryRepository>();
+        services.AddTransient<IWorkspaceQueryRepository, WorkspaceQueryRepository>();
 
         return services;
     }

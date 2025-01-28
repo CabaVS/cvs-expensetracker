@@ -9,11 +9,11 @@ namespace CabaVS.ExpenseTracker.Application.Features.Currencies.Queries;
 public sealed record GetCurrenciesQuery : IAuthenticatedUserRequest, IRequest<Result<CurrencyModel[]>>;
 
 internal sealed class GetCurrenciesQueryHandler(
-    ICurrencyReadRepository currencyReadRepository) : IRequestHandler<GetCurrenciesQuery, Result<CurrencyModel[]>>
+    ICurrencyQueryRepository currencyQueryRepository) : IRequestHandler<GetCurrenciesQuery, Result<CurrencyModel[]>>
 {
     public async Task<Result<CurrencyModel[]>> Handle(GetCurrenciesQuery request, CancellationToken cancellationToken)
     {
-        CurrencyModel[] allCurrencies = await currencyReadRepository.GetAll(cancellationToken);
+        CurrencyModel[] allCurrencies = await currencyQueryRepository.GetAllAsync(cancellationToken);
         return allCurrencies;
     }
 }

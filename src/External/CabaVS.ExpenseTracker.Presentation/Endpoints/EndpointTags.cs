@@ -8,7 +8,7 @@ internal static class EndpointTags
     
     public const string Balances = "Balances";
     
-    public const string ExpenseCategories = "Expense Categories";
+    public const string Categories = "Categories";
     
-    public const string TransferTransactions = "Transfer Transactions";
+    public const string Transactions = "Transactions";
 }

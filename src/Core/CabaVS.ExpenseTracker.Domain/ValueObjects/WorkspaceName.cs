@@ -15,7 +15,7 @@ public sealed class WorkspaceName : ValueObject
     public static Result<WorkspaceName> Create(string value) =>
         Result<string>.Success(value)
             .EnsureStringNotNullOrWhitespace(WorkspaceErrors.NameIsNullOrWhitespace())
-            .EnsureStringNotTooLong(MaxLength, WorkspaceErrors.NameTooLong(value))
+            .EnsureStringNotTooLong(MaxLength, WorkspaceErrors.NameIsTooLong(value))
             .Map(x => new WorkspaceName(x));
 
     protected override IEnumerable<object> GetAtomicValues()

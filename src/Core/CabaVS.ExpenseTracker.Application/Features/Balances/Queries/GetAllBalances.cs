@@ -8,12 +8,12 @@ namespace CabaVS.ExpenseTracker.Application.Features.Balances.Queries;
 
 public sealed record GetAllBalancesQuery(Guid WorkspaceId) : IWorkspaceBoundRequest, IRequest<Result<BalanceModel[]>>;
 
-internal sealed class GetAllBalancesHandler(IBalanceReadRepository balanceReadRepository) 
+internal sealed class GetAllBalancesHandler(IBalanceQueryRepository balanceQueryRepository) 
     : IRequestHandler<GetAllBalancesQuery, Result<BalanceModel[]>>
 {
     public async Task<Result<BalanceModel[]>> Handle(GetAllBalancesQuery request, CancellationToken cancellationToken)
     {
-        BalanceModel[] allModels = await balanceReadRepository.GetBalances(request.WorkspaceId, cancellationToken);
+        BalanceModel[] allModels = await balanceQueryRepository.GetAllAsync(request.WorkspaceId, cancellationToken);
         return allModels;
     }
 }

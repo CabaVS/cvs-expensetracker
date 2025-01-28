@@ -1,4 +1,5 @@
 using CabaVS.ExpenseTracker.Application.Common.Behaviors;
+using CabaVS.ExpenseTracker.Application.Services;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,6 +16,8 @@ public static class DependencyInjection
         
         serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthenticatedUserRequestBehavior<,>));
         serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), typeof(WorkspaceBoundRequestBehavior<,>));
+
+        serviceCollection.AddSingleton<ITransactionService, TransactionService>();
 
         return serviceCollection;
     }

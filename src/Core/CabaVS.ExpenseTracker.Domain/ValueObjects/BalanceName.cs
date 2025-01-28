@@ -6,7 +6,7 @@ namespace CabaVS.ExpenseTracker.Domain.ValueObjects;
 
 public sealed class BalanceName : ValueObject
 {
-    public const int MaxLength = 64;
+    public const int MaxLength = 32;
     
     public string Value { get; }
 
@@ -15,7 +15,7 @@ public sealed class BalanceName : ValueObject
     public static Result<BalanceName> Create(string value) =>
         Result<string>.Success(value)
             .EnsureStringNotNullOrWhitespace(BalanceErrors.NameIsNullOrWhitespace())
-            .EnsureStringNotTooLong(MaxLength, BalanceErrors.NameTooLong(value))
+            .EnsureStringNotTooLong(MaxLength, BalanceErrors.NameIsTooLong(value))
             .Map(x => new BalanceName(x));
 
     protected override IEnumerable<object> GetAtomicValues()

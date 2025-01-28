@@ -10,11 +10,11 @@ namespace CabaVS.ExpenseTracker.Application.Features.Balances.Queries;
 public sealed record GetBalanceByIdQuery(Guid BalanceId, Guid WorkspaceId) : IWorkspaceBoundRequest, IRequest<Result<BalanceModel>>;
 
 internal sealed class GetBalanceByIdQueryHandler(
-    IBalanceReadRepository balanceReadRepository) : IRequestHandler<GetBalanceByIdQuery, Result<BalanceModel>>
+    IBalanceQueryRepository balanceQueryRepository) : IRequestHandler<GetBalanceByIdQuery, Result<BalanceModel>>
 {
     public async Task<Result<BalanceModel>> Handle(GetBalanceByIdQuery request, CancellationToken cancellationToken)
     {
-        BalanceModel? balanceModel = await balanceReadRepository.GetBalanceById(request.BalanceId, request.WorkspaceId, cancellationToken);
-        return balanceModel is null ? BalanceErrors.NotFoundById(request.BalanceId) : balanceModel;
+        BalanceModel? balanceModel = await balanceQueryRepository.GetByIdAsync(request.WorkspaceId, request.BalanceId, cancellationToken);
+        return balanceModel is not null ? balanceModel : BalanceErrors.NotFoundById(request.BalanceId);
     }
 }

@@ -1,15 +1,16 @@
 using CabaVS.ExpenseTracker.Application.Abstractions.Persistence.Repositories;
+using CabaVS.ExpenseTracker.Domain.Entities;
 
 namespace CabaVS.ExpenseTracker.Application.Abstractions.Persistence;
 
 public interface IUnitOfWork
 {
-    Task SaveChanges(CancellationToken cancellationToken = default);
+    Task SaveChangesAsync(CancellationToken cancellationToken = default);
     
-    IUserRepository UserRepository { get; }
-    ICurrencyRepository CurrencyRepository { get; }
-    IWorkspaceRepository WorkspaceRepository { get; }
-    IBalanceRepository BalanceRepository { get; }
-    IExpenseCategoryRepository ExpenseCategoryRepository { get; }
-    ITransferTransactionRepository TransferTransactionRepository { get; }
+    IGenericCommandRepository<User> UserRepository { get; }
+    IGenericCommandRepository<Currency> CurrencyRepository { get; }
+    IWorkspaceCommandRepository WorkspaceRepository { get; }
+    IGenericCommandRepository<Balance> BalanceRepository { get; }
+    IGenericCommandRepository<Category> CategoryRepository { get; }
+    IGenericCommandRepository<Transaction> TransactionRepository { get; }
 }

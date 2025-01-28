@@ -1,24 +1,25 @@
+using CabaVS.ExpenseTracker.Persistence.Entities.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CabaVS.ExpenseTracker.Persistence.Entities;
 
-internal sealed class User
+internal sealed class User : IRepresentAuditableEntity<Domain.Entities.User, User>
 {
     public Guid Id { get; set; }
     public DateTime CreatedOn { get; set; }
-    public DateTime? ModifiedOn { get; set; }
+    public DateTime ModifiedOn { get; set; }
+    
+    public Domain.Entities.User ToDomainEntity() => new(Id, CreatedOn, ModifiedOn);
 
-    public Domain.Entities.User ConvertToDomainEntity() => 
-        new(Id, CreatedOn, ModifiedOn);
-
-    public static User ConvertFromDomainEntity(Domain.Entities.User domainEntity) =>
-        new()
-        {
-            Id = domainEntity.Id,
-            CreatedOn = domainEntity.CreatedOn,
-            ModifiedOn = domainEntity.ModifiedOn
-        };
+    public User FromDomainEntity(Domain.Entities.User domainEntity)
+    {
+        Id = domainEntity.Id;
+        CreatedOn = domainEntity.CreatedOn;
+        ModifiedOn = domainEntity.ModifiedOn;
+        
+        return this;
+    }
 }
 
 internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
