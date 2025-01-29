@@ -11,12 +11,8 @@ public sealed class Workspace : AuditableEntity
     private Workspace(Guid id, DateTime createdOn, DateTime modifiedOn, WorkspaceName name) : base(id, createdOn, modifiedOn) => 
         Name = name;
     
-    public static Result<Workspace> Create(string name)
-    {
-        DateTime utcNow = DateTime.UtcNow;
-        
-        return Create(Guid.NewGuid(), utcNow, utcNow, name);
-    }
+    public static Result<Workspace> Create(string name) => 
+        Create(Guid.NewGuid(), default, default, name);
 
     public static Result<Workspace> Create(Guid id, DateTime createdOn, DateTime modifiedOn, string name)
     {

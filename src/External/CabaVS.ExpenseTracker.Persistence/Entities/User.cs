@@ -24,5 +24,13 @@ internal sealed class User : IRepresentAuditableEntity<Domain.Entities.User, Use
 
 internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
-    public void Configure(EntityTypeBuilder<User> builder) => builder.HasKey(x => x.Id);
+    public void Configure(EntityTypeBuilder<User> builder)
+    {
+        builder.HasKey(x => x.Id);
+        
+        builder
+            .HasMany<UserWorkspace>()
+            .WithOne(uw => uw.User)
+            .HasForeignKey(uw => uw.UserId);
+    }
 }

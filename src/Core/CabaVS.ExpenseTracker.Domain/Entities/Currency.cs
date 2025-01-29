@@ -18,12 +18,8 @@ public sealed class Currency : AuditableEntity
         Symbol = symbol;
     }
     
-    public static Result<Currency> Create(string name, string code, string symbol)
-    {
-        DateTime utcNow = DateTime.UtcNow;
-        
-        return Create(Guid.NewGuid(), utcNow, utcNow, name, code, symbol);
-    }
+    public static Result<Currency> Create(string name, string code, string symbol) => 
+        Create(Guid.NewGuid(), default, default, name, code, symbol);
 
     public static Result<Currency> Create(Guid id, DateTime createdOn, DateTime modifiedOn,
         string name, string code, string symbol)

@@ -67,4 +67,26 @@ internal static class DefaultDatabaseSeeder
             dbContext.SaveChanges();
         }
     }
+
+    public static void SeedWorkspaces(ApplicationDbContext dbContext, Guid userId, bool isAdmin, int numberOfWorkspaces = 1)
+    {
+        IEnumerable<UserWorkspace> workspacesToCreate = new WorkspaceFaker().Generate(numberOfWorkspaces)
+            .Select(w => new UserWorkspace
+            {
+                UserId = userId,
+                IsAdmin = isAdmin,
+                Workspace = w
+            });
+        
+        dbContext.UserWorkspaces.AddRange(workspacesToCreate);
+        dbContext.SaveChanges();
+    }
+
+    public static void SeedBalances(ApplicationDbContext dbContext, Guid currencyId, Guid workspaceId, int numberOfBalances = 1)
+    {
+        List<Balance> balancesToCreate = new BalanceFaker(currencyId, workspaceId).Generate(numberOfBalances);
+        
+        dbContext.Balances.AddRange(balancesToCreate);
+        dbContext.SaveChanges();
+    }
 }

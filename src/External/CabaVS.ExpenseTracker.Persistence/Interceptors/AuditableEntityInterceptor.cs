@@ -1,6 +1,5 @@
 using CabaVS.ExpenseTracker.Persistence.Entities.Abstractions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace CabaVS.ExpenseTracker.Persistence.Interceptors;
@@ -19,20 +18,22 @@ internal sealed class AuditableEntityInterceptor : ISaveChangesInterceptor
         
         DateTime utcNow = DateTime.UtcNow;
 
-        IEnumerable<EntityEntry<IAuditableEntity>> createdEntities = context.ChangeTracker
+        IEnumerable<IAuditableEntity> createdEntities = context.ChangeTracker
             .Entries<IAuditableEntity>()
-            .Where(x => x.State == EntityState.Added);
-        foreach (EntityEntry<IAuditableEntity> createdEntity in createdEntities)
+            .Where(x => x.State is EntityState.Added)
+            .Select(x => x.Entity);
+        foreach (IAuditableEntity createdEntity in createdEntities)
         {
-            createdEntity.Entity.CreatedOn = utcNow;
+            createdEntity.CreatedOn = utcNow;
         }
 
-        IEnumerable<EntityEntry<IAuditableEntity>> modifiedEntities = context.ChangeTracker
+        IEnumerable<IAuditableEntity> modifiedEntities = context.ChangeTracker
             .Entries<IAuditableEntity>()
-            .Where(x => x.State == EntityState.Modified);
-        foreach (EntityEntry<IAuditableEntity> modifiedEntity in modifiedEntities)
+            .Where(x => x.State is EntityState.Added or EntityState.Modified)
+            .Select(x => x.Entity);
+        foreach (IAuditableEntity modifiedEntity in modifiedEntities)
         {
-            modifiedEntity.Entity.ModifiedOn = utcNow;
+            modifiedEntity.ModifiedOn = utcNow;
         }
         
         return ValueTask.FromResult(result);

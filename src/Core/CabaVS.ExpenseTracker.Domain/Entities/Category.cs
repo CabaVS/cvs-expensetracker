@@ -24,12 +24,8 @@ public sealed class Category : AuditableEntity, IWithCurrency, IWithWorkspace
         Workspace = workspace;
     }
     
-    public static Result<Category> Create(string name, CategoryType type, Currency currency, Workspace workspace)
-    {
-        DateTime utcNow = DateTime.UtcNow;
-        
-        return Create(Guid.NewGuid(), utcNow, utcNow, name, type, currency, workspace);
-    }
+    public static Result<Category> Create(string name, CategoryType type, Currency currency, Workspace workspace) => 
+        Create(Guid.NewGuid(), default, default, name, type, currency, workspace);
 
     public static Result<Category> Create(Guid id, DateTime createdOn, DateTime modifiedOn, 
         string name, CategoryType type, Currency currency, Workspace workspace)

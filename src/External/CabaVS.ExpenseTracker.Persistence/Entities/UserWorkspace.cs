@@ -21,13 +21,17 @@ internal sealed class UserWorkspaceConfiguration : IEntityTypeConfiguration<User
         builder.HasKey(x => new { x.UserId, x.WorkspaceId });
 
         builder.HasOne(x => x.User)
-            .WithOne()
-            .HasForeignKey<UserWorkspace>(x => x.UserId)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
+        builder.HasIndex(x => x.UserId);
         
         builder.HasOne(x => x.Workspace)
-            .WithOne()
-            .HasForeignKey<UserWorkspace>(x => x.WorkspaceId)
+            .WithMany()
+            .HasForeignKey(x => x.WorkspaceId)
+            .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
+        builder.HasIndex(x => x.WorkspaceId);
     }
 }

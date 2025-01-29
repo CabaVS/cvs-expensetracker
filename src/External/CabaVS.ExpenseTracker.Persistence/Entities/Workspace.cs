@@ -38,5 +38,10 @@ internal sealed class WorkspaceConfiguration : IEntityTypeConfiguration<Workspac
         builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(WorkspaceName.MaxLength);
+        
+        builder
+            .HasMany<UserWorkspace>()
+            .WithOne(uw => uw.Workspace)
+            .HasForeignKey(uw => uw.WorkspaceId);
     }
 }

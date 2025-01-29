@@ -22,12 +22,8 @@ public sealed class Balance : AuditableEntity, IWithCurrency, IWithWorkspace
         Workspace = workspace;
     }
     
-    public static Result<Balance> Create(string name, decimal amount, Currency currency, Workspace workspace)
-    {
-        DateTime utcNow = DateTime.UtcNow;
-        
-        return Create(Guid.NewGuid(), utcNow, utcNow, name, amount, currency, workspace);
-    }
+    public static Result<Balance> Create(string name, decimal amount, Currency currency, Workspace workspace) => 
+        Create(Guid.NewGuid(), default, default, name, amount, currency, workspace);
 
     public static Result<Balance> Create(Guid id, DateTime createdOn, DateTime modifiedOn, 
         string name, decimal amount, Currency currency, Workspace workspace)
