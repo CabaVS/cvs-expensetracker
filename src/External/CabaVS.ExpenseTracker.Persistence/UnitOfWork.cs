@@ -23,14 +23,14 @@ internal sealed class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
     public IGenericCommandRepository<Currency> CurrencyRepository => _currencyRepository.Value;
     
     private readonly Lazy<IGenericCommandRepository<Balance>> _balanceRepository = 
-        new(() => new GenericCommandRepository<Balance, Persistence.Entities.Balance>(dbContext));
+        new(() => new BalanceCommandRepository(dbContext));
     public IGenericCommandRepository<Balance> BalanceRepository => _balanceRepository.Value;
     
     private readonly Lazy<IGenericCommandRepository<Category>> _categoryRepository = 
-        new(() => new GenericCommandRepository<Category, Persistence.Entities.Category>(dbContext));
+        new(() => new CategoryCommandRepository(dbContext));
     public IGenericCommandRepository<Category> CategoryRepository => _categoryRepository.Value;
 
     private readonly Lazy<IGenericCommandRepository<Transaction>> _transactionRepository = 
-        new(() => new GenericCommandRepository<Transaction, Persistence.Entities.Transaction>(dbContext));
+        new(() => new TransactionCommandRepository(dbContext));
     public IGenericCommandRepository<Transaction> TransactionRepository => _transactionRepository.Value;
 }
