@@ -8,7 +8,7 @@ using MediatR;
 
 namespace CabaVS.ExpenseTracker.Application.Features.Categories.Commands;
 
-public sealed record UpdateCategoryCommand(Guid WorkspaceId, Guid CategoryId, string Name, decimal Amount) : IWorkspaceBoundRequest, IRequest<Result>;
+public sealed record UpdateCategoryCommand(Guid WorkspaceId, Guid CategoryId, string Name) : IWorkspaceBoundRequest, IRequest<Result>;
 
 internal sealed class UpdateCategoryCommandHandler(IUnitOfWork unitOfWork) 
     : IRequestHandler<UpdateCategoryCommand, Result>
