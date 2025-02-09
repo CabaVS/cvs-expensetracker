@@ -38,6 +38,29 @@ internal sealed class TransactionQueryRepository(ApplicationDbContext dbContext)
         return entity is not null ? ConvertToModel(entity) : null;
     }
 
+    public async Task<TransactionMoneyModel[]> GetTransactionsMoneyAsync(
+        Guid workspaceId, TransactionType type, DateOnly from, DateOnly to,
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<Transaction> query = dbContext.Transactions
+            .Where(x => x.WorkspaceId == workspaceId)
+            .Where(x => x.Type == type)
+            .Where(x => from <= x.Date && x.Date <= to);
+        
+        IQueryable<TransactionMoneyModel> final = type switch
+        {
+            TransactionType.Income => query.Select(
+                x => new TransactionMoneyModel(
+                    x.AmountInDestinationCurrency, x.DestinationBalance!.Currency.Code)),
+            TransactionType.Expense => query.Select(
+                x => new TransactionMoneyModel(
+                    x.AmountInSourceCurrency, x.SourceBalance!.Currency.Code)),
+            _ => throw new InvalidOperationException()
+        };
+        
+        return await final.ToArrayAsync(cancellationToken);
+    }
+
     private static Func<Transaction, TransactionModel> ConvertToModel =>
         x =>
         {

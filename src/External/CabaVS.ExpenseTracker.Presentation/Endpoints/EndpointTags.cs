@@ -11,4 +11,6 @@ internal static class EndpointTags
     public const string Categories = "Categories";
     
     public const string Transactions = "Transactions";
+    
+    public const string Reports = "Reports";
 }
