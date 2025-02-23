@@ -9,5 +9,9 @@ public interface ITransactionQueryRepository
     Task<TransactionModel?> GetByIdAsync(Guid workspaceId, Guid transactionId, CancellationToken cancellationToken = default);
     
     Task<TransactionMoneyModel[]> GetTransactionsMoneyAsync(
-        Guid workspaceId, TransactionType type, DateOnly from, DateOnly to, CancellationToken cancellationToken = default);
+        Guid workspaceId, TransactionType type, DateOnly from, DateOnly to, 
+        CancellationToken cancellationToken = default);
+    Task<TransactionMoneyByCategoryModel[]> GetTransactionsMoneyByCategoryAsync(
+        Guid workspaceId, TransactionType type, DateOnly from, DateOnly to, 
+        CancellationToken cancellationToken = default);
 }

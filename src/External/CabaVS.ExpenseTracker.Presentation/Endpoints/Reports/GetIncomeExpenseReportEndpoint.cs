@@ -39,9 +39,9 @@ internal sealed class GetIncomeExpenseReportEndpoint(ISender sender)
     internal sealed record RequestModel(Guid WorkspaceId, DateOnly From, DateOnly To);
 }
 
-internal sealed class GetCurrenciesEndpointSummary : Summary<GetIncomeExpenseReportEndpoint>
+internal sealed class GetIncomeExpenseReportEndpointSummary : Summary<GetIncomeExpenseReportEndpoint>
 {
-    public GetCurrenciesEndpointSummary()
+    public GetIncomeExpenseReportEndpointSummary()
     {
         Summary = "Get Income/Expense Report";
         Description = "Gets an Income/Expense report over the provided workspace grouped by currency code.";

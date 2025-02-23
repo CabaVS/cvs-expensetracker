@@ -61,6 +61,84 @@ internal sealed class TransactionQueryRepository(ApplicationDbContext dbContext)
         return await final.ToArrayAsync(cancellationToken);
     }
 
+    public async Task<TransactionMoneyByCategoryModel[]> GetTransactionsMoneyByCategoryAsync(
+        Guid workspaceId, TransactionType type, DateOnly from, DateOnly to,
+        CancellationToken cancellationToken = default)
+    {
+        Transaction[] transactions = await dbContext.Transactions
+            .AsNoTracking()
+            .Include(x => x.SourceCategory)
+            .ThenInclude(x => x!.Currency)
+            .Include(x => x.DestinationCategory)
+            .ThenInclude(x => x!.Currency)
+            .Where(x => x.WorkspaceId == workspaceId)
+            .Where(x => x.Type == type)
+            .Where(x => from <= x.Date && x.Date <= to)
+            .ToArrayAsync(cancellationToken);
+        if (transactions.Length == 0)
+        {
+            return [];
+        }
+
+        var groupedByCategory = type switch
+        {
+            TransactionType.Income => transactions
+                .Where(x => x.SourceCategory is not null)
+                .GroupBy(x => (x.SourceCategory!.Id, x.SourceCategory.Name, x.SourceCategory.Currency.Code))
+                .Select(g => new
+                {
+                    CategoryId = g.Key.Id,
+                    CategoryName = g.Key.Name,
+                    CategoryCurrencyCode = g.Key.Code,
+                    Transactions = g.Select(x => new
+                    {
+                        Amount = x.AmountInSourceCurrency,
+                        x.Tags,
+                        g.Key.Code
+                    })
+                }),
+            TransactionType.Expense => transactions
+                .Where(x => x.DestinationCategory is not null)
+                .GroupBy(x => (x.DestinationCategory!.Id, x.DestinationCategory.Name, x.DestinationCategory.Currency.Code))
+                .Select(g => new
+                {
+                    CategoryId = g.Key.Id,
+                    CategoryName = g.Key.Name,
+                    CategoryCurrencyCode = g.Key.Code,
+                    Transactions = g.Select(x => new
+                    {
+                        Amount = x.AmountInDestinationCurrency,
+                        x.Tags,
+                        g.Key.Code
+                    })
+                }),
+            _ => throw new InvalidOperationException()
+        };
+
+        TransactionMoneyByCategoryModel[] resultModels = groupedByCategory
+            .Select(x => new TransactionMoneyByCategoryModel(
+                x.CategoryId, x.CategoryName, x.Transactions.Sum(y => y.Amount), x.CategoryCurrencyCode)
+            {
+                ByTag = x.Transactions
+                    .GroupBy(y => string.Join(',', y.Tags.OrderBy(z => z)))
+                    .Select(g =>
+                    {
+                        var first = g.First();
+                        
+                        return new TransactionMoneyByTagModel(
+                            first.Tags,
+                            g.Sum(y => y.Amount),
+                            first.Code);
+                    })
+                    .OrderByDescending(y => y.Amount)
+                    .ToArray()
+            })
+            .OrderByDescending(x => x.Amount)
+            .ToArray();
+
+        return resultModels;
+    }
+
     private static Func<Transaction, TransactionModel> ConvertToModel =>
         x =>
         {
