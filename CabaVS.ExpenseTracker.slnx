@@ -1,0 +1,17 @@
+﻿<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src\CabaVS.ExpenseTracker.API\CabaVS.ExpenseTracker.API.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/src/Core/">
+    <Project Path="src\Core\CabaVS.ExpenseTracker.Application\CabaVS.ExpenseTracker.Application.csproj" Type="Classic C#" />
+    <Project Path="src\Core\CabaVS.ExpenseTracker.Domain\CabaVS.ExpenseTracker.Domain.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/src/External/">
+    <Project Path="src\External\CabaVS.ExpenseTracker.Persistence\CabaVS.ExpenseTracker.Persistence.csproj" Type="Classic C#" />
+    <Project Path="src\External\CabaVS.ExpenseTracker.Presentation\CabaVS.ExpenseTracker.Presentation.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/tests/" />
+</Solution>
