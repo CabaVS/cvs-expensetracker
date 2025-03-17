@@ -5,6 +5,8 @@
     <File Path="scripts\cvs-unittests.ps1" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
+    <File Path="Dockerfile" />
+    <File Path="docker-compose.yml" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src\CabaVS.ExpenseTracker.API\CabaVS.ExpenseTracker.API.csproj" />
