@@ -2,14 +2,14 @@ using CabaVS.ExpenseTracker.Application;
 using CabaVS.ExpenseTracker.Persistence;
 using CabaVS.ExpenseTracker.Presentation;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplication();
 builder.Services.AddPersistence();
 builder.Services.AddPresentation();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
 
-app.Run();
+await app.RunAsync();

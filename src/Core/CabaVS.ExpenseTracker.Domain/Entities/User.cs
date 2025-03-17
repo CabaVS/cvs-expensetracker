@@ -15,7 +15,7 @@ public sealed class User : AuditableEntity
 
     public static Result<User> CreateNew(string userName)
     {
-        var utcNow = DateTime.UtcNow;
+        DateTime utcNow = DateTime.UtcNow;
         
         return CreateExisting(
             Guid.NewGuid(), utcNow, utcNow,

@@ -19,7 +19,7 @@ public sealed class Workspace : AuditableEntity
 
     public static Result<Workspace> CreateNew(string name, User owner)
     {
-        var utcNow = DateTime.UtcNow;
+        DateTime utcNow = DateTime.UtcNow;
         
         return WorkspaceMember.CreateNew(owner, true)
             .Map(x => CreateExisting(

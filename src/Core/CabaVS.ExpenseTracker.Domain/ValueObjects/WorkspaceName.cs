@@ -10,10 +10,8 @@ public sealed class WorkspaceName : ValueObject
     
     public string Value { get; }
 
-    private WorkspaceName(string value)
-    {
+    private WorkspaceName(string value) => 
         Value = value;
-    }
 
     protected override IEnumerable<object> AtomicValues
     {

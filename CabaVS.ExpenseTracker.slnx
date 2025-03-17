@@ -1,20 +1,23 @@
-﻿<Solution>
+<Solution>
   <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path="scripts\cvs-unittests.ps1" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src\CabaVS.ExpenseTracker.API\CabaVS.ExpenseTracker.API.csproj" Type="Classic C#" />
+    <Project Path="src\CabaVS.ExpenseTracker.API\CabaVS.ExpenseTracker.API.csproj" />
   </Folder>
   <Folder Name="/src/Core/">
-    <Project Path="src\Core\CabaVS.ExpenseTracker.Application\CabaVS.ExpenseTracker.Application.csproj" Type="Classic C#" />
-    <Project Path="src\Core\CabaVS.ExpenseTracker.Domain\CabaVS.ExpenseTracker.Domain.csproj" Type="Classic C#" />
+    <Project Path="src\Core\CabaVS.ExpenseTracker.Application\CabaVS.ExpenseTracker.Application.csproj" />
+    <Project Path="src\Core\CabaVS.ExpenseTracker.Domain\CabaVS.ExpenseTracker.Domain.csproj" />
   </Folder>
   <Folder Name="/src/External/">
-    <Project Path="src\External\CabaVS.ExpenseTracker.Persistence\CabaVS.ExpenseTracker.Persistence.csproj" Type="Classic C#" />
-    <Project Path="src\External\CabaVS.ExpenseTracker.Presentation\CabaVS.ExpenseTracker.Presentation.csproj" Type="Classic C#" />
+    <Project Path="src\External\CabaVS.ExpenseTracker.Persistence\CabaVS.ExpenseTracker.Persistence.csproj" />
+    <Project Path="src\External\CabaVS.ExpenseTracker.Presentation\CabaVS.ExpenseTracker.Presentation.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests\CabaVS.ExpenseTracker.UnitTests\CabaVS.ExpenseTracker.UnitTests.csproj" Type="Classic C#" />
+    <Project Path="tests\CabaVS.ExpenseTracker.UnitTests\CabaVS.ExpenseTracker.UnitTests.csproj" />
   </Folder>
 </Solution>

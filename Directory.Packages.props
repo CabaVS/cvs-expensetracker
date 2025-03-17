@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Global -->
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.7.0.110445" />
+    <!-- Application layer -->
+    <PackageVersion Include="MediatR" Version="12.4.1" />
+    <!-- Unit Tests with xUnit -->
+    <PackageVersion Include="coverlet.collector" Version="6.0.2"/>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
+    <PackageVersion Include="xunit" Version="2.9.2"/>
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2"/>
+  </ItemGroup>
+</Project>

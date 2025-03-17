@@ -5,3 +5,6 @@ obj/
 # Rider IDE
 .idea/
 *.DotSettings.user
+
+# Visual Studio IDE
+.vs/

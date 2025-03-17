@@ -10,10 +10,8 @@ public sealed class UserName : ValueObject
     
     public string Value { get; }
 
-    private UserName(string value)
-    {
+    private UserName(string value) => 
         Value = value;
-    }
 
     protected override IEnumerable<object> AtomicValues
     {

@@ -18,7 +18,7 @@ public sealed class WorkspaceMember : AuditableEntity
     
     public static Result<WorkspaceMember> CreateNew(User user, bool isAdmin)
     {
-        var utcNow = DateTime.UtcNow;
+        DateTime utcNow = DateTime.UtcNow;
         
         return CreateExisting(
             Guid.NewGuid(), utcNow, utcNow,
