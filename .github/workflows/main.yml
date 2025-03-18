@@ -5,13 +5,14 @@ on:
   push:
     branches:
       - master
+      - feature/github-actions
 
 env:
   BUILD_CONFIGURATION: "Release"
   PATH_TO_GLOBAL_JSON: "./global.json"
   PATH_TO_API: "./src/CabaVS.ExpenseTracker.API/CabaVS.ExpenseTracker.API.csproj"
   PATH_TO_UNIT_TESTS: "./tests/CabaVS.ExpenseTracker.UnitTests/CabaVS.ExpenseTracker.UnitTests.csproj"
-  PUBLISH_PATH: "./TestResults"
+  PUBLISH_PATH: "./published"
   REPORT_PATH: "./TestResults"
 
 jobs:
