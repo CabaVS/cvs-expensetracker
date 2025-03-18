@@ -5,6 +5,15 @@
   <ItemGroup>
     <!-- Global -->
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.7.0.110445" />
+		<!-- Global: .NET Aspire -->
+		<PackageVersion Include="Aspire.Hosting.AppHost" Version="9.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.0.0" />
+		<PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
+		<PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
+		<PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
+		<PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
+		<PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.9.0" />
     <!-- Application layer -->
     <PackageVersion Include="MediatR" Version="12.4.1" />
     <!-- Unit Tests with xUnit -->
