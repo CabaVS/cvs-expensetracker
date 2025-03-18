@@ -7,17 +7,19 @@
     <File Path="Directory.Packages.props" />
     <File Path="Dockerfile" />
     <File Path="docker-compose.yml" />
+    <File Path="global.json" />
+    <File Path=".github\workflows\main.yml" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/CabaVS.ExpenseTracker.AppHost/CabaVS.ExpenseTracker.AppHost.csproj" Id="f71cd2e4-3c89-4b2f-ad1c-a0e7155185aa" />
+    <Project Path="src/CabaVS.ExpenseTracker.AppHost/CabaVS.ExpenseTracker.AppHost.csproj" />
     <Project Path="src/CabaVS.ExpenseTracker.ServiceDefaults/CabaVS.ExpenseTracker.ServiceDefaults.csproj" />
     <Project Path="src\CabaVS.ExpenseTracker.API\CabaVS.ExpenseTracker.API.csproj" />
   </Folder>
-  <Folder Name="/src/Core/" Id="8d626ea8-cb54-bc41-363a-217881beba6e">
+  <Folder Name="/src/Core/">
     <Project Path="src\Core\CabaVS.ExpenseTracker.Application\CabaVS.ExpenseTracker.Application.csproj" />
     <Project Path="src\Core\CabaVS.ExpenseTracker.Domain\CabaVS.ExpenseTracker.Domain.csproj" />
   </Folder>
-  <Folder Name="/src/External/" Id="17fe7165-7831-552a-0281-14200d3cbaad">
+  <Folder Name="/src/External/">
     <Project Path="src\External\CabaVS.ExpenseTracker.Persistence\CabaVS.ExpenseTracker.Persistence.csproj" />
     <Project Path="src\External\CabaVS.ExpenseTracker.Presentation\CabaVS.ExpenseTracker.Presentation.csproj" />
   </Folder>

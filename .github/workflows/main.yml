@@ -1,0 +1,76 @@
+name: Main Pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+env:
+  BUILD_CONFIGURATION: "Release"
+  PATH_TO_GLOBAL_JSON: "./global.json"
+  PATH_TO_API: "./src/CabaVS.ExpenseTracker.API/CabaVS.ExpenseTracker.API.csproj"
+  PATH_TO_UNIT_TESTS: "./tests/CabaVS.ExpenseTracker.UnitTests/CabaVS.ExpenseTracker.UnitTests.csproj"
+  PUBLISH_PATH: "./published"
+  REPORT_PATH: "./TestResults"
+
+jobs:
+  build:
+    name: Build and Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: ${{ env.PATH_TO_GLOBAL_JSON }}
+
+      - name: Restore API project
+        run: dotnet restore ${{ env.PATH_TO_API }}
+
+      - name: Build API project
+        run: dotnet build ${{ env.PATH_TO_API }} --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
+        
+      - name: Publish API project
+        run: dotnet publish ${{ env.PATH_TO_API }} --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore --no-build --output ${{ env.PUBLISH_PATH }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: published-api
+          path: ${{ env.PUBLISH_PATH }}
+
+  test:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    environment: main-environment
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: ${{ env.PATH_TO_GLOBAL_JSON }}
+
+      - name: Run Unit Tests with Code Coverage
+        run: dotnet test ${{ env.PATH_TO_UNIT_TESTS }} --configuration ${{ env.BUILD_CONFIGURATION }} --collect:"XPlat Code Coverage" --results-directory ${{ env.REPORT_PATH }}
+        
+      - name: Generate coverage report
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.4.4
+        with:
+          reports: '${{ env.REPORT_PATH }}/**/coverage.cobertura.xml'
+          targetdir: '${{ env.REPORT_PATH }}/generated-report'
+          reporttypes: 'Html,MarkdownSummaryGithub'
+          toolpath: 'reportgeneratortool'
+          
+      - name: Upload coverage report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-unit-tests        
+          path: '${{ env.REPORT_PATH }}/generated-report'
+
+      - name: Publish coverage in the GitHub build summary
+        run: cat ${{ env.REPORT_PATH }}/generated-report/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
+        shell: bash
