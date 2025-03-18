@@ -54,19 +54,16 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: ${{ env.PATH_TO_GLOBAL_JSON }}
-        
-      - name: Install ReportGenerator Tool
-        run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
       - name: Run Unit Tests with Code Coverage
         run: dotnet test ${{ env.PATH_TO_UNIT_TESTS }} --configuration ${{ env.BUILD_CONFIGURATION }} --collect:"XPlat Code Coverage" --results-directory ${{ env.REPORT_PATH }}
         
-      - name: ReportGenerator
+      - name: Generate coverage report
         uses: danielpalme/ReportGenerator-GitHub-Action@5.4.4
         with:
           reports: '${{ env.REPORT_PATH }}/**/coverage.cobertura.xml'
           targetdir: '${{ env.REPORT_PATH }}/generated-report'
-          reporttypes: 'MarkdownSummaryGithub'
+          reporttypes: 'Html,MarkdownSummaryGithub'
           toolpath: 'reportgeneratortool'
           
       - name: Upload coverage report artifact
@@ -75,6 +72,6 @@ jobs:
           name: coverage-report-unit-tests        
           path: '${{ env.REPORT_PATH }}/generated-report'
 
-      - name: Publish coverage in build summary
+      - name: Publish coverage in the GitHub build summary
         run: cat ${{ env.REPORT_PATH }}/generated-report/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
         shell: bash
