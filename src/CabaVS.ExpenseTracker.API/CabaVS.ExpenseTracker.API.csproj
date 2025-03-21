@@ -2,13 +2,17 @@
 
     <PropertyGroup>
       <UserSecretsId>cvs-expensetracker-api</UserSecretsId>
+      <DefineConstants Condition="'$(AspireBuild)' == 'true'">$(DefineConstants);ASPIRE</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CabaVS.ExpenseTracker.ServiceDefaults\CabaVS.ExpenseTracker.ServiceDefaults.csproj" />
       <ProjectReference Include="..\Core\CabaVS.ExpenseTracker.Application\CabaVS.ExpenseTracker.Application.csproj" />
       <ProjectReference Include="..\External\CabaVS.ExpenseTracker.Persistence\CabaVS.ExpenseTracker.Persistence.csproj" />
       <ProjectReference Include="..\External\CabaVS.ExpenseTracker.Presentation\CabaVS.ExpenseTracker.Presentation.csproj" />
     </ItemGroup>
 
+    <ItemGroup Condition="'$(AspireBuild)' == 'true'">
+      <ProjectReference Include="..\CabaVS.ExpenseTracker.ServiceDefaults\CabaVS.ExpenseTracker.ServiceDefaults.csproj" />
+    </ItemGroup>
+  
 </Project>
