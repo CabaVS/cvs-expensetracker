@@ -58,7 +58,7 @@ jobs:
         run: |
           dotnet test ${{ env.PATH_TO_UNIT_TESTS }} \
             /p:CollectCoverage=true \
-            /p:CoverletOutput="${{ env.REPORT_PATH }}" \
+            /p:CoverletOutput="${{ env.REPORT_PATH }}/coverage" \
             /p:CoverletOutputFormat="cobertura" \
             /p:ExcludeByFile="**/AssemblyMarker.cs" \
             --verbosity minimal --results-directory "${{ env.REPORT_PATH }}" \
