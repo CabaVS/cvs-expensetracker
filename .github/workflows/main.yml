@@ -60,7 +60,7 @@ jobs:
           /p:CoverletOutput="${{ env.REPORT_PATH }}\coverage" `
           /p:CoverletOutputFormat="cobertura" `
           /p:ExcludeByFile="**/AssemblyMarker.cs" `
-          --verbosity minimal --results-directory ${{ env.REPORT_PATH }}
+          --verbosity minimal --results-directory ${{ env.REPORT_PATH }} `
           --configuration ${{ env.BUILD_CONFIGURATION }}
         
       - name: Generate coverage report
