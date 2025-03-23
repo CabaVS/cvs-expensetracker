@@ -1,6 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 $unitTestsPath = ".\tests\CabaVS.ExpenseTracker.UnitTests\CabaVS.ExpenseTracker.UnitTests.csproj";
+$coverageJson = ".\tests\CabaVS.ExpenseTracker.UnitTests\coverage.json"
 
 $toolName = "dotnet-reportgenerator-globaltool"
 
@@ -24,7 +25,17 @@ else {
 }
 
 Write-Host "Launching the Unit Tests..."
-dotnet test $unitTestsPath --verbosity minimal --collect:"XPlat Code Coverage" --results-directory $reportPath
+dotnet test $unitTestsPath `
+    /p:CollectCoverage=true `
+    /p:CoverletOutput="$reportPath\coverage" `
+    /p:CoverletOutputFormat="cobertura" `
+    /p:ExcludeByFile="**/AssemblyMarker.cs" `
+    --verbosity minimal --results-directory $reportPath
+    
+if (Test-Path $coverageJson) {
+    Write-Host "Removing 'coverage.json' file..."
+    Remove-Item $coverageJson -Force
+}
 
 Write-Host "Generating a code coverage report..."
 reportgenerator -reports:"$reportPath\**\coverage.cobertura.xml" -targetdir:"$reportPath\generated-report" -reporttypes:Html
