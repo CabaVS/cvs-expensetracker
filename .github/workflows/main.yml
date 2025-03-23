@@ -11,8 +11,8 @@ env:
   PATH_TO_GLOBAL_JSON: "./global.json"
   PATH_TO_API: "./src/CabaVS.ExpenseTracker.API/CabaVS.ExpenseTracker.API.csproj"
   PATH_TO_UNIT_TESTS: "./tests/CabaVS.ExpenseTracker.UnitTests/CabaVS.ExpenseTracker.UnitTests.csproj"
-  PUBLISH_PATH: "./published"
-  REPORT_PATH: "./TestResults"
+  PUBLISH_PATH: ${{ github.workspace }}/published-api
+  REPORT_PATH: ${{ github.workspace }}/test-results
 
 jobs:
   build:
@@ -58,10 +58,10 @@ jobs:
         run: |
           dotnet test ${{ env.PATH_TO_UNIT_TESTS }} \
             /p:CollectCoverage=true \
-            /p:CoverletOutput="${{ env.REPORT_PATH }}/coverage" \
+            /p:CoverletOutput="${{ env.REPORT_PATH }}" \
             /p:CoverletOutputFormat="cobertura" \
             /p:ExcludeByFile="**/AssemblyMarker.cs" \
-            --verbosity minimal --results-directory ${{ env.REPORT_PATH }} \
+            --verbosity minimal --results-directory "${{ env.REPORT_PATH }}" \
             --configuration ${{ env.BUILD_CONFIGURATION }}
         
       - name: Generate coverage report
