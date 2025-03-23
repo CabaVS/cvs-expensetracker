@@ -55,13 +55,14 @@ jobs:
           global-json-file: ${{ env.PATH_TO_GLOBAL_JSON }}
 
       - name: Run Unit Tests with Code Coverage
-        run: dotnet test ${{ env.PATH_TO_UNIT_TESTS }} `
-          /p:CollectCoverage=true `
-          /p:CoverletOutput="${{ env.REPORT_PATH }}\coverage" `
-          /p:CoverletOutputFormat="cobertura" `
-          /p:ExcludeByFile="**/AssemblyMarker.cs" `
-          --verbosity minimal --results-directory ${{ env.REPORT_PATH }} `
-          --configuration ${{ env.BUILD_CONFIGURATION }}
+        run: |
+          dotnet test ${{ env.PATH_TO_UNIT_TESTS }} \
+            /p:CollectCoverage=true \
+            /p:CoverletOutput="${{ env.REPORT_PATH }}/coverage" \
+            /p:CoverletOutputFormat="cobertura" \
+            /p:ExcludeByFile="**/AssemblyMarker.cs" \
+            --verbosity minimal --results-directory ${{ env.REPORT_PATH }} \
+            --configuration ${{ env.BUILD_CONFIGURATION }}
         
       - name: Generate coverage report
         uses: danielpalme/ReportGenerator-GitHub-Action@5.4.4
