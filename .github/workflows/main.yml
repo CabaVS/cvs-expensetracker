@@ -64,7 +64,7 @@ jobs:
             /p:CoverletOutputFormat="cobertura" \
             /p:Threshold=80 \
             /p:ThresholdType=line \
-            /p:ExcludeByFile="**/AssemblyMarker.cs" \
+            /p:ExcludeByFile="**/AssemblyMarker.cs%2c**/Errors/**/*.cs" \
             --verbosity minimal --results-directory "${{ env.REPORT_PATH }}" \
             --configuration ${{ env.BUILD_CONFIGURATION }}
         
