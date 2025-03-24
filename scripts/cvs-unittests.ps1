@@ -28,8 +28,8 @@ Write-Host "Launching the Unit Tests..."
 dotnet test $unitTestsPath `
     /p:CollectCoverage=true `
     /p:CoverletOutput="$reportPath\coverage" `
-    /p:CoverletOutputFormat="cobertura" `
-    /p:ExcludeByFile="**/AssemblyMarker.cs" `
+    /p:CoverletOutputFormat=cobertura `
+    /p:ExcludeByFile="**/AssemblyMarker.cs%2c**/Errors/**/*.cs" `
     --verbosity minimal --results-directory $reportPath
     
 if (Test-Path $coverageJson) {
