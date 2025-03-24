@@ -13,9 +13,10 @@ public sealed class UserTests
         // Arrange
         DateTime timeStampBefore = DateTime.UtcNow;
         const string username = "username";
+        const bool isAdmin = false;
         
         // Act
-        Result<User> result = User.CreateNew(username);
+        Result<User> result = User.CreateNew(username, isAdmin);
         
         // Assert
         DateTime timeStampAfter = DateTime.UtcNow;
@@ -24,6 +25,7 @@ public sealed class UserTests
         Assert.InRange(result.Value.CreatedOn, timeStampBefore, timeStampAfter);
         Assert.InRange(result.Value.ModifiedOn, timeStampBefore, timeStampAfter);
         Assert.Equal(UserName.Create(username).Value, result.Value.UserName);
+        Assert.Equal(isAdmin, result.Value.IsAdmin);
     }
     
     [Fact]
@@ -33,9 +35,10 @@ public sealed class UserTests
         var id = Guid.NewGuid();
         DateTime timeStamp = DateTime.UtcNow;
         const string username = "username";
+        const bool isAdmin = false;
         
         // Act
-        Result<User> result = User.CreateExisting(id, timeStamp, timeStamp, username);
+        Result<User> result = User.CreateExisting(id, timeStamp, timeStamp, username, isAdmin);
         
         // Assert
         Assert.True(result.IsSuccess);
@@ -43,5 +46,6 @@ public sealed class UserTests
         Assert.Equal(timeStamp, result.Value.CreatedOn);
         Assert.Equal(timeStamp, result.Value.ModifiedOn);
         Assert.Equal(UserName.Create(username).Value, result.Value.UserName);
+        Assert.Equal(isAdmin, result.Value.IsAdmin);
     }
 }

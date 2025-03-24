@@ -14,7 +14,7 @@ public sealed class WorkspaceTests
         DateTime timeStampBefore = DateTime.UtcNow;
         const string workspaceName = "My Workspace";
         
-        User owner = User.CreateNew("username").Value;
+        User owner = User.CreateNew("username", false).Value;
         
         // Act
         Result<Workspace> result = Workspace.CreateNew(workspaceName, owner);
@@ -39,7 +39,7 @@ public sealed class WorkspaceTests
         const string workspaceName = "My Workspace";
         
         WorkspaceMember owner = WorkspaceMember.CreateNew(
-            User.CreateNew("username").Value,
+            User.CreateNew("username", false).Value,
             true).Value;
         
         // Act

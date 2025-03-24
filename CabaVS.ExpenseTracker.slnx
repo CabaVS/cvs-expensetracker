@@ -9,6 +9,7 @@
     <File Path="docker-compose.yml" />
     <File Path="global.json" />
     <File Path=".github\workflows\main.yml" />
+    <File Path="scripts\cvs-efmigrations.ps1" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/CabaVS.ExpenseTracker.AppHost/CabaVS.ExpenseTracker.AppHost.csproj" />

@@ -5,21 +5,31 @@
   <ItemGroup>
     <!-- Global -->
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.7.0.110445" />
-		<!-- Global: .NET Aspire -->
-		<PackageVersion Include="Aspire.Hosting.AppHost" Version="9.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.0.0" />
-		<PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
-		<PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
-		<PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
-		<PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
-		<PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.9.0" />
+    <!-- Global: .NET Aspire -->
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.0.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.9.0" />
     <!-- Application layer -->
     <PackageVersion Include="MediatR" Version="12.4.1" />
+    <!-- Persistence layer -->
+    <PackageVersion Include="Dapper" Version="2.1.66" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageVersion>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.3" />
+    <!-- Presentation layer -->
+    <PackageVersion Include="FastEndpoints" Version="5.35.0" />
+    <PackageVersion Include="FastEndpoints.Swagger" Version="5.35.0" />
     <!-- Unit Tests with xUnit -->
-    <PackageVersion Include="coverlet.msbuild" Version="6.0.2"/>
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
-    <PackageVersion Include="xunit" Version="2.9.2"/>
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2"/>
+    <PackageVersion Include="coverlet.msbuild" Version="6.0.2" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
 </Project>
