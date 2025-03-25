@@ -37,9 +37,9 @@ internal sealed class GetCurrentUserEndpoint(ISender sender, ICurrentUserAccesso
     
     internal sealed record ResponseModel(UserModel User);
     
-    internal sealed class GetCurrentUserEndpointSummary : Summary<GetCurrentUserEndpoint>
+    internal sealed class EndpointSummary : Summary<GetCurrentUserEndpoint>
     {
-        public GetCurrentUserEndpointSummary()
+        internal EndpointSummary()
         {
             Summary = "Get Current User";
             Description = "Gets a Current User details.";
