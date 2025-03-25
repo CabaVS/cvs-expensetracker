@@ -8,6 +8,8 @@
     <File Path="global.json" />
     <File Path=".github\workflows\main.yml" />
     <File Path="scripts\cvs-efmigrations.ps1" />
+    <File Path="Dockerfile" />
+    <File Path="docker-compose.yml" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src\CabaVS.ExpenseTracker.API\CabaVS.ExpenseTracker.API.csproj" />
