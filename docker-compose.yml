@@ -11,6 +11,10 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: "${ASPNETCORE_ENVIRONMENT}"
       ASPNETCORE_URLS: "${ASPNETCORE_URLS}"
+      Authentication__Audience: "${Authentication__Audience}"
+      Authentication__Issuer: "${Authentication__Issuer}"
+      Authentication__MetadataAddress: "${Authentication__MetadataAddress}"
+      Authentication__RequireHttpsMetadata: "${Authentication__RequireHttpsMetadata}"
       ConnectionStrings__SqlDatabase: "${ConnectionStrings__SqlDatabase}"
       Kestrel__Certificates__Default__Password: "${Kestrel__Certificates__Default__Password}"
       Kestrel__Certificates__Default__Path: "${Kestrel__Certificates__Default__Path}"

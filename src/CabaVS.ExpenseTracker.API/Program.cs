@@ -6,7 +6,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplication();
 builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddPresentation(builder.Environment);
+builder.Services.AddPresentation(builder.Configuration, builder.Environment);
 
 WebApplication app = builder.Build();
 

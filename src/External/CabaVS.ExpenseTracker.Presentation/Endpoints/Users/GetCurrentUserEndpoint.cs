@@ -18,7 +18,6 @@ internal sealed class GetCurrentUserEndpoint(ISender sender, ICurrentUserAccesso
 {
     public override void Configure()
     {
-        AllowAnonymous();
         Get("/api/users/me");
         Options(x =>
         {
