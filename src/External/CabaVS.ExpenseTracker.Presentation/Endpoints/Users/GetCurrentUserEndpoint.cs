@@ -39,7 +39,7 @@ internal sealed class GetCurrentUserEndpoint(ISender sender, ICurrentUserAccesso
     
     internal sealed class EndpointSummary : Summary<GetCurrentUserEndpoint>
     {
-        internal EndpointSummary()
+        public EndpointSummary()
         {
             Summary = "Get Current User";
             Description = "Gets a Current User details.";

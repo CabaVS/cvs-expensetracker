@@ -19,6 +19,7 @@
     <Project Path="src\Core\CabaVS.ExpenseTracker.Domain\CabaVS.ExpenseTracker.Domain.csproj" />
   </Folder>
   <Folder Name="/src/External/">
+    <Project Path="src\External\CabaVS.ExpenseTracker.Infrastructure\CabaVS.ExpenseTracker.Infrastructure.csproj" Type="Classic C#" />
     <Project Path="src\External\CabaVS.ExpenseTracker.Persistence\CabaVS.ExpenseTracker.Persistence.csproj" />
     <Project Path="src\External\CabaVS.ExpenseTracker.Presentation\CabaVS.ExpenseTracker.Presentation.csproj" />
   </Folder>

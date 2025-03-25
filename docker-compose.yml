@@ -18,11 +18,13 @@ services:
       ConnectionStrings__SqlDatabase: "${ConnectionStrings__SqlDatabase}"
       Kestrel__Certificates__Default__Password: "${Kestrel__Certificates__Default__Password}"
       Kestrel__Certificates__Default__Path: "${Kestrel__Certificates__Default__Path}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "${OTEL_EXPORTER_OTLP_ENDPOINT}"
     volumes:
       - "${CERT_VOLUME}:/https-certs:ro"
     depends_on:
       - sqlserver
       - keycloak
+      - jaeger
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
@@ -46,6 +48,12 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: "${Keycloak_Password}"
     depends_on:
       - sqlserver
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "16686:16686"
 
 volumes:
   sqlserver_data:
