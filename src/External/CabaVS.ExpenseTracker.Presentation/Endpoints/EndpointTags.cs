@@ -2,5 +2,6 @@
 
 internal static class EndpointTags
 {
-    internal const string Users = "Users"; 
+    internal const string Users = "Users";
+    internal const string Workspaces = "Workspaces";
 }

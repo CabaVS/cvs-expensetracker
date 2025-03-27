@@ -18,13 +18,14 @@ public static class DependencyInjection
             options => options.UseSqlServer(connectionString),
             contextLifetime: ServiceLifetime.Transient,
             optionsLifetime: ServiceLifetime.Transient);
-
-        services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>(
-            _ => new SqlConnectionFactory(connectionString));
         
         services.AddTransient<IUnitOfWork, UnitOfWork>();
 
+        services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>(
+            _ => new SqlConnectionFactory(connectionString));
+
         services.AddSingleton<IReadOnlyUserRepository, ReadOnlyUserRepository>();
+        services.AddSingleton<IReadOnlyWorkspaceRepository, ReadOnlyWorkspaceRepository>();
         
         return services;
     }

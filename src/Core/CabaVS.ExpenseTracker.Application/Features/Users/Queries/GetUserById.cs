@@ -1,4 +1,5 @@
-﻿using CabaVS.ExpenseTracker.Application.Contracts.Persistence.Repositories;
+﻿using CabaVS.ExpenseTracker.Application.Common;
+using CabaVS.ExpenseTracker.Application.Contracts.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Features.Users.Models;
 using CabaVS.ExpenseTracker.Domain.Entities;
 using CabaVS.ExpenseTracker.Domain.Errors.Shared;
@@ -7,7 +8,7 @@ using MediatR;
 
 namespace CabaVS.ExpenseTracker.Application.Features.Users.Queries;
 
-public sealed record GetUserByIdQuery(Guid UserId) : IRequest<Result<UserModel>>;
+public sealed record GetUserByIdQuery(Guid UserId) : IUserOwningRequest, IRequest<Result<UserModel>>;
 
 internal sealed class GetUserByIdQueryHandler(
     IReadOnlyUserRepository readOnlyUserRepository) : IRequestHandler<GetUserByIdQuery, Result<UserModel>>

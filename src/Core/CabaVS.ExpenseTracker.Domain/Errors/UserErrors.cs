@@ -12,4 +12,7 @@ public static class UserErrors
     
     public static Error UserNameIsTooLong(string actualValue) =>
         StringErrors.IsTooLong(nameof(User), nameof(User.UserName), UserName.MaxLength, actualValue);
+    
+    public static Error UserHasNoAccess(Guid currentUserId) =>
+        new("User.HasNoAccess", $"User '{currentUserId} has no access to the resource or operation.'");
 }
