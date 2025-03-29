@@ -12,4 +12,7 @@ public static class WorkspaceErrors
     
     public static Error WorkspaceNameIsTooLong(string actualValue) =>
         StringErrors.IsTooLong(nameof(Workspace), nameof(Workspace.Name), WorkspaceName.MaxLength, actualValue);
+    
+    public static Error WorkspaceNotFoundById(Guid id) =>
+        CommonErrors.NotFoundById(nameof(Workspace), id);
 }
