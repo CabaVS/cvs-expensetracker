@@ -12,4 +12,12 @@ internal static class ResultExtensions
         result.IsSuccess
             ? TypedResults.Ok(mappingFunc(result.Value))
             : TypedResults.BadRequest(result.Error);
+    
+    internal static Results<CreatedAtRoute, BadRequest<Error>> ToDefaultApiResponse(
+        this Result<Guid> result,
+        string routeName,
+        Func<Guid, object> mappingFunc) =>
+        result.IsSuccess
+            ? TypedResults.CreatedAtRoute(routeName, mappingFunc(result.Value))
+            : TypedResults.BadRequest(result.Error);
 }

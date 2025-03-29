@@ -33,7 +33,7 @@ internal sealed class ReadOnlyWorkspaceRepository(ISqlConnectionFactory connecti
         
         const string sql =
             """
-            SELECT w.[Id], w.[Name], wm.[Id] AS MemberId, wm.[IsAdmin], u.[Id] AS UserId, u.[UserName]
+            SELECT w.[Id], w.[Name], wm.[Id], wm.[IsAdmin], u.[Id] AS UserId, u.[UserName]
             FROM [dbo].[Workspaces] w
             LEFT JOIN [dbo].[WorkspaceMembers] wm ON w.[Id] = wm.[WorkspaceId]
             LEFT JOIN [dbo].[Users] u ON wm.[UserId] = u.[Id]
@@ -45,10 +45,33 @@ internal sealed class ReadOnlyWorkspaceRepository(ISqlConnectionFactory connecti
                   AND [UserId] = @UserId
             )
             """;
+
+        var lookup = new Dictionary<Guid, WorkspaceDetailsDapperModel>(1);
+        _ = await connection.QueryAsync<WorkspaceDetailsDapperModel, WorkspaceMemberModel, WorkspaceDetailsDapperModel>(
+            sql,
+            (workspace, member) =>
+            {
+                if (!lookup.TryGetValue(workspace.Id, out WorkspaceDetailsDapperModel? currentWorkspace))
+                {
+                    currentWorkspace = workspace;
+                    lookup.Add(currentWorkspace.Id, currentWorkspace);
+                }
+
+                currentWorkspace.Members.Add(member);
+                return currentWorkspace;
+            }, 
+            new { UserId = userId, WorkspaceId = workspaceId },
+            splitOn: "Id");
         
-        WorkspaceDetailsModel? user = await connection.QueryFirstOrDefaultAsync<WorkspaceDetailsModel>(
-            sql, 
-            new { UserId = userId, WorkspaceId = workspaceId });
-        return user;
+        return lookup.Values.FirstOrDefault() is { } workspaceDetails
+            ? new WorkspaceDetailsModel(workspaceDetails.Id, workspaceDetails.Name, [.. workspaceDetails.Members])
+            : null;
+    }
+    
+    internal sealed class WorkspaceDetailsDapperModel
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public List<WorkspaceMemberModel> Members { get; set; } = [];
     }
 }
