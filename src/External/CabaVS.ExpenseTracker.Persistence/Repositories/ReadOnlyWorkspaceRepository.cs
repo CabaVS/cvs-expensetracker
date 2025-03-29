@@ -7,7 +7,7 @@ namespace CabaVS.ExpenseTracker.Persistence.Repositories;
 
 internal sealed class ReadOnlyWorkspaceRepository(ISqlConnectionFactory connectionFactory) : IReadOnlyWorkspaceRepository
 {
-    public async Task<WorkspaceCollectionItemModel[]> GetAllAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<WorkspaceModel[]> GetAllAsync(Guid userId, CancellationToken cancellationToken)
     {
         await using SqlConnection connection = connectionFactory.CreateConnection();
         await connection.OpenAsync(cancellationToken);
@@ -19,7 +19,7 @@ internal sealed class ReadOnlyWorkspaceRepository(ISqlConnectionFactory connecti
             WHERE [wm].[UserId] = @UserId 
             """;
         
-        IEnumerable<WorkspaceCollectionItemModel> workspaces = await connection.QueryAsync<WorkspaceCollectionItemModel>(sql, new { UserId = userId });
+        IEnumerable<WorkspaceModel> workspaces = await connection.QueryAsync<WorkspaceModel>(sql, new { UserId = userId });
         return [..workspaces];
     }
 }

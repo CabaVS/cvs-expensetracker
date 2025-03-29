@@ -30,12 +30,12 @@ internal sealed class GetAllWorkspacesForCurrentUserEndpoint(ISender sender, ICu
     {
         var query = new GetAllWorkspacesByUserQuery(currentUserAccessor.UserId);
         
-        Result<WorkspaceCollectionItemModel[]> result = await sender.Send(query, ct);
+        Result<WorkspaceModel[]> result = await sender.Send(query, ct);
 
         return result.ToDefaultApiResponse(workspaces => new ResponseModel(workspaces));
     }
     
-    internal sealed record ResponseModel(WorkspaceCollectionItemModel[] Workspaces);
+    internal sealed record ResponseModel(WorkspaceModel[] Workspaces);
     
     internal sealed class EndpointSummary : Summary<GetAllWorkspacesForCurrentUserEndpoint>
     {
@@ -49,10 +49,10 @@ internal sealed class GetAllWorkspacesForCurrentUserEndpoint(ISender sender, ICu
                 "OK response with body.",
                 example: new ResponseModel(
                     [
-                        new WorkspaceCollectionItemModel(
+                        new WorkspaceModel(
                             Guid.NewGuid(),
                             "My workspace 2023"),
-                        new WorkspaceCollectionItemModel(
+                        new WorkspaceModel(
                             Guid.NewGuid(),
                             "My workspace 2024")
                     ]));

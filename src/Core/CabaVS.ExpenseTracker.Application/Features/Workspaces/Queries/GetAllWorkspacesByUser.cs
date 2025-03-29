@@ -6,16 +6,16 @@ using MediatR;
 
 namespace CabaVS.ExpenseTracker.Application.Features.Workspaces.Queries;
 
-public sealed record GetAllWorkspacesByUserQuery(Guid UserId) : IUserOwningRequest, IRequest<Result<WorkspaceCollectionItemModel[]>>;
+public sealed record GetAllWorkspacesByUserQuery(Guid UserId) : IUserOwningRequest, IRequest<Result<WorkspaceModel[]>>;
 
 internal sealed class GetAllWorkspacesByUserQueryHandler(IReadOnlyWorkspaceRepository readOnlyWorkspaceRepository)
-    : IRequestHandler<GetAllWorkspacesByUserQuery, Result<WorkspaceCollectionItemModel[]>>
+    : IRequestHandler<GetAllWorkspacesByUserQuery, Result<WorkspaceModel[]>>
 {
-    public async Task<Result<WorkspaceCollectionItemModel[]>> Handle(
+    public async Task<Result<WorkspaceModel[]>> Handle(
         GetAllWorkspacesByUserQuery request,
         CancellationToken cancellationToken)
     {
-        WorkspaceCollectionItemModel[] models = await readOnlyWorkspaceRepository.GetAllAsync(request.UserId, cancellationToken);
-        return Result<WorkspaceCollectionItemModel[]>.Success(models);
+        WorkspaceModel[] models = await readOnlyWorkspaceRepository.GetAllAsync(request.UserId, cancellationToken);
+        return Result<WorkspaceModel[]>.Success(models);
     }
 }
