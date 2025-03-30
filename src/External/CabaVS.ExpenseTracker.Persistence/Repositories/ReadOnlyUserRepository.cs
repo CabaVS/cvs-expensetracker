@@ -15,7 +15,8 @@ internal sealed class ReadOnlyUserRepository(ISqlConnectionFactory connectionFac
         const string sql =
             """
             SELECT [Id], [UserName], [IsAdmin]
-            FROM [dbo].[Users] WHERE Id = @UserId 
+            FROM [dbo].[Users]
+            WHERE Id = @UserId 
             """;
         
         UserModel? user = await connection.QueryFirstOrDefaultAsync<UserModel>(sql, new { UserId = userId });
