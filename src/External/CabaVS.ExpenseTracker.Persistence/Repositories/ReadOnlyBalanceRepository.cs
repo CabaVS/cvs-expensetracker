@@ -15,16 +15,26 @@ internal sealed class ReadOnlyBalanceRepository(ISqlConnectionFactory connection
         
         const string sql =
             """
-            SELECT b.[Id], b.[Name]
+            SELECT
+                b.[Id], 
+                b.[Name],
+                b.[Amount],
+                c.[Id] AS CurrencyId, 
+                c.[Code]
             FROM [dbo].[Balances] b
+            INNER JOIN [dbo].[Currencies] c ON b.[CurrencyId] = c.[Id]
             WHERE b.[WorkspaceId] = @WorkspaceId
             """;
         
-        IEnumerable<BalanceModel> balances = await connection.QueryAsync<BalanceModel>(sql, new { WorkspaceId = workspaceId });
+        IEnumerable<BalanceModel> balances = await connection.QueryAsync<BalanceDapperModel, CurrencySlimDapperModel, BalanceModel>(
+            sql,
+            (temp, currency) => new BalanceModel(temp.Id, temp.Name, temp.Amount, currency.ToCurrencySlimModel()),
+            new { WorkspaceId = workspaceId },
+            splitOn: "CurrencyId");
         return [.. balances];
     }
 
-    public async Task<BalanceDetailsModel?> GetDetailsAsync(Guid workspaceId, Guid balanceId, CancellationToken cancellationToken)
+    public async Task<BalanceModel?> GetDetailsAsync(Guid workspaceId, Guid balanceId, CancellationToken cancellationToken)
     {
         await using SqlConnection connection = connectionFactory.CreateConnection();
         await connection.OpenAsync(cancellationToken);
@@ -34,6 +44,7 @@ internal sealed class ReadOnlyBalanceRepository(ISqlConnectionFactory connection
             SELECT TOP(1)
                 b.[Id], 
                 b.[Name],
+                b.[Amount],
                 c.[Id] AS CurrencyId, 
                 c.[Code]
             FROM [dbo].[Balances] b
@@ -41,13 +52,18 @@ internal sealed class ReadOnlyBalanceRepository(ISqlConnectionFactory connection
             WHERE b.[Id] = @BalanceId AND b.[WorkspaceId] = @WorkspaceId
             """;
         
-        IEnumerable<BalanceDetailsModel> balance = await connection.QueryAsync<TempBalanceDetails, CurrencySlimModel, BalanceDetailsModel>(
+        IEnumerable<BalanceModel> balance = await connection.QueryAsync<BalanceDapperModel, CurrencySlimDapperModel, BalanceModel>(
             sql,
-            (temp, currency) => new BalanceDetailsModel(temp.Id, temp.Name, currency),
+            (temp, currency) => new BalanceModel(temp.Id, temp.Name, temp.Amount, currency.ToCurrencySlimModel()),
             new { WorkspaceId = workspaceId, BalanceId = balanceId },
             splitOn: "CurrencyId");
         return balance.FirstOrDefault();
     }
     
-    private sealed record TempBalanceDetails(Guid Id, string Name);
+    private sealed record BalanceDapperModel(Guid Id, string Name, decimal Amount);
+
+    private sealed record CurrencySlimDapperModel(Guid CurrencyId, string Code)
+    {
+        public CurrencySlimModel ToCurrencySlimModel() => new(CurrencyId, Code);
+    }
 }

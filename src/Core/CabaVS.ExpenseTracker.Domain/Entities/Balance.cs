@@ -6,29 +6,31 @@ namespace CabaVS.ExpenseTracker.Domain.Entities;
 
 public sealed class Balance : AuditableEntity
 {
-    public BalanceName Name { get; set; }
-    public Currency Currency { get; set; }
+    public BalanceName Name { get; }
+    public decimal Amount { get; }
+    public Currency Currency { get; }
     
     private Balance(
         Guid id, DateTime createdOn, DateTime modifiedOn,
-        BalanceName name, Currency currency) : base(id, createdOn, modifiedOn)
+        BalanceName name, decimal amount, Currency currency) : base(id, createdOn, modifiedOn)
     {
         Name = name;
+        Amount = amount;
         Currency = currency;
     }
     
-    public static Result<Balance> CreateNew(string name, Currency currency)
+    public static Result<Balance> CreateNew(string name, decimal amount, Currency currency)
     {
         DateTime utcNow = DateTime.UtcNow;
         
         return CreateExisting(
             Guid.NewGuid(), utcNow, utcNow,
-            name, currency);
+            name, amount, currency);
     }
 
     public static Result<Balance> CreateExisting(
         Guid id, DateTime createdOn, DateTime modifiedOn,
-        string name, Currency currency) =>
+        string name, decimal amount, Currency currency) =>
         BalanceName.Create(name)
-            .Map(x => new Balance(id, createdOn, modifiedOn, x, currency));
+            .Map(x => new Balance(id, createdOn, modifiedOn, x, amount, currency));
 }

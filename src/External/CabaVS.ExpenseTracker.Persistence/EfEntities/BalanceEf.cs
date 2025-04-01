@@ -7,6 +7,7 @@ internal sealed class BalanceEf
     public DateTime ModifiedOn { get; set; }
 
     public string Name { get; set; } = string.Empty;
+    public decimal Amount { get; set; }
 
     public Guid WorkspaceId { get; set; }
     public WorkspaceEf? Workspace { get; set; }

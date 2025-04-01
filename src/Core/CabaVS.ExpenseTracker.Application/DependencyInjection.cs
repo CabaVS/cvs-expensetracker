@@ -16,6 +16,7 @@ public static class DependencyInjection
             });
         
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(UserOwningRequestBehavior<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(WorkspaceBoundedRequestBehavior<,>));
         
         return services;
     }

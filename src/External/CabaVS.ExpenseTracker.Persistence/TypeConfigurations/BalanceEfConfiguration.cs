@@ -20,6 +20,9 @@ internal sealed class BalanceEfConfiguration : IEntityTypeConfiguration<BalanceE
         builder.Property(x => x.Name)
             .HasMaxLength(BalanceName.MaxLength)
             .IsRequired();
+        builder.Property(x => x.Amount)
+            .HasDefaultValue(0m)
+            .IsRequired();
         
         builder.HasOne(x => x.Workspace)
             .WithMany()

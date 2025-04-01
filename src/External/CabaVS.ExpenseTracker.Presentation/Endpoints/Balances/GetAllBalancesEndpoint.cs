@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using CabaVS.ExpenseTracker.Application.Features.Balances.Models;
 using CabaVS.ExpenseTracker.Application.Features.Balances.Queries;
+using CabaVS.ExpenseTracker.Application.Features.Currencies.Models;
 using CabaVS.ExpenseTracker.Domain.Shared;
 using CabaVS.ExpenseTracker.Presentation.Extensions;
 using FastEndpoints;
@@ -52,10 +53,18 @@ internal sealed class GetAllBalancesEndpoint(ISender sender) : Endpoint<
                 [
                     new BalanceModel(
                         Guid.NewGuid(),
-                        "My USD card"),
+                        "My USD card",
+                        1000.50m,
+                        new CurrencySlimModel(
+                            Guid.NewGuid(),
+                            "USD")),
                     new BalanceModel(
                         Guid.NewGuid(),
-                        "My PLN card")
+                        "My PLN card",
+                        -500.99m,
+                        new CurrencySlimModel(
+                            Guid.NewGuid(),
+                            "PLN"))
                 ]));
         
             Response(
