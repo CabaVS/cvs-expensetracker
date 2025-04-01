@@ -6,4 +6,6 @@ public interface IReadOnlyWorkspaceRepository
 {
     Task<WorkspaceModel[]> GetAllAsync(Guid userId, CancellationToken cancellationToken);
     Task<WorkspaceDetailsModel?> GetDetailsAsync(Guid userId, Guid workspaceId, CancellationToken cancellationToken);
+    
+    Task<bool> UserIsMemberOfWorkspaceAsync(Guid userId, Guid workspaceId, CancellationToken cancellationToken);
 }

@@ -27,6 +27,7 @@ public static class DependencyInjection
         services.AddSingleton<IReadOnlyUserRepository, ReadOnlyUserRepository>();
         services.AddSingleton<IReadOnlyWorkspaceRepository, ReadOnlyWorkspaceRepository>();
         services.AddSingleton<IReadOnlyCurrencyRepository, ReadOnlyCurrencyRepository>();
+        services.AddSingleton<IReadOnlyBalanceRepository, ReadOnlyBalanceRepository>();
         
         return services;
     }

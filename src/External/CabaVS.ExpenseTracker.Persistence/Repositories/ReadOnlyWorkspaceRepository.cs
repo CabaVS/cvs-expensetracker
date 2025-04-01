@@ -67,7 +67,23 @@ internal sealed class ReadOnlyWorkspaceRepository(ISqlConnectionFactory connecti
             ? new WorkspaceDetailsModel(workspaceDetails.Id, workspaceDetails.Name, [.. workspaceDetails.Members])
             : null;
     }
-    
+
+    public async Task<bool> UserIsMemberOfWorkspaceAsync(Guid userId, Guid workspaceId, CancellationToken cancellationToken)
+    {
+        await using SqlConnection connection = connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken);
+        
+        const string sql =
+            """
+            SELECT 1
+            FROM [dbo].[WorkspaceMembers]
+            WHERE [WorkspaceId] = @WorkspaceId AND [UserId] = @UserId;
+            """;
+        
+        var result = await connection.QueryFirstOrDefaultAsync<int?>(sql, new { WorkspaceId = workspaceId, UserId = userId });
+        return result.HasValue;
+    }
+
     internal sealed class WorkspaceDetailsDapperModel
     {
         public Guid Id { get; set; }
