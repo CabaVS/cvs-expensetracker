@@ -7,6 +7,7 @@
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.7.0.110445" />
     <!-- Application layer -->
     <PackageVersion Include="MediatR" Version="12.4.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
     <!-- Persistence layer -->
     <PackageVersion Include="Dapper" Version="2.1.66" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">

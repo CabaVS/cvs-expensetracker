@@ -15,6 +15,7 @@ public static class DependencyInjection
                 options.RegisterServicesFromAssembly(AssemblyMarker.Assembly);
             });
         
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(UserOwningRequestBehavior<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(WorkspaceBoundedRequestBehavior<,>));
         
