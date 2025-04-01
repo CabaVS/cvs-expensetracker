@@ -12,8 +12,9 @@
       <ProjectReference Include="..\External\CabaVS.ExpenseTracker.Presentation\CabaVS.ExpenseTracker.Presentation.csproj" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(AspireBuild)' == 'true'">
-      <ProjectReference Include="..\CabaVS.ExpenseTracker.ServiceDefaults\CabaVS.ExpenseTracker.ServiceDefaults.csproj" />
+    <ItemGroup>
+      <PackageReference Include="Serilog.AspNetCore" />
+      <PackageReference Include="Serilog.Sinks.Console" />
     </ItemGroup>
   
 </Project>
