@@ -23,6 +23,7 @@
     <Project Path="src\External\CabaVS.ExpenseTracker.Presentation\CabaVS.ExpenseTracker.Presentation.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests\CabaVS.ExpenseTracker.ArchitectureTests\CabaVS.ExpenseTracker.ArchitectureTests.csproj" Type="Classic C#" />
     <Project Path="tests\CabaVS.ExpenseTracker.UnitTests\CabaVS.ExpenseTracker.UnitTests.csproj" />
   </Folder>
 </Solution>

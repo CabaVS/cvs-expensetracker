@@ -11,6 +11,7 @@ env:
   PATH_TO_GLOBAL_JSON: "./global.json"
   PATH_TO_API: "./src/CabaVS.ExpenseTracker.API/CabaVS.ExpenseTracker.API.csproj"
   PATH_TO_UNIT_TESTS: "./tests/CabaVS.ExpenseTracker.UnitTests/CabaVS.ExpenseTracker.UnitTests.csproj"
+  PATH_TO_ARCH_TESTS: "./tests/CabaVS.ExpenseTracker.ArchitectureTests/CabaVS.ExpenseTracker.ArchitectureTests.csproj"
   PUBLISH_PATH: ${{ github.workspace }}/published-api
   REPORT_PATH: ${{ github.workspace }}/test-results
 
@@ -42,7 +43,7 @@ jobs:
           path: ${{ env.PUBLISH_PATH }}
 
   test:
-    name: Run Unit Tests
+    name: Run Tests
     runs-on: ubuntu-latest
     environment: main-environment
     needs: build
@@ -53,6 +54,9 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: ${{ env.PATH_TO_GLOBAL_JSON }}
+          
+      - name: Run Architecture Tests
+        run: dotnet test ${{ env.PATH_TO_ARCH_TESTS }} --configuration ${{ env.BUILD_CONFIGURATION }}
 
       - name: Run Unit Tests with Code Coverage
         id: unittests
