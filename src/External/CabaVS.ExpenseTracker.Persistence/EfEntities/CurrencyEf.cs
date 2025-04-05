@@ -1,4 +1,6 @@
-﻿namespace CabaVS.ExpenseTracker.Persistence.EfEntities;
+﻿using CabaVS.ExpenseTracker.Domain.Entities;
+
+namespace CabaVS.ExpenseTracker.Persistence.EfEntities;
 
 internal sealed class CurrencyEf
 {
@@ -9,4 +11,15 @@ internal sealed class CurrencyEf
     public string Name { get; set; } = string.Empty;
     public string Code { get; set; } = string.Empty;
     public string Symbol { get; set; } = string.Empty;
+    
+    internal Currency ToDomain() =>
+        Currency
+            .CreateExisting(
+                Id,
+                CreatedOn,
+                ModifiedOn,
+                Name,
+                Code,
+                Symbol)
+            .Value;
 }

@@ -23,4 +23,7 @@ public static class CurrencyErrors
         StringErrors.IsNullOrWhiteSpace(nameof(Currency), nameof(Currency.Symbol));
     public static Error CurrencySymbolIsTooLong(string actualValue) =>
         StringErrors.IsTooLong(nameof(Currency), nameof(Currency.Symbol), CurrencySymbol.MaxLength, actualValue);
+    
+    public static Error CurrencyNotFoundById(Guid id) =>
+        CommonErrors.NotFoundById(nameof(Currency), id);
 }

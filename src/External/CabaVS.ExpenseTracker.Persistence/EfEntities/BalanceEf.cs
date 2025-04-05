@@ -1,4 +1,6 @@
-﻿namespace CabaVS.ExpenseTracker.Persistence.EfEntities;
+﻿using CabaVS.ExpenseTracker.Domain.Entities;
+
+namespace CabaVS.ExpenseTracker.Persistence.EfEntities;
 
 internal sealed class BalanceEf
 {
@@ -14,4 +16,15 @@ internal sealed class BalanceEf
 
     public Guid CurrencyId { get; set; }
     public CurrencyEf? Currency { get; set; }
+    
+    internal static BalanceEf FromDomain(Balance balance, Guid workspaceId) => new()
+    {
+        Id = balance.Id,
+        CreatedOn = balance.CreatedOn,
+        ModifiedOn = balance.ModifiedOn,
+        Name = balance.Name.Value,
+        Amount = balance.Amount,
+        WorkspaceId = workspaceId,
+        CurrencyId = balance.Currency.Id
+    };
 }

@@ -1,4 +1,5 @@
-﻿using CabaVS.ExpenseTracker.Application.Features.Workspaces.Commands;
+﻿using System.Net;
+using CabaVS.ExpenseTracker.Application.Features.Workspaces.Commands;
 using CabaVS.ExpenseTracker.Domain.Shared;
 using CabaVS.ExpenseTracker.Presentation.Extensions;
 using FastEndpoints;
@@ -35,4 +36,28 @@ internal sealed class CreateWorkspaceEndpoint(ISender sender)
     }
 
     internal sealed record RequestModel(string WorkspaceName);
+    
+    internal sealed class EndpointSummary : Summary<CreateWorkspaceEndpoint>
+    {
+        public EndpointSummary()
+        {
+            Summary = "Create a Workspace";
+            Description = "Creates a Workspace.";
+
+            ExampleRequest =
+                new RequestModel(
+                    "My Workspace");
+        
+            Response(
+                (int)HttpStatusCode.Created,
+                "Created At Route response without a body. Location header is filled with Id of created entity.");
+        
+            Response(
+                (int)HttpStatusCode.BadRequest,
+                "Bad Request with Error.",
+                example: new Error(
+                    "Validation.Unspecified",
+                    "Unspecified validation error occured. Check your input and try again."));
+        }
+    }
 }

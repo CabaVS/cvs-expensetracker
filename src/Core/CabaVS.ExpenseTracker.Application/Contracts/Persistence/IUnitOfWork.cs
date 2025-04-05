@@ -8,4 +8,6 @@ public interface IUnitOfWork
     
     IUserRepository UserRepository { get; }
     IWorkspaceRepository WorkspaceRepository { get; }
+    ICurrencyRepository CurrencyRepository { get; }
+    IBalanceRepository BalanceRepository { get; }
 }
