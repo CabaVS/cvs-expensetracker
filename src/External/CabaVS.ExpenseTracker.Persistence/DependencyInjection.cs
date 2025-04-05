@@ -1,5 +1,6 @@
 ﻿using CabaVS.ExpenseTracker.Application.Contracts.Persistence;
 using CabaVS.ExpenseTracker.Application.Contracts.Persistence.Repositories;
+using CabaVS.ExpenseTracker.Persistence.Dapper;
 using CabaVS.ExpenseTracker.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

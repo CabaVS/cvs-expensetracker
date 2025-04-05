@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace CabaVS.ExpenseTracker.Persistence;
+namespace CabaVS.ExpenseTracker.Persistence.Dapper;
 
 internal sealed class SqlConnectionFactory(string connectionString) : ISqlConnectionFactory
 {

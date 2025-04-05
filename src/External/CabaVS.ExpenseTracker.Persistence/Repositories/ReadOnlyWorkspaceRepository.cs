@@ -1,5 +1,6 @@
 ﻿using CabaVS.ExpenseTracker.Application.Contracts.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Features.Workspaces.Models;
+using CabaVS.ExpenseTracker.Persistence.Dapper;
 using Dapper;
 using Microsoft.Data.SqlClient;
 

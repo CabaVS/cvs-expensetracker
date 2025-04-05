@@ -2,6 +2,7 @@
 using CabaVS.ExpenseTracker.Application.Features.Categories.Models;
 using CabaVS.ExpenseTracker.Application.Features.Currencies.Models;
 using CabaVS.ExpenseTracker.Domain.Enums;
+using CabaVS.ExpenseTracker.Persistence.Dapper;
 using Dapper;
 using Microsoft.Data.SqlClient;
 
