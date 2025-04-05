@@ -18,7 +18,7 @@ internal sealed class WorkspaceBoundedRequestBehavior<TRequest, TResponse>(
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        Guid currentUserId = currentUserAccessor.UserId;
+        Guid currentUserId = currentUserAccessor.UserId!.Value;
         return await readOnlyWorkspaceRepository.UserIsMemberOfWorkspaceAsync(currentUserId, request.WorkspaceId, cancellationToken)
             ? await next()
             : FailedResultFactory.Create<TResponse>(

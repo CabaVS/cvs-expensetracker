@@ -14,7 +14,7 @@ internal sealed class CreateWorkspaceCommandHandler(IUnitOfWork unitOfWork, ICur
     public async Task<Result<Guid>> Handle(CreateWorkspaceCommand request, CancellationToken cancellationToken)
     {
         User owner = await unitOfWork.UserRepository.GetAsync(
-            currentUserAccessor.UserId,
+            currentUserAccessor.UserId!.Value,
             cancellationToken) ?? throw new InvalidOperationException("User not found.");
 
         Result<Workspace> workspace = Workspace.CreateNew(

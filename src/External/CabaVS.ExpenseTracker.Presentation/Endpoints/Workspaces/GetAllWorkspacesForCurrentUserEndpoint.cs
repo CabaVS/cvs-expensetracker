@@ -28,7 +28,7 @@ internal sealed class GetAllWorkspacesForCurrentUserEndpoint(ISender sender, ICu
 
     public override async Task<Results<Ok<ResponseModel>, BadRequest<Error>>> ExecuteAsync(CancellationToken ct)
     {
-        var query = new GetAllWorkspacesByUserQuery(currentUserAccessor.UserId);
+        var query = new GetAllWorkspacesByUserQuery(currentUserAccessor.UserId!.Value);
         
         Result<WorkspaceModel[]> result = await sender.Send(query, ct);
 

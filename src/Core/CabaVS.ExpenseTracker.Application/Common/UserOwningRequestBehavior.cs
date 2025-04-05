@@ -15,7 +15,7 @@ internal sealed class UserOwningRequestBehavior<TRequest, TResponse>(ICurrentUse
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        Guid currentUserId = currentUserAccessor.UserId;
+        Guid currentUserId = currentUserAccessor.UserId!.Value;
         return request.UserId == currentUserId
             ? await next()
             : FailedResultFactory.Create<TResponse>(

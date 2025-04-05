@@ -2,5 +2,5 @@
 
 public interface ICurrentUserAccessor
 {
-    Guid UserId { get; }
+    Guid? UserId { get; }
 }

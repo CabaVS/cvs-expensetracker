@@ -21,7 +21,7 @@ internal sealed class GetWorkspaceDetailsByUserQueryHandler(
         CancellationToken cancellationToken)
     {
         WorkspaceDetailsModel? model = await readOnlyWorkspaceRepository.GetDetailsAsync(
-            currentUserAccessor.UserId,
+            currentUserAccessor.UserId!.Value,
             request.WorkspaceId,
             cancellationToken);
         return model is not null

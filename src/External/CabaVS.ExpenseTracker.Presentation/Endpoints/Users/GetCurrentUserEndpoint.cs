@@ -28,7 +28,7 @@ internal sealed class GetCurrentUserEndpoint(ISender sender, ICurrentUserAccesso
 
     public override async Task<Results<Ok<ResponseModel>, BadRequest<Error>>> ExecuteAsync(CancellationToken ct)
     {
-        var query = new GetUserByIdQuery(currentUserAccessor.UserId);
+        var query = new GetUserByIdQuery(currentUserAccessor.UserId!.Value);
         
         Result<UserModel> result = await sender.Send(query, ct);
 

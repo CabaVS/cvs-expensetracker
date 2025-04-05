@@ -6,8 +6,14 @@ namespace CabaVS.ExpenseTracker.Presentation;
 
 internal sealed class CurrentUserAccessor(IHttpContextAccessor httpContextAccessor) : ICurrentUserAccessor
 {
-    public Guid UserId => 
-        Guid.Parse(
-            httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier) 
-            ?? throw new InvalidOperationException("User is not authenticated."));
+    public Guid? UserId
+    {
+        get
+        {
+            var userIdClaim = httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return userIdClaim is not null
+                ? Guid.Parse(userIdClaim)
+                : null;
+        }
+    }
 }

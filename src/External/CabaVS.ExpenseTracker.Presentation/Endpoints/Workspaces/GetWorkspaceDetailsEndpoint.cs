@@ -30,7 +30,7 @@ internal sealed class GetWorkspaceDetailsEndpoint(ISender sender, ICurrentUserAc
     public override async Task<Results<Ok<ResponseModel>, BadRequest<Error>>> ExecuteAsync(
         RequestModel req, CancellationToken ct)
     {
-        var query = new GetWorkspaceDetailsByUserQuery(currentUserAccessor.UserId, req.WorkspaceId);
+        var query = new GetWorkspaceDetailsByUserQuery(currentUserAccessor.UserId!.Value, req.WorkspaceId);
         
         Result<WorkspaceDetailsModel> result = await sender.Send(query, ct);
 
