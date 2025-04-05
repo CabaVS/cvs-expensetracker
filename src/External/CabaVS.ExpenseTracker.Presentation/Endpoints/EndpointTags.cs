@@ -6,4 +6,5 @@ internal static class EndpointTags
     internal const string Workspaces = "Workspaces";
     internal const string Currencies = "Currencies";
     internal const string Balances = "Balances";
+    internal const string Categories = "Categories";
 }

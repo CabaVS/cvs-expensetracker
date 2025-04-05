@@ -13,6 +13,7 @@ internal sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext
     public DbSet<CurrencyEf> Currencies { get; set; }
     
     public DbSet<BalanceEf> Balances { get; set; }
+    public DbSet<CategoryEf> Categories { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyMarker.Assembly);
