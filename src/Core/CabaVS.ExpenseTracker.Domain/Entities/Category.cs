@@ -1,11 +1,12 @@
-﻿using CabaVS.ExpenseTracker.Domain.Enums;
+﻿using CabaVS.ExpenseTracker.Domain.Abstractions;
+using CabaVS.ExpenseTracker.Domain.Enums;
 using CabaVS.ExpenseTracker.Domain.Primitives;
 using CabaVS.ExpenseTracker.Domain.Shared;
 using CabaVS.ExpenseTracker.Domain.ValueObjects;
 
 namespace CabaVS.ExpenseTracker.Domain.Entities;
 
-public sealed class Category : AuditableEntity
+public sealed class Category : AuditableEntity, IWithCurrency
 {
     public CategoryName Name { get; }
     public CategoryType Type { get; }
@@ -19,6 +20,15 @@ public sealed class Category : AuditableEntity
         Type = type;
         Currency = currency;
     }
+    
+    public Result<Transaction> CreateIncomeTransaction(
+        DateOnly date, IEnumerable<string> tags,
+        decimal amountInSourceCurrency, decimal amountInDestinationCurrency,
+        Balance destination) =>
+        Transaction.CreateNew(
+            date, TransactionType.Income, tags,
+            amountInSourceCurrency, amountInDestinationCurrency,
+            this, destination);
     
     public static Result<Category> CreateNew(string name, CategoryType type, Currency currency)
     {
