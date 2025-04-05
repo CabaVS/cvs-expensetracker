@@ -1,36 +1,42 @@
 ﻿using CabaVS.ExpenseTracker.Application.Contracts.Presentation;
+using CabaVS.ExpenseTracker.Presentation.Middleware;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 namespace CabaVS.ExpenseTracker.Presentation;
 
 public static class DependencyInjection
 {
     public static IServiceCollection AddPresentation(
-        this IServiceCollection services, 
-        IConfiguration configuration, 
-        IWebHostEnvironment environment)
+        this IServiceCollection services,
+        WebApplicationBuilder builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+        
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .CreateLogger();
+        builder.Host.UseSerilog();
+        
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(o =>
             {
                 o.RequireHttpsMetadata = bool.Parse(
-                    configuration["Authentication:RequireHttpsMetadata"]
+                    builder.Configuration["Authentication:RequireHttpsMetadata"]
                     ?? throw new InvalidOperationException("RequireHttpsMetadata is not configured."));
-                o.MetadataAddress = configuration["Authentication:MetadataAddress"]
+                o.MetadataAddress = builder.Configuration["Authentication:MetadataAddress"]
                     ?? throw new InvalidOperationException("MetadataAddress is not configured.");
                 
                 o.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = configuration["Authentication:Issuer"],
-                    ValidAudience = configuration["Authentication:Audience"],
+                    ValidIssuer = builder.Configuration["Authentication:Issuer"],
+                    ValidAudience = builder.Configuration["Authentication:Audience"],
                     
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
@@ -42,11 +48,13 @@ public static class DependencyInjection
         
         services.AddHttpContextAccessor();
 
+        services.AddScoped<UserIdEnrichmentMiddleware>();
+        
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
         
         services.AddFastEndpoints();
 
-        if (!environment.IsDevelopment())
+        if (!builder.Environment.IsDevelopment())
         {
             return services;
         }
@@ -72,6 +80,8 @@ public static class DependencyInjection
 
         app.UseAuthentication();
         app.UseAuthorization();
+
+        app.UseMiddleware<UserIdEnrichmentMiddleware>();
         
         app.UseFastEndpoints();
 

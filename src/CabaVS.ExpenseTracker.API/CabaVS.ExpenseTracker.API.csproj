@@ -11,10 +11,5 @@
       <ProjectReference Include="..\External\CabaVS.ExpenseTracker.Persistence\CabaVS.ExpenseTracker.Persistence.csproj" />
       <ProjectReference Include="..\External\CabaVS.ExpenseTracker.Presentation\CabaVS.ExpenseTracker.Presentation.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Serilog.AspNetCore" />
-      <PackageReference Include="Serilog.Sinks.Console" />
-    </ItemGroup>
   
 </Project>
