@@ -10,4 +10,5 @@ public interface IUnitOfWork
     IWorkspaceRepository WorkspaceRepository { get; }
     ICurrencyRepository CurrencyRepository { get; }
     IBalanceRepository BalanceRepository { get; }
+    ICategoryRepository CategoryRepository { get; }
 }
