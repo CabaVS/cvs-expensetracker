@@ -1,9 +1,10 @@
-﻿using CabaVS.ExpenseTracker.Application.Contracts.Presentation;
+﻿using CabaVS.ExpenseTracker.Application.Common.Requests;
+using CabaVS.ExpenseTracker.Application.Contracts.Presentation;
 using CabaVS.ExpenseTracker.Domain.Errors;
 using CabaVS.ExpenseTracker.Domain.Shared;
 using MediatR;
 
-namespace CabaVS.ExpenseTracker.Application.Common;
+namespace CabaVS.ExpenseTracker.Application.Common.Behaviors;
 
 internal sealed class UserOwningRequestBehavior<TRequest, TResponse>(ICurrentUserAccessor currentUserAccessor) 
     : IPipelineBehavior<TRequest, TResponse>

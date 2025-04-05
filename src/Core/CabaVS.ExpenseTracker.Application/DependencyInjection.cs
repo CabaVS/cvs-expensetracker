@@ -1,4 +1,4 @@
-﻿using CabaVS.ExpenseTracker.Application.Common;
+﻿using CabaVS.ExpenseTracker.Application.Common.Behaviors;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 

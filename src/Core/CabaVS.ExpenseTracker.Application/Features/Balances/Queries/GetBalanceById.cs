@@ -1,4 +1,4 @@
-﻿using CabaVS.ExpenseTracker.Application.Common;
+﻿using CabaVS.ExpenseTracker.Application.Common.Requests;
 using CabaVS.ExpenseTracker.Application.Contracts.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Features.Balances.Models;
 using CabaVS.ExpenseTracker.Domain.Errors;

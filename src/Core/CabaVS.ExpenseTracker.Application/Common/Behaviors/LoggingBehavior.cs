@@ -3,7 +3,7 @@ using CabaVS.ExpenseTracker.Domain.Shared;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace CabaVS.ExpenseTracker.Application.Common;
+namespace CabaVS.ExpenseTracker.Application.Common.Behaviors;
 
 internal sealed class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
     : IPipelineBehavior<TRequest, TResponse>

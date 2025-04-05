@@ -1,4 +1,4 @@
-﻿using CabaVS.ExpenseTracker.Application.Common;
+﻿using CabaVS.ExpenseTracker.Application.Common.Requests;
 using CabaVS.ExpenseTracker.Application.Contracts.Persistence;
 using CabaVS.ExpenseTracker.Domain.Entities;
 using CabaVS.ExpenseTracker.Domain.Enums;

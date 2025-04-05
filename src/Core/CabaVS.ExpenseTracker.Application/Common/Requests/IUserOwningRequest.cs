@@ -1,4 +1,4 @@
-﻿namespace CabaVS.ExpenseTracker.Application.Common;
+﻿namespace CabaVS.ExpenseTracker.Application.Common.Requests;
 
 public interface IUserOwningRequest
 {
