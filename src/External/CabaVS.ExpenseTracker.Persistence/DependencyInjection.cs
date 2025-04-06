@@ -30,6 +30,7 @@ public static class DependencyInjection
         services.AddSingleton<IReadOnlyCurrencyRepository, ReadOnlyCurrencyRepository>();
         services.AddSingleton<IReadOnlyBalanceRepository, ReadOnlyBalanceRepository>();
         services.AddSingleton<IReadOnlyCategoryRepository, ReadOnlyCategoryRepository>();
+        services.AddSingleton<IReadOnlyTransactionRepository, ReadOnlyTransactionRepository>();
         
         return services;
     }
