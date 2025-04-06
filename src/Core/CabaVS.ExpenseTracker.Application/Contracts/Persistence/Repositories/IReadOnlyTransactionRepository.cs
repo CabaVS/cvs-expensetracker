@@ -7,4 +7,7 @@ public interface IReadOnlyTransactionRepository
     Task<TransactionModel[]> GetMultipleAsync(
         Guid workspaceId, DateOnly from, DateOnly to,
         CancellationToken cancellationToken = default);
+    Task<TransactionModel?> GetSingleByIdAsync(
+        Guid workspaceId, Guid transactionId,
+        CancellationToken cancellationToken = default);
 }

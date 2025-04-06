@@ -19,57 +19,91 @@ internal sealed class ReadOnlyTransactionRepository(ISqlConnectionFactory connec
         await connection.OpenAsync(cancellationToken);
         
         const string sql =
-            """
-            SELECT
-                t.[Id], t.[Date], t.[Type], t.[Tags],
-                t.[AmountInSourceCurrency], t.[AmountInDestinationCurrency],
-                -- Source joins
-                sb.[Id] AS SourceBalanceId, sb.[Name] AS SourceBalanceName,
-                sc.[Id] AS SourceCategoryId, sc.[Name] AS SourceCategoryName,
-                -- Destination joins
-                db.[Id] AS DestinationBalanceId, db.[Name] AS DestinationBalanceName,
-                dc.[Id] AS DestinationCategoryId, dc.[Name] AS DestinationCategoryName
-            FROM [dbo].[Transactions] t
-            LEFT JOIN [dbo].[Balances] sb ON t.[SourceBalanceId] = sb.[Id]
-            LEFT JOIN [dbo].[Categories] sc ON t.[SourceCategoryId] = sc.[Id]
-            LEFT JOIN [dbo].[Balances] db ON t.[DestinationBalanceId] = db.[Id]
-            LEFT JOIN [dbo].[Categories] dc ON t.[DestinationCategoryId] = dc.[Id]
+            $"""
+            {TransactionModelSelectAndJoinsSqlPart}
             WHERE t.[WorkspaceId] = @WorkspaceId
             AND t.[Date] >= @From
             AND t.[Date] <= @To;
             """;
 
         var dateOnlyConverter = new DateOnlyToDateTimeConverter();
-        var tagsConverter = new StringArrayToCommaSeparatedStringConverter();
+        DateTime fromConverted = dateOnlyConverter.ConvertToProviderTyped(from);
+        DateTime toConverted = dateOnlyConverter.ConvertToProviderTyped(to);
         
-        IEnumerable<TransactionModel> transactionModels = await connection.QueryAsync<
-            TransactionPartDapperModel, TransactionSourcePartDapperModel, TransactionDestinationPartDapperModel, TransactionModel>(
+        IEnumerable<TransactionModel> transactionModels = await connection.QueryAsync(
             sql,
+            MappingFunc,
+            new { WorkspaceId = workspaceId, From = fromConverted, To = toConverted },
+            splitOn: "SourceBalanceId,DestinationBalanceId");
+        return [.. transactionModels];
+    }
+    
+    public async Task<TransactionModel?> GetSingleByIdAsync(
+        Guid workspaceId, Guid transactionId,
+        CancellationToken cancellationToken = default)
+    {
+        await using SqlConnection connection = connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken);
+        
+        const string sql =
+            $"""
+            {TransactionModelSelectAndJoinsSqlPart}
+            WHERE t.[Id] = @TransactionId
+            AND t.[WorkspaceId] = @WorkspaceId
+            """;
+        
+        IEnumerable<TransactionModel> transactionModels = await connection.QueryAsync(
+            sql,
+            MappingFunc,
+            new { TransactionId = transactionId, WorkspaceId = workspaceId },
+            splitOn: "SourceBalanceId,DestinationBalanceId");
+        return transactionModels.FirstOrDefault();
+    }
+
+    private const string TransactionModelSelectAndJoinsSqlPart =
+        """
+        SELECT
+            t.[Id], t.[Date], t.[Type], t.[Tags],
+            t.[AmountInSourceCurrency], t.[AmountInDestinationCurrency],
+            -- Source joins
+            sb.[Id] AS SourceBalanceId, sb.[Name] AS SourceBalanceName,
+            sc.[Id] AS SourceCategoryId, sc.[Name] AS SourceCategoryName,
+            -- Destination joins
+            db.[Id] AS DestinationBalanceId, db.[Name] AS DestinationBalanceName,
+            dc.[Id] AS DestinationCategoryId, dc.[Name] AS DestinationCategoryName
+        FROM [dbo].[Transactions] t
+        LEFT JOIN [dbo].[Balances] sb ON t.[SourceBalanceId] = sb.[Id]
+        LEFT JOIN [dbo].[Categories] sc ON t.[SourceCategoryId] = sc.[Id]
+        LEFT JOIN [dbo].[Balances] db ON t.[DestinationBalanceId] = db.[Id]
+        LEFT JOIN [dbo].[Categories] dc ON t.[DestinationCategoryId] = dc.[Id]
+        """;
+
+    private static readonly
+        Func<
+            TransactionPartDapperModel,
+            TransactionSourcePartDapperModel,
+            TransactionDestinationPartDapperModel,
+            TransactionModel> MappingFunc =
             (t, src, dst) => new TransactionModel(
-                t.Id, dateOnlyConverter.ConvertFromProviderTyped.Invoke(t.Date),
-                t.Type, tagsConverter.ConvertFromProviderTyped.Invoke(t.Tags),
+                t.Id, new DateOnlyToDateTimeConverter().ConvertFromProviderTyped.Invoke(t.Date),
+                t.Type, new StringArrayToCommaSeparatedStringConverter().ConvertFromProviderTyped.Invoke(t.Tags),
                 t.AmountInSourceCurrency, t.AmountInDestinationCurrency,
                 t.Type switch
                 {
-                    TransactionType.Expense or TransactionType.Transfer => new TransactionSideModel(src.SourceBalanceId!.Value, src.SourceBalanceName!),
-                    TransactionType.Income => new TransactionSideModel(src.SourceCategoryId!.Value, src.SourceCategoryName!),
+                    TransactionType.Expense or TransactionType.Transfer => new TransactionSideModel(
+                        src.SourceBalanceId!.Value, src.SourceBalanceName!),
+                    TransactionType.Income => new TransactionSideModel(src.SourceCategoryId!.Value,
+                        src.SourceCategoryName!),
                     _ => throw new UnreachableException()
                 },
                 t.Type switch
                 {
-                    TransactionType.Income or TransactionType.Transfer => new TransactionSideModel(dst.DestinationBalanceId!.Value, dst.DestinationBalanceName!),
-                    TransactionType.Expense => new TransactionSideModel(dst.DestinationCategoryId!.Value, dst.DestinationCategoryName!),
+                    TransactionType.Income or TransactionType.Transfer => new TransactionSideModel(
+                        dst.DestinationBalanceId!.Value, dst.DestinationBalanceName!),
+                    TransactionType.Expense => new TransactionSideModel(dst.DestinationCategoryId!.Value,
+                        dst.DestinationCategoryName!),
                     _ => throw new UnreachableException()
-                }),
-            new
-            {
-                WorkspaceId = workspaceId, 
-                From = dateOnlyConverter.ConvertToProviderTyped.Invoke(from), 
-                To = dateOnlyConverter.ConvertToProviderTyped.Invoke(to)
-            },
-            splitOn: "SourceBalanceId,DestinationBalanceId");
-        return [.. transactionModels];
-    }
+                });
 
     private sealed record TransactionPartDapperModel(
         Guid Id,
