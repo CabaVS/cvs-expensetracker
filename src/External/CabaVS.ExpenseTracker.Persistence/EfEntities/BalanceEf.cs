@@ -1,4 +1,5 @@
-﻿using CabaVS.ExpenseTracker.Domain.Entities;
+﻿using System.Linq.Expressions;
+using CabaVS.ExpenseTracker.Domain.Entities;
 
 namespace CabaVS.ExpenseTracker.Persistence.EfEntities;
 
@@ -27,4 +28,23 @@ internal sealed class BalanceEf
         WorkspaceId = workspaceId,
         CurrencyId = balance.Currency.Id
     };
+
+    internal static Expression<Func<BalanceEf, Balance>> ProjectToDomain =>
+        b => Balance
+            .CreateExisting(
+                b.Id,
+                b.CreatedOn,
+                b.ModifiedOn,
+                b.Name,
+                b.Amount,
+                Domain.Entities.Currency
+                    .CreateExisting(
+                        b.Currency!.Id,
+                        b.Currency.CreatedOn,
+                        b.Currency.ModifiedOn,
+                        b.Currency.Name,
+                        b.Currency.Code,
+                        b.Currency.Symbol)
+                    .Value)
+            .Value;
 }

@@ -16,6 +16,11 @@ public static class TransactionErrors
             $"{nameof(Transaction)}.{nameof(SourceOrDestinationMismatch)}", 
             "Source or destination mismatch for the transaction with provided Type.");
     
+    public static Error SourceOrDestinationNotFound() =>
+        new(
+            $"{nameof(Transaction)}.{nameof(SourceOrDestinationNotFound)}", 
+            "Source or destination not found for the transaction with provided Type.");
+    
     public static Error AmountsMustDifferWhenCurrenciesAreDifferent() =>
         new(
             $"{nameof(Transaction)}.{nameof(AmountsMustDifferWhenCurrenciesAreDifferent)}", 

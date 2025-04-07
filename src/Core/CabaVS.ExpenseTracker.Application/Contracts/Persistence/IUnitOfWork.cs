@@ -11,4 +11,5 @@ public interface IUnitOfWork
     ICurrencyRepository CurrencyRepository { get; }
     IBalanceRepository BalanceRepository { get; }
     ICategoryRepository CategoryRepository { get; }
+    ITransactionRepository TransactionRepository { get; }
 }

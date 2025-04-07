@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using CabaVS.ExpenseTracker.Application.Contracts.Persistence.Repositories;
+﻿using CabaVS.ExpenseTracker.Application.Contracts.Persistence.Repositories;
 using CabaVS.ExpenseTracker.Application.Features.Transactions.Models;
 using CabaVS.ExpenseTracker.Domain.Enums;
 using CabaVS.ExpenseTracker.Persistence.Converters;
@@ -34,7 +33,7 @@ internal sealed class ReadOnlyTransactionRepository(ISqlConnectionFactory connec
             sql,
             MappingFunc,
             new { WorkspaceId = workspaceId, From = fromConverted, To = toConverted },
-            splitOn: "SourceBalanceId,DestinationBalanceId");
+            splitOn: "SourceId,DestinationId");
         return [.. transactionModels];
     }
     
@@ -56,21 +55,17 @@ internal sealed class ReadOnlyTransactionRepository(ISqlConnectionFactory connec
             sql,
             MappingFunc,
             new { TransactionId = transactionId, WorkspaceId = workspaceId },
-            splitOn: "SourceBalanceId,DestinationBalanceId");
+            splitOn: "SourceId,DestinationId");
         return transactionModels.FirstOrDefault();
     }
-
+    
     private const string TransactionModelSelectAndJoinsSqlPart =
         """
         SELECT
             t.[Id], t.[Date], t.[Type], t.[Tags],
             t.[AmountInSourceCurrency], t.[AmountInDestinationCurrency],
-            -- Source joins
-            sb.[Id] AS SourceBalanceId, sb.[Name] AS SourceBalanceName,
-            sc.[Id] AS SourceCategoryId, sc.[Name] AS SourceCategoryName,
-            -- Destination joins
-            db.[Id] AS DestinationBalanceId, db.[Name] AS DestinationBalanceName,
-            dc.[Id] AS DestinationCategoryId, dc.[Name] AS DestinationCategoryName
+            ISNULL(sb.[Id], sc.[Id]) AS SourceId, ISNULL(sb.[Name], sc.[Name]) AS SourceName,
+            ISNULL(db.[Id], dc.[Id]) AS DestinationId, ISNULL(db.[Name], dc.[Name]) AS DestinationName
         FROM [dbo].[Transactions] t
         LEFT JOIN [dbo].[Balances] sb ON t.[SourceBalanceId] = sb.[Id]
         LEFT JOIN [dbo].[Categories] sc ON t.[SourceCategoryId] = sc.[Id]
@@ -88,22 +83,8 @@ internal sealed class ReadOnlyTransactionRepository(ISqlConnectionFactory connec
                 t.Id, new DateOnlyToDateTimeConverter().ConvertFromProviderTyped.Invoke(t.Date),
                 t.Type, new StringArrayToCommaSeparatedStringConverter().ConvertFromProviderTyped.Invoke(t.Tags),
                 t.AmountInSourceCurrency, t.AmountInDestinationCurrency,
-                t.Type switch
-                {
-                    TransactionType.Expense or TransactionType.Transfer => new TransactionSideModel(
-                        src.SourceBalanceId!.Value, src.SourceBalanceName!),
-                    TransactionType.Income => new TransactionSideModel(src.SourceCategoryId!.Value,
-                        src.SourceCategoryName!),
-                    _ => throw new UnreachableException()
-                },
-                t.Type switch
-                {
-                    TransactionType.Income or TransactionType.Transfer => new TransactionSideModel(
-                        dst.DestinationBalanceId!.Value, dst.DestinationBalanceName!),
-                    TransactionType.Expense => new TransactionSideModel(dst.DestinationCategoryId!.Value,
-                        dst.DestinationCategoryName!),
-                    _ => throw new UnreachableException()
-                });
+                new TransactionSideModel(src.SourceId, src.SourceName),
+                new TransactionSideModel(dst.DestinationId, dst.DestinationName));
 
     private sealed record TransactionPartDapperModel(
         Guid Id,
@@ -114,14 +95,10 @@ internal sealed class ReadOnlyTransactionRepository(ISqlConnectionFactory connec
         decimal AmountInDestinationCurrency);
 
     private sealed record TransactionSourcePartDapperModel(
-        Guid? SourceBalanceId,
-        string? SourceBalanceName,
-        Guid? SourceCategoryId,
-        string? SourceCategoryName);
+        Guid SourceId,
+        string SourceName);
     
     private sealed record TransactionDestinationPartDapperModel(
-        Guid? DestinationBalanceId,
-        string? DestinationBalanceName,
-        Guid? DestinationCategoryId,
-        string? DestinationCategoryName);
+        Guid DestinationId,
+        string DestinationName);
 }
