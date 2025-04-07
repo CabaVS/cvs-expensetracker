@@ -60,10 +60,8 @@ internal sealed class CreateTransactionCommandHandler(IUnitOfWork unitOfWork)
         {
             case TransactionType.Expense:
                 await unitOfWork.BalanceRepository.UpdateAsync((Balance)source, request.WorkspaceId, cancellationToken);
-                await unitOfWork.CategoryRepository.UpdateAsync((Category)destination, request.WorkspaceId, cancellationToken);
                 break;
             case TransactionType.Income:
-                await unitOfWork.CategoryRepository.UpdateAsync((Category)source, request.WorkspaceId, cancellationToken);
                 await unitOfWork.BalanceRepository.UpdateAsync((Balance)destination, request.WorkspaceId, cancellationToken);
                 break;
             case TransactionType.Transfer:
