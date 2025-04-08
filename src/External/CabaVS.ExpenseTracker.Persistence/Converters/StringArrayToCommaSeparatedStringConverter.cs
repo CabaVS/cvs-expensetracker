@@ -6,7 +6,9 @@ namespace CabaVS.ExpenseTracker.Persistence.Converters;
 internal sealed class StringArrayToCommaSeparatedStringConverter()
     : ValueConverter<string[], string>(
         strArray => string.Join(Separator, strArray),
-        str => str.Split(Separator, StringSplitOptions.None))
+        str => !string.IsNullOrEmpty(str)
+            ? str.Split(Separator, StringSplitOptions.None)
+            : Array.Empty<string>())
 {
     private const char Separator = ',';
 }
