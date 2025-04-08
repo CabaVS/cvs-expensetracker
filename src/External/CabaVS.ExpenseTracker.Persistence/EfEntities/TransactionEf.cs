@@ -1,4 +1,5 @@
-﻿using CabaVS.ExpenseTracker.Domain.Entities;
+﻿using CabaVS.ExpenseTracker.Domain.Abstractions;
+using CabaVS.ExpenseTracker.Domain.Entities;
 using CabaVS.ExpenseTracker.Domain.Enums;
 
 namespace CabaVS.ExpenseTracker.Persistence.EfEntities;
@@ -65,5 +66,37 @@ internal sealed class TransactionEf
         }
         
         return transactionEf;
+    }
+
+    internal Transaction MapToDomain()
+    {
+        IWithCurrency source = Type switch
+        {
+            TransactionType.Expense or TransactionType.Transfer => BalanceEf.ProjectToDomain.Compile()(SourceBalance!),
+            TransactionType.Income => CategoryEf.ProjectToDomain.Compile()(SourceCategory!),
+            _ => throw new InvalidOperationException(),
+        };
+            
+        IWithCurrency destination = Type switch
+        {
+            TransactionType.Income or TransactionType.Transfer => BalanceEf.ProjectToDomain.Compile()(DestinationBalance!),
+            TransactionType.Expense => CategoryEf.ProjectToDomain.Compile()(DestinationCategory!),
+            _ => throw new InvalidOperationException(),
+        };
+            
+        Transaction transaction = Transaction
+            .CreateExisting(
+                Id,
+                CreatedOn,
+                ModifiedOn,
+                Date,
+                Type,
+                Tags,
+                AmountInSourceCurrency,
+                AmountInDestinationCurrency,
+                source,
+                destination)
+            .Value;
+        return transaction;
     }
 }

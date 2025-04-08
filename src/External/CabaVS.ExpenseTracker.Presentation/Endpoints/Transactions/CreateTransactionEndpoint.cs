@@ -1,4 +1,5 @@
-﻿using CabaVS.ExpenseTracker.Application.Features.Transactions.Commands;
+﻿using System.Net;
+using CabaVS.ExpenseTracker.Application.Features.Transactions.Commands;
 using CabaVS.ExpenseTracker.Domain.Enums;
 using CabaVS.ExpenseTracker.Domain.Shared;
 using CabaVS.ExpenseTracker.Presentation.Extensions;
@@ -52,4 +53,37 @@ internal sealed class CreateTransactionEndpoint(ISender sender)
         DateOnly Date, TransactionType Type, IEnumerable<string> Tags,
         decimal AmountInSourceCurrency, decimal AmountInDestinationCurrency,
         Guid SourceId, Guid DestinationId);
+
+    internal sealed class EndpointSummary : Summary<CreateTransactionEndpoint>
+    {
+        public EndpointSummary()
+        {
+            Summary = "Create a Transaction";
+            Description = "Creates a Transaction within specified workspace.";
+            
+            Params[nameof(RequestModel.WorkspaceId)] = "Workspace ID to verify access.";
+
+            ExampleRequest =
+                new RequestModel(
+                    Guid.Empty,
+                    new DateOnly(2020, 10, 20),
+                    TransactionType.Expense,
+                    ["subscription", "open-ai"],
+                    1234.56m,
+                    1234.56m,
+                    Guid.NewGuid(),
+                    Guid.NewGuid());
+        
+            Response(
+                (int)HttpStatusCode.Created,
+                "Created At Route response without a body. Location header is filled with Id of created entity.");
+        
+            Response(
+                (int)HttpStatusCode.BadRequest,
+                "Bad Request with Error.",
+                example: new Error(
+                    "Validation.Unspecified",
+                    "Unspecified validation error occured. Check your input and try again."));
+        }
+    }
 }

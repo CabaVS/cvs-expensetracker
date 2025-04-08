@@ -100,4 +100,17 @@ public sealed class Transaction : AuditableEntity
         
         return transaction;
     }
+    
+    public void Rollback()
+    {
+        if (Source is Balance sourceBalance)
+        {
+            sourceBalance.Amount += AmountInSourceCurrency;
+        }
+
+        if (Destination is Balance destinationBalance)
+        {
+            destinationBalance.Amount -= AmountInDestinationCurrency;
+        }
+    }
 }

@@ -49,8 +49,7 @@ internal sealed class CreateBalanceEndpoint(ISender sender)
             Summary = "Create a Balance";
             Description = "Creates a Balance within specified workspace.";
             
-            Params[nameof(GetBalanceByIdEndpoint.RequestModel.WorkspaceId)] = 
-                "Workspace ID to verify access.";
+            Params[nameof(RequestModel.WorkspaceId)] = "Workspace ID to verify access.";
 
             ExampleRequest =
                 new RequestModel(
