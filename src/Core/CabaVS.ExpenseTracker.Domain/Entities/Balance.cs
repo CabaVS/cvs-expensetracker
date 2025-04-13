@@ -1,5 +1,4 @@
 ﻿using CabaVS.ExpenseTracker.Domain.Abstractions;
-using CabaVS.ExpenseTracker.Domain.Enums;
 using CabaVS.ExpenseTracker.Domain.Primitives;
 using CabaVS.ExpenseTracker.Domain.Shared;
 using CabaVS.ExpenseTracker.Domain.ValueObjects;
@@ -20,24 +19,6 @@ public sealed class Balance : AuditableEntity, IWithCurrency
         Amount = amount;
         Currency = currency;
     }
-
-    public Result<Transaction> CreateExpenseTransaction(
-        DateOnly date, IEnumerable<string> tags,
-        decimal amountInSourceCurrency, decimal amountInDestinationCurrency,
-        Category destination) =>
-        Transaction.CreateNew(
-            date, TransactionType.Expense, tags,
-            amountInSourceCurrency, amountInDestinationCurrency,
-            this, destination);
-    
-    public Result<Transaction> CreateTransferTransaction(
-        DateOnly date, IEnumerable<string> tags,
-        decimal amountInSourceCurrency, decimal amountInDestinationCurrency,
-        Balance destination) =>
-        Transaction.CreateNew(
-            date, TransactionType.Transfer, tags,
-            amountInSourceCurrency, amountInDestinationCurrency,
-            this, destination);
 
     public static Result<Balance> CreateNew(string name, decimal amount, Currency currency)
     {

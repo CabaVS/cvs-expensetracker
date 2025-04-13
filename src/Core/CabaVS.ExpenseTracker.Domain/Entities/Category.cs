@@ -21,15 +21,6 @@ public sealed class Category : AuditableEntity, IWithCurrency
         Currency = currency;
     }
     
-    public Result<Transaction> CreateIncomeTransaction(
-        DateOnly date, IEnumerable<string> tags,
-        decimal amountInSourceCurrency, decimal amountInDestinationCurrency,
-        Balance destination) =>
-        Transaction.CreateNew(
-            date, TransactionType.Income, tags,
-            amountInSourceCurrency, amountInDestinationCurrency,
-            this, destination);
-    
     public static Result<Category> CreateNew(string name, CategoryType type, Currency currency)
     {
         DateTime utcNow = DateTime.UtcNow;

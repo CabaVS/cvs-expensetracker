@@ -1,6 +1,9 @@
-﻿namespace CabaVS.ExpenseTracker.Domain.Primitives;
+﻿using CabaVS.ExpenseTracker.Domain.Abstractions;
 
-public abstract class AuditableEntity(Guid id, DateTime createdOn, DateTime modifiedOn) : IEquatable<AuditableEntity>
+namespace CabaVS.ExpenseTracker.Domain.Primitives;
+
+public abstract class AuditableEntity(Guid id, DateTime createdOn, DateTime modifiedOn)
+    : IAuditableEntity, IEquatable<AuditableEntity>
 {
     public Guid Id { get; } = id;
     public DateTime CreatedOn { get; } = createdOn;
